@@ -2,7 +2,7 @@
   "name": "todo",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "start-server":"node server.js"  },
   "keywords": [],
