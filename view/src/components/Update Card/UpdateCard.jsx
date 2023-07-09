@@ -18,7 +18,7 @@ const UpdateCard = () => {
 
   let tokenData = localStorage.getItem("token");
 
-  useFetch("http://localhost:5000/task", tokenData);
+  useFetch(`${process.env.REACT_APP_API_LINK}/task`, tokenData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,7 +34,7 @@ const UpdateCard = () => {
     console.log("form data", updatedNote);
 
     let savedNoteData = await axios.put(
-      `http://localhost:5000/task/${_id}`,
+      `${process.env.REACT_APP_API_LINK}/task/${_id}`,
       updatedNote,
       {
         headers: {

@@ -27,7 +27,7 @@ const Login = () => {
 
     try {
       const loginData = await axios.post(
-        "http://localhost:5000/login",
+        `https://notes-app-0wxo.onrender.com/login`,
         loginCredentials
       );
 

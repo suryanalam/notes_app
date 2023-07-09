@@ -30,7 +30,7 @@ const Card = ({note}) => {
 
   const handleDeleteNote = async () => {
     
-    await axios.delete(`http://localhost:5000/task/${_id}`,{
+    await axios.delete(`${process.env.REACT_APP_API_LINK}/task/${_id}`,{
         headers: {
           Authorization: tokenData,
         },
@@ -45,7 +45,7 @@ const Card = ({note}) => {
 
   };
 
-  useFetch("http://localhost:5000/task", tokenData);
+  useFetch(`${process.env.REACT_APP_API_LINK}/task`, tokenData);
 
   return (
     <div className="card-bg" key={_id}>

@@ -20,7 +20,7 @@ const Home = () => {
   const {notesData, msg} = useContext(ToggleContext); 
   const tokenData = localStorage.getItem("token");
 
-  useFetch('http://localhost:5000/task',tokenData);
+  useFetch(`${process.env.REACT_APP_API_LINK}/task`,tokenData);
 
   return (
     <>

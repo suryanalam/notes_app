@@ -28,7 +28,7 @@ const Signup = () => {
     e.preventDefault();
     console.log('form data',user);
     try{
-      const userData = await axios.post("http://localhost:5000/signup",user);
+      const userData = await axios.post(`https://notes-app-0wxo.onrender.com/signup`,user);
 
       if(userData.data.data){
         console.log("user data from response",userData.data.data);

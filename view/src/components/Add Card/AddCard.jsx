@@ -15,7 +15,7 @@ const AddCard = () => {
     payload = JSON.parse(atob(tokenData.split(".")[1]));
   }
 
-  useFetch("http://localhost:5000/task", tokenData);
+  useFetch(`${process.env.REACT_APP_API_LINK}/task`, tokenData);
 
   const [note, setNote] = useState({
     uid: "",
@@ -37,7 +37,7 @@ const AddCard = () => {
     note.uid = payload.id;
     console.log("form data", note);
 
-    let savedNoteData = await axios.post("http://localhost:5000/task", note, {
+    let savedNoteData = await axios.post(`${process.env.REACT_APP_API_LINK}/task`, note, {
       headers: {
         Authorization: tokenData,
       },
