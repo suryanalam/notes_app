@@ -34,7 +34,7 @@ const UpdateCard = () => {
     console.log("form data", updatedNote);
 
     let savedNoteData = await axios.put(
-      `${process.env.REACT_APP_API_LINK}/task/${_id}`,
+      `https://notes-app-0wxo.onrender.com/task/${_id}`,
       updatedNote,
       {
         headers: {

@@ -20,7 +20,7 @@ const Home = () => {
   const {notesData, msg} = useContext(ToggleContext); 
   const tokenData = localStorage.getItem("token");
 
-  useFetch(`${process.env.REACT_APP_API_LINK}/task`,tokenData);
+  useFetch(`https://notes-app-0wxo.onrender.com/task`,tokenData);
 
   return (
     <>
