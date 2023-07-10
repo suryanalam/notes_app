@@ -43,8 +43,9 @@ const AddCard = () => {
       },
     });
     console.log("response from db", savedNoteData.data.data);
+    const resData = savedNoteData.data.data;
 
-    if (savedNoteData.data.data) {
+    if (resData) {
       setNote({
         uid: "",
         title: "",
@@ -52,6 +53,7 @@ const AddCard = () => {
       });
       navigate("/");
     }else{
+      console.log(savedNoteData.data.message)
       alert(savedNoteData.data.message)
     }
   };

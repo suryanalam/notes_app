@@ -45,13 +45,16 @@ const UpdateCard = () => {
 
     console.log("response from db", savedNoteData.data.data);
 
-    if (savedNoteData.data.data) {
+    const resData = savedNoteData.data.data;
+
+    if (resData) {
       setUpdatedNote({
         title: "",
         desc: "",
       });
       navigate("/");
     }else{
+      console.log(savedNoteData.data.message)
       alert(savedNoteData.data.message)
     }
   };
