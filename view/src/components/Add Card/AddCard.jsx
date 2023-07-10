@@ -51,6 +51,8 @@ const AddCard = () => {
         desc: "",
       });
       navigate("/");
+    }else{
+      alert(savedNoteData.data.message)
     }
   };
 

@@ -51,6 +51,8 @@ const UpdateCard = () => {
         desc: "",
       });
       navigate("/");
+    }else{
+      alert(savedNoteData.data.message)
     }
   };
 

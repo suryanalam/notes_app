@@ -72,14 +72,6 @@ const Signup = () => {
             <label className="form-label">Mobile No</label>
             <input className="form-input" type="number" name="mobileNo" placeholder="Ex: 9876543210"  onChange={handleChange}/>
           </div>
-          <div className="form-group-role">
-            <label className="form-label" name="role" >Role: </label>
-            <select name="role"  onChange={handleChange}>
-              <option value="">Select</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-            </select>
-          </div>
           <div className="form-group">
             <button className="form-btn" onClick={handleSignup}>Signup</button>
           </div>
