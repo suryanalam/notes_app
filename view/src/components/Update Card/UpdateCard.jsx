@@ -33,29 +33,31 @@ const UpdateCard = () => {
   const handleSaveNote = async (e) => {
     console.log("form data", updatedNote);
 
-    let savedNoteData = await axios.put(
-      `https://notes-app-0wxo.onrender.com/task/${_id}`,
-      updatedNote,
-      {
-        headers: {
-          Authorization: tokenData,
-        },
+    try {
+      let savedNoteData = await axios.put(
+        `https://notes-app-0wxo.onrender.com/task/${_id}`,
+        updatedNote,
+        {
+          headers: {
+            Authorization: tokenData,
+          },
+        }
+      );
+  
+      console.log("response from db", savedNoteData.data);
+  
+      const resData = savedNoteData.data.data;
+  
+      if (resData) {
+        setUpdatedNote({
+          title: "",
+          desc: "",
+        });
+        navigate("/");
       }
-    );
-
-    console.log("response from db", savedNoteData.data);
-
-    const resData = savedNoteData.data.data;
-
-    if (resData) {
-      setUpdatedNote({
-        title: "",
-        desc: "",
-      });
-      navigate("/");
-    }else{
-      console.log(savedNoteData.data.message)
-      alert(savedNoteData.data.message)
+    }
+    catch(err){
+      alert(err.response.data.message)
     }
   };
 

@@ -32,10 +32,7 @@ const Signup = () => {
       if(userData.data.data){
         console.log("user data from response",userData.data.data);
         navigate('/')
-      }else{
-        alert("signup failed")
       }
-
     }
     catch(err){
       alert(err.response.data.message)

@@ -37,24 +37,26 @@ const AddCard = () => {
     note.uid = payload.id;
     console.log("form data", note);
 
-    let savedNoteData = await axios.post(`https://notes-app-0wxo.onrender.com/task`, note, {
-      headers: {
-        Authorization: tokenData,
-      },
-    });
-    console.log("response from db", savedNoteData.data.data);
-    const resData = savedNoteData.data.data;
-
-    if (resData) {
-      setNote({
-        uid: "",
-        title: "",
-        desc: "",
+    try{
+      let savedNoteData = await axios.post(`https://notes-app-0wxo.onrender.com/task`, note, {
+        headers: {
+          Authorization: tokenData,
+        },
       });
-      navigate("/");
-    }else{
-      console.log(savedNoteData.data.message)
-      alert(savedNoteData.data.message)
+      console.log("response from db", savedNoteData);
+      const resData = savedNoteData.data.data;
+  
+      if (resData) {
+        setNote({
+          uid: "",
+          title: "",
+          desc: "",
+        });
+        navigate("/");
+      }
+    }
+    catch(err){
+      alert(err.response.data.message)
     }
   };
 
