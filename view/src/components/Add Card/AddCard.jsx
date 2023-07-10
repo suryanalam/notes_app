@@ -87,6 +87,7 @@ const AddCard = () => {
           </div>
         </section>
       </div>
+      <button className='add-btn' onClick={()=>navigate(-1)}>Go Back</button>
     </section>
   );
 };

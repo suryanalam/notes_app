@@ -27,7 +27,7 @@ const Home = () => {
       <Header />
       <section className="home-bg">
         <div className="add-btn-div">
-          <button onClick={()=>navigate('/addTask')}>ADD</button>
+          <button className='add-btn' onClick={()=>navigate('/addTask')}>ADD</button>
         </div>
           {     
             msg ? <NoCard />

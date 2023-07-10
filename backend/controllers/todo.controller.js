@@ -64,6 +64,13 @@ const getTask = async (req, res) => {
 const updateTask = async (req, res) => {
   let id = req.params.id;
   let { title, desc } = req.body;
+
+  if (!title || !desc ) {
+    return res.status(500).send({
+      message: "please enter all the required fields !!",
+    });
+  }
+
   let updatedTask = { title, desc };
 
   let taskData = await Task.findOneAndUpdate(

@@ -2,23 +2,20 @@
     margin: 1rem 2rem;
 }
 
-.home-bg > div > button{
-    font-size: 1rem;
-    display: flex;
-    gap:0.5rem;
+.add-btn{
     background-color: var(--dark-blue);
     border: 2px solid var(--dark-blue);
 }
 
-.home-bg > div > button:hover{
+.add-btn:hover{
     background-color: inherit;
 }
 
 .tasks-bg{
     margin-top: 1.5rem;
     display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 1.5rem;
+    grid-gap: 1.5rem;
+    grid-template-columns: repeat(4, 1fr);
 }
 
 .no-data-div{

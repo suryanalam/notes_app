@@ -13,6 +13,14 @@ const signupUser = async(req,res) => {
         })
     }
 
+    let isUserExist = await User.findOne({mail:mail});
+
+    if(isUserExist){
+        return res.status(500).send({
+            message: 'User already exist !!'
+        })
+    }
+
     password = await bcrypt.hash(password,10);
     if(!password){
         return res.status(500).send({

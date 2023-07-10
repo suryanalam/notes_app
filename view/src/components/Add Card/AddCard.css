@@ -7,6 +7,7 @@
   font-size: 1rem;
   font-weight: bold;
   background-color: transparent;
+  overflow-wrap: break-word;
 }
 
 .card-input-content {
