@@ -7,45 +7,49 @@ import axios from "axios";
 import { useFetch } from "../../custom hooks/useFetch";
 import { ToggleContext } from "../../contexts/ToggleContext";
 
-const Card = ({note}) => {
-
-  // console.log("card data in card.js: ", note);
+const Card = ({ note }) => {
   const { _id, title, desc, createdAt, updatedAt } = note;
 
   const navigate = useNavigate();
 
-  let { setUpdatingNote } = 
-  useContext(ToggleContext);
+  let { setUpdatingNote,confirmDelete, setConfirmDelete } = useContext(ToggleContext);
 
   let tokenData = localStorage.getItem("token");
-  
+
+  useFetch(`https://notes-app-0wxo.onrender.com/task`, tokenData, confirmDelete);
+
   const handleEditNote = () => {
     setUpdatingNote({
-      _id, 
+      _id,
       title,
       desc,
     });
-    navigate('/updateTask')
+    navigate("/updateTask");
   };
 
   const handleDeleteNote = async () => {
-    
-    await axios.delete(`https://notes-app-0wxo.onrender.com/task/${_id}`,{
+    let confirmation = window.confirm(
+      "Are you sure you want to delete this note?"
+    );
+
+    if (!confirmation) {
+      navigate("/");
+    }
+
+    await axios
+      .delete(`https://notes-app-0wxo.onrender.com/task/${_id}`, {
         headers: {
           Authorization: tokenData,
         },
-    })
-      .then((res)=>{
+      })
+      .then((res) => {
         console.log("response from db of deleted item: ", res.data.data);
-        window.location.reload();
+        setConfirmDelete(!confirmDelete);
       })
-      .catch((err)=>{
-        console.log('error while deleting tasks in card.js: ',err);
-      })
-
+      .catch((err) => {
+        console.log("error while deleting tasks in card.js: ", err);
+      });
   };
-
-  useFetch(`https://notes-app-0wxo.onrender.com/task`, tokenData);
 
   return (
     <div className="card-bg" key={_id}>

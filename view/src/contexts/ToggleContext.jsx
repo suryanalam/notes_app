@@ -6,12 +6,18 @@ export const ToggleProvider = ({ children }) => {
   const [notesData, setNotesData] = useState([]);
   const [msg, setMsg] = useState("");
   const [updatingNote, setUpdatingNote] = useState({});
+  const [confirmDelete, setConfirmDelete] = useState(false);
   return (
     <ToggleContext.Provider
       value={{
-        notesData,setNotesData,
-        updatingNote,setUpdatingNote,
-        msg, setMsg
+        notesData,
+        setNotesData,
+        updatingNote,
+        setUpdatingNote,
+        confirmDelete, 
+        setConfirmDelete,
+        msg,
+        setMsg,
       }}
     >
       {children}

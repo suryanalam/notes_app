@@ -26,12 +26,11 @@ const addTask = async (req, res) => {
 };
 
 const getAllTask = async (req, res) => {
+  console.log("user data from req", req.user);
+  let { id } = req.user;
+  console.log("user id from req", id);
 
-  console.log('user data from req', req.user);
-  let {id} = req.user;
-  console.log('user id from req', id);
-
-  let taskData = await Task.find({uid:id}).populate("uid", "name mail");
+  let taskData = await Task.find({ uid: id }).populate("uid", "name mail");
 
   if (taskData.length) {
     return res.status(200).send({
@@ -39,7 +38,7 @@ const getAllTask = async (req, res) => {
       data: taskData,
     });
   } else {
-    return res.status(500).send({
+    return res.status(404).send({
       message: "Tasks not found !!",
     });
   }
@@ -55,7 +54,7 @@ const getTask = async (req, res) => {
       data: taskData,
     });
   } else {
-    return res.status(500).send({
+    return res.status(404).send({
       message: "Task not found !!",
     });
   }
@@ -65,7 +64,7 @@ const updateTask = async (req, res) => {
   let id = req.params.id;
   let { title, desc } = req.body;
 
-  if (!title || !desc ) {
+  if (!title || !desc) {
     return res.status(500).send({
       message: "please enter all the required fields !!",
     });

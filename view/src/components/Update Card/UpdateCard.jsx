@@ -43,11 +43,11 @@ const UpdateCard = () => {
           },
         }
       );
-  
+
       console.log("response from db", savedNoteData.data);
-  
+
       const resData = savedNoteData.data.data;
-  
+
       if (resData) {
         setUpdatedNote({
           title: "",
@@ -55,15 +55,14 @@ const UpdateCard = () => {
         });
         navigate("/");
       }
-    }
-    catch(err){
-      alert(err.response.data.message)
+    } catch (err) {
+      alert(err.response.data.message);
     }
   };
 
   return (
     <section className="cards-main-bg">
-        <h1>UPDATE TASK</h1>
+      <h1>UPDATE TASK</h1>
       <div className="card-bg">
         <section className="card-title-div">
           <input
@@ -94,7 +93,9 @@ const UpdateCard = () => {
           </div>
         </section>
       </div>
-      <button className='add-btn' onClick={()=>navigate(-1)}>Go Back</button>
+      <button className="add-btn" onClick={() => navigate(-1)}>
+        Go Back
+      </button>
     </section>
   );
 };

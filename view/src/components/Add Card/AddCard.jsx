@@ -37,15 +37,19 @@ const AddCard = () => {
     note.uid = payload.id;
     console.log("form data", note);
 
-    try{
-      let savedNoteData = await axios.post(`https://notes-app-0wxo.onrender.com/task`, note, {
-        headers: {
-          Authorization: tokenData,
-        },
-      });
+    try {
+      let savedNoteData = await axios.post(
+        `https://notes-app-0wxo.onrender.com/task`,
+        note,
+        {
+          headers: {
+            Authorization: tokenData,
+          },
+        }
+      );
       console.log("response from db", savedNoteData);
       const resData = savedNoteData.data.data;
-  
+
       if (resData) {
         setNote({
           uid: "",
@@ -54,15 +58,14 @@ const AddCard = () => {
         });
         navigate("/");
       }
-    }
-    catch(err){
-      alert(err.response.data.message)
+    } catch (err) {
+      alert(err.response.data.message);
     }
   };
 
   return (
     <section className="cards-main-bg">
-       <h1>ADD TASK</h1>
+      <h1>ADD TASK</h1>
       <div className="card-bg">
         <section className="card-title-div">
           <input
@@ -93,7 +96,9 @@ const AddCard = () => {
           </div>
         </section>
       </div>
-      <button className='add-btn' onClick={()=>navigate(-1)}>Go Back</button>
+      <button className="add-btn" onClick={() => navigate(-1)}>
+        Go Back
+      </button>
     </section>
   );
 };

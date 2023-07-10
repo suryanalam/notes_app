@@ -2,15 +2,15 @@
 If yes, user can access the authorized routes like 'getAllUser' */
 
 const authorizeRole = (req, res, next) => {
-    const tokenData = req.user;
+  const tokenData = req.user;
 
-    if(tokenData.role !== 'admin'){
-        res.status(500).send({
-            message: 'you are not authorized to access this route !!'
-        });
-    }
+  if (tokenData.role !== "admin") {
+    res.status(500).send({
+      message: "you are not authorized to access this route !!",
+    });
+  }
 
-    next();
+  next();
 };
 
 module.exports = authorizeRole;
