@@ -43,7 +43,7 @@ const UpdateCard = () => {
       }
     );
 
-    console.log("response from db", savedNoteData.data.data);
+    console.log("response from db", savedNoteData.data);
 
     const resData = savedNoteData.data.data;
 
