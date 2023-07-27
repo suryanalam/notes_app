@@ -7,16 +7,19 @@ const app = express();
 //Models
 require("./models/User");
 require("./models/Task");
+require("./models/Food");
 
 //Routes
 const userRouter = require("./routes/userRouter");
 const todoRouter = require("./routes/todoRouter");
+const foodRouter = require("./routes/foodRouter");
 
 //Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const authorizeLogin = require("./middlewares/authorizeLogin");
+
 
 // MongoDB Connection
 mongoose
@@ -32,7 +35,9 @@ mongoose
 
 //Api's
 app.use(userRouter);
+app.use("/food", foodRouter)
 app.use("/task", authorizeLogin, todoRouter);
+
 
 app.listen(process.env.PORT, () => {
   console.log("server started at port", process.env.PORT);
