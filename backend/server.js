@@ -15,7 +15,7 @@ const todoRouter = require("./routes/todoRouter");
 
 
 //Middlewares
-app.use(cors());
+app.use(cors({origin:['https://notes-app-ten-navy.vercel.app/']}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const authorizeLogin = require("./middlewares/authorizeLogin");
