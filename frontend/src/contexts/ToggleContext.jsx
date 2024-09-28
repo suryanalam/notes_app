@@ -7,7 +7,7 @@ export const ToggleProvider = ({ children }) => {
   const [msg, setMsg] = useState("");
   const [updatingNote, setUpdatingNote] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [baseUrl, setBaseUrl]=useState("http://localhost:5000")
+  const [baseUrl, setBaseUrl]=useState("https://notes-app-cl3y.onrender.com")
   return (
     <ToggleContext.Provider
       value={{
