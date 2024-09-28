@@ -1,0 +1,12 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-server":"cd backend & npm install",
+    "start-server":"cd backend & node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

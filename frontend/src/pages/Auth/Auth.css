@@ -1,0 +1,125 @@
+.auth-bg {
+  display: flex;
+}
+
+.auth-left-bg {
+  width: 50vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.auth-left-bg-img {
+  width: 100%;
+  height: 70%;
+}
+
+.auth-right-bg {
+  width: 50dvw;
+  height: 100vh;
+  background-color: var(--dark-blue);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  object-fit: cover;
+}
+
+.auth-form-bg {
+  padding: 1rem 2rem;
+  border-radius: 15px;
+  background-color: var(--white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.auth-form {
+  min-width: 22vw;
+  min-height: 25vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.form-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group-role {
+  width: 100%;
+  display: flex;
+  gap: 2rem;
+}
+
+.form-group label,
+.form-group-role label {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.form-group-role select {
+  width: 100px;
+  padding: 0.3rem 0.5rem;
+}
+
+.form-group input {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  outline: 0;
+  border: 0;
+  border-bottom: 2px solid var(--grey);
+}
+
+.form-group input::placeholder {
+  color: var(--grey);
+  opacity: 0.5;
+  font-size: 0.75rem;
+}
+
+.form-group input:focus {
+  border-bottom: 2px solid var(--dark-blue);
+}
+
+.form-group input::placeholder {
+  color: var(--dark-blue);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.form-group button {
+  width: 100%;
+  height: 2.5rem;
+  border-radius: 8px;
+  border: 2px solid var(--dark-blue);
+  background-color: var(--dark-blue);
+  padding: 0.5rem;
+  font-size: 1rem;
+  color: var(--white);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-group button:hover {
+  color: var(--black);
+  background-color: var(--white);
+}
