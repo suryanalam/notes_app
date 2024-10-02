@@ -1,0 +1,32 @@
+.home-bg {
+  margin: 1rem 2rem;
+}
+
+.add-btn {
+  background-color: var(--dark-blue);
+  border: 2px solid var(--dark-blue);
+}
+
+.add-btn:hover {
+  background-color: inherit;
+}
+
+.tasks-bg {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-gap: 1.5rem;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.no-data-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+}
+
+.no-task-img {
+  height: 50vh;
+  margin-bottom: 1rem;
+}
