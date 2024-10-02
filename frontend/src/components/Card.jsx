@@ -1,18 +1,19 @@
-import "./Card.css";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdEdit, MdDelete } from "react-icons/md";
 import axios from "axios";
 
-import { useFetch } from "../../custom hooks/useFetch";
-import { ToggleContext } from "../../contexts/ToggleContext";
+// icons
+import { MdEdit, MdDelete } from "react-icons/md";
+
+import { useFetch } from "../composables/useFetch";
+import { CommonContext } from "../contexts/CommonContext";
 
 const Card = ({ note }) => {
   const { _id, title, desc, createdAt, updatedAt } = note;
 
   const navigate = useNavigate();
 
-  let { setUpdatingNote,confirmDelete, setConfirmDelete,baseUrl } = useContext(ToggleContext);
+  let { setUpdatingNote,confirmDelete, setConfirmDelete,baseUrl } = useContext(CommonContext);
 
   let tokenData = localStorage.getItem("token");
 

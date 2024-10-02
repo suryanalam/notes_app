@@ -1,32 +1,31 @@
-import "./AddCard.css";
-import React, { useState,useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { LuSave } from "react-icons/lu";
 import axios from "axios";
-import { useFetch } from "../../custom hooks/useFetch";
-import { ToggleContext } from "../../contexts/ToggleContext";
 
-const AddCard = () => {
+// icons
+import { LuSave } from "react-icons/lu";
+
+import { useFetch } from "../composables/useFetch";
+import { CommonContext } from "../contexts/CommonContext";
+
+const UpdateCard = () => {
+  const { updatingNote,baseUrl } = useContext(CommonContext);
   const navigate = useNavigate();
-  const {baseUrl}=useContext(ToggleContext);
-  let tokenData = localStorage.getItem("token");
-  let payload;
 
-  if (tokenData) {
-    payload = JSON.parse(atob(tokenData.split(".")[1]));
-  }
+  const { _id } = updatingNote;
 
-  useFetch(`${baseUrl}/task`, tokenData);
-
-  const [note, setNote] = useState({
-    uid: "",
-    title: "",
-    desc: "",
+  const [updatedNote, setUpdatedNote] = useState({
+    title: updatingNote.title,
+    desc: updatingNote.desc,
   });
+
+  let tokenData = localStorage.getItem("token");
+
+  useFetch(`${process.env.REACT_APP_API_LINK}/task`, tokenData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNote((prevValues) => {
+    setUpdatedNote((prevValues) => {
       return {
         ...prevValues,
         [name]: value,
@@ -35,25 +34,25 @@ const AddCard = () => {
   };
 
   const handleSaveNote = async (e) => {
-    note.uid = payload.id;
-    console.log("form data", note);
+    console.log("form data", updatedNote);
 
     try {
-      let savedNoteData = await axios.post(
-        `${baseUrl}/task`,
-        note,
+      let savedNoteData = await axios.put(
+        `${baseUrl}/task/${_id}`,
+        updatedNote,
         {
           headers: {
             Authorization: tokenData,
           },
         }
       );
-      console.log("response from db", savedNoteData);
+
+      console.log("response from db", savedNoteData.data);
+
       const resData = savedNoteData.data.data;
 
       if (resData) {
-        setNote({
-          uid: "",
+        setUpdatedNote({
           title: "",
           desc: "",
         });
@@ -66,7 +65,7 @@ const AddCard = () => {
 
   return (
     <section className="cards-main-bg">
-      <h1>ADD TASK</h1>
+      <h1>UPDATE TASK</h1>
       <div className="card-bg">
         <section className="card-title-div">
           <input
@@ -74,7 +73,7 @@ const AddCard = () => {
             className="card-input-title"
             name="title"
             placeholder="New Task"
-            value={note.title}
+            value={updatedNote.title}
             onChange={handleChange}
           />
         </section>
@@ -85,7 +84,7 @@ const AddCard = () => {
             name="desc"
             placeholder="write something..."
             maxLength={500}
-            value={note.desc}
+            value={updatedNote.desc}
             onChange={handleChange}
           />
         </section>
@@ -104,4 +103,4 @@ const AddCard = () => {
   );
 };
 
-export default AddCard;
+export default UpdateCard;

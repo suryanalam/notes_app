@@ -1,46 +1,39 @@
-const mongoose = require("mongoose");
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+
+// Routes
+import userRouter from "./routes/userRouter.js";
+import noteRouter from "./routes/notesRouter.js";
+
+// Middlewares
+import authorizeLogin from "./middlewares/authorizeLogin.js";
+
+// DB Connection
+import dbConnection from "./dbConnection.js";
+
+// Config the dotenv to track ENV variables
+dotenv.config();
+
+// Create an express instance
 const app = express();
 
-//Models
-require("./models/User");
-require("./models/Task");
-
-
-//Routes
-const userRouter = require("./routes/userRouter");
-const todoRouter = require("./routes/todoRouter");
-
-
-//Middlewares
-app.use(cors({
-  origin: 'https://notes-app-ten-navy.vercel.app',
-  methods: 'GET,POST,PUT,DELETE',  // Specify allowed methods
-  allowedHeaders: 'Content-Type, Authorization'  // Specify allowed headers
-}));
+// Setup Middlewares
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://jot-it-app.netlify.app"],
+    allowedHeaders: "Content-Type, Authorization",
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const authorizeLogin = require("./middlewares/authorizeLogin");
 
+// Trigger MongoDB Connection
+dbConnection();
 
-// MongoDB Connection
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("db connected..."))
-  .catch((err) => {
-    console.log("error while connecting db", err);
-    process.exit(1);
-  });
-
-//Api's
+// Define all Api's related to the application
 app.use(userRouter);
-app.use("/task", authorizeLogin, todoRouter);
-
+app.use("/note", authorizeLogin, noteRouter);
 
 app.listen(process.env.PORT, () => {
   console.log("server started at port", process.env.PORT);

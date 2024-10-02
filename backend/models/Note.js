@@ -1,6 +1,6 @@
-let mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const taskSchema = new mongoose.Schema(
+const noteSchema = new mongoose.Schema(
   {
     uid: {
       type: mongoose.Schema.Types.ObjectId,
@@ -10,12 +10,13 @@ const taskSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    desc: {
+    content: {
       type: String,
     },
   },
   { timestamps: true }
 );
 
-const Task = mongoose.model("Task", taskSchema);
-module.exports = Task;
+const Note = mongoose.model("Note", noteSchema);
+
+export default Note;

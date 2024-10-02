@@ -1,0 +1,25 @@
+@import url('./addCard.css');
+@import url('./auth.css');
+@import url('./card.css');
+@import url('./header.css');
+@import url('./home.css');
+
+body {
+    font-family: sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  :root {
+    --black: #242424;
+    --white: #f5f5f5;
+    --grey: #585858;
+    --light-blue: #63a3fa;
+    --dark-blue: #2a3466;
+  }

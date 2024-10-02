@@ -1,9 +1,10 @@
 import { useContext, useEffect } from "react";
 import axios from "axios";
-import { ToggleContext } from "../contexts/ToggleContext";
+
+import { CommonContext } from "../contexts/CommonContext";
 
 export const useFetch = (url, tokenData) => {
-  const { setNotesData, setMsg, confirmDelete } = useContext(ToggleContext);
+  const { setNotesData, setMsg, confirmDelete } = useContext(CommonContext);
 
   useEffect(() => {
     const fetchData = async () => {

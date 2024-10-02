@@ -1,15 +1,15 @@
 import React, { useState, createContext } from "react";
 
-export const ToggleContext = createContext();
+export const CommonContext = createContext();
 
-export const ToggleProvider = ({ children }) => {
+export const CommonProvider = ({ children }) => {
   const [notesData, setNotesData] = useState([]);
   const [msg, setMsg] = useState("");
   const [updatingNote, setUpdatingNote] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [baseUrl, setBaseUrl]=useState("https://notes-app-cl3y.onrender.com")
+  const [baseUrl, setBaseUrl]=useState("http://localhost:5000")
   return (
-    <ToggleContext.Provider
+    <CommonContext.Provider
       value={{
         notesData,
         setNotesData,
@@ -24,6 +24,6 @@ export const ToggleProvider = ({ children }) => {
       }}
     >
       {children}
-    </ToggleContext.Provider>
+    </CommonContext.Provider>
   );
 };

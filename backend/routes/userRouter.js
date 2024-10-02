@@ -1,24 +1,20 @@
-const {
-  signupUser,
-  loginUser,
-  getAllUser,
+import express from "express";
+import authorizeLogin from "../middlewares/authorizeLogin.js";
+import {
+  signup,
+  login,
   getUser,
   updateUser,
   deleteUser,
-} = require("../controllers/user.controller");
+} from "../controllers/user.controller.js";
 
-const authorizeLogin = require("../middlewares/authorizeLogin");
-
-
-const express = require("express");
+// create a user router instance
 const userRouter = express.Router();
 
-userRouter.post("/login", loginUser); // login User
-userRouter.post("/signup", signupUser); // signup User
-
-
+userRouter.post("/login", login); // login User
+userRouter.post("/signup", signup); // signup User
 userRouter.get("/user/:id", authorizeLogin, getUser); // get User by id
 userRouter.put("/user/:id", authorizeLogin, updateUser); // update User by id
 userRouter.delete("/user/:id", authorizeLogin, deleteUser); // delete User by id
 
-module.exports = userRouter;
+export default userRouter;

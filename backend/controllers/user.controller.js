@@ -1,20 +1,18 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const User = mongoose.model("User");
-require("dotenv").config();
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import User from "../models/User.js";
 
-const signupUser = async (req, res) => {
-  let { name, mail, password, mobileNo, role } = req.body;
+const signup = async (req, res) => {
+  let { name, email, password } = req.body;
 
-  if (!name || !mail || !password) {
+  if (!name || !email || !password) {
     return res.status(500).send({
-      message: "Please enter the required user details !!",
+      message: "Please fill the required details !!",
     });
   }
 
-  let isUserExist = await User.findOne({ mail: mail });
-
+  const isUserExist = await User.findOne({ email });
   if (isUserExist) {
     return res.status(500).send({
       message: "User already exist !!",
@@ -24,36 +22,34 @@ const signupUser = async (req, res) => {
   password = await bcrypt.hash(password, 10);
   if (!password) {
     return res.status(500).send({
-      message: "password not encrypted!!",
+      message: "Error while hashing the password !!",
     });
   }
 
-  let newUser = { name, mail, password, mobileNo, role };
+  const newUser = { name, email, password };
 
-  let user = new User(newUser);
-  let userData = await user.save();
-
-  if (!userData) {
-    return res.status(500).send({
+  try {
+    const user = new User(newUser);
+    const userData = await user.save();
+    res.status(201).send({
+      message: "User created successfully !!",
+      data: userData,
+    });
+  } catch (err) {
+    res.status(500).send({
       message: "Error while adding a User !!",
     });
   }
-
-  res.status(200).send({
-    message: "User created successfully !!",
-    data: userData,
-  });
 };
 
-const loginUser = async (req, res) => {
-  let { mail, password } = req.body;
+const login = async (req, res) => {
+  const { email, password } = req.body;
 
-  if (!mail || !password) {
-    return res.send("please enter the required user details !!");
+  if (!email || !password) {
+    return res.send("please fill the required details !!");
   }
 
-  const userData = await User.findOne({ mail: mail });
-
+  const userData = await User.findOne({ email });
   if (!userData) {
     return res.status(401).send({
       message: "Invalid Email or Password !!",
@@ -61,7 +57,6 @@ const loginUser = async (req, res) => {
   }
 
   const isValid = await bcrypt.compare(password, userData.password);
-
   if (!isValid) {
     return res.status(401).send({
       message: "Invalid Email or Password !!",
@@ -72,8 +67,7 @@ const loginUser = async (req, res) => {
     {
       id: userData._id,
       name: userData.name,
-      mail: userData.mail,
-      role: userData.role,
+      email: userData.email,
     },
     process.env.JWT_SECRET_KEY
   );
@@ -90,78 +84,77 @@ const loginUser = async (req, res) => {
   });
 };
 
-const getAllUser = async (req, res) => {
-  let userData = await User.find({});
-  if (userData.length) {
-    res.status(200).send({
-      message: "Users found successfully !!",
-      data: userData,
-    });
-  } else {
-    res.status(404).send({
+const getAllUsers = async (_req, res) => {
+  const userData = await User.find({});
+
+  if (!userData.length) {
+    return res.status(404).send({
       message: "Users not found !!",
     });
   }
+
+  res.status(200).send({
+    message: "Users found successfully !!",
+    data: userData,
+  });
 };
 
 const getUser = async (req, res) => {
-  let id = req.params.id;
-  let userData = await User.findOne({ _id: id });
-  if (userData) {
-    res.status(200).send({
-      message: "User found successfully !!",
-      data: userData,
-    });
-  } else {
-    res.status(404).send({
+  const id = req.params.id;
+
+  const userData = await User.findOne({ _id: id });
+
+  if (!userData) {
+    return res.status(404).send({
       message: "User not found !!",
     });
   }
+
+  res.status(200).send({
+    message: "User found successfully !!",
+    data: userData,
+  });
 };
 
 const updateUser = async (req, res) => {
-  let id = req.params.id;
-  let { name, mail, password, mobileNo, role } = req.body;
-  let updatedUser = { name, mail, password, mobileNo, role };
+  const id = req.params.id;
+  const { name, email, password } = req.body;
+
+  const updatedUser = { name, email, password };
 
   let userData = await User.findOneAndUpdate(
     { _id: id },
     { $set: updatedUser },
     { new: true }
   );
-  if (userData) {
-    res.status(200).send({
-      message: "User updated successfully !!",
-      data: userData,
-    });
-  } else {
-    res.status(500).send({
+
+  if (!userData) {
+    return res.status(500).send({
       message: "Error while updating a User !!",
     });
   }
+
+  res.status(200).send({
+    message: "User updated successfully !!",
+    data: userData,
+  });
 };
 
 const deleteUser = async (req, res) => {
-  let id = req.params.id;
+  const id = req.params.id;
 
-  let userData = await User.findOneAndDelete({ _id: id });
-  if (userData) {
-    res.status(200).send({
-      message: "User deleted successfully !!",
-      data: userData,
-    });
-  } else {
-    res.status(500).send({
+  const userData = await User.findOneAndDelete({ _id: id });
+
+  if (!userData) {
+    return res.status(500).send({
       message: "Error while deleting a User !!",
     });
   }
+
+  res.status(200).send({
+    message: "User deleted successfully !!",
+    data: userData,
+  });
 };
 
-module.exports = {
-  loginUser,
-  signupUser,
-  getAllUser,
-  getUser,
-  updateUser,
-  deleteUser,
-};
+export { login, signup, getAllUsers, getUser, updateUser, deleteUser };

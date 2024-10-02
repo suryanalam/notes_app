@@ -1,15 +1,17 @@
-import "./Auth.css";
-import React, { useState,useContext } from "react";
+import { useState, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ToggleContext } from "../../contexts/ToggleContext";
+
+import formImg from "../../assets/images/form.jpg";
+
+import { CommonContext } from "../../contexts/CommonContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const {baseUrl}=useContext(ToggleContext);
+  const { baseUrl } = useContext(CommonContext);
 
   const [loginCredentials, setLoginCredentials] = useState({
-    mail: "",
+    email: "",
     password: "",
   });
 
@@ -28,10 +30,7 @@ const Login = () => {
     console.log("form data", loginCredentials);
 
     try {
-      const loginData = await axios.post(
-        `${baseUrl}/login`,
-        loginCredentials
-      );
+      const loginData = await axios.post(`${baseUrl}/login`, loginCredentials);
 
       console.log("login data from response", loginData);
 
@@ -51,11 +50,7 @@ const Login = () => {
   return (
     <div className="auth-bg">
       <section className="auth-left-bg">
-        <img
-          className="auth-left-bg-img"
-          src={process.env.PUBLIC_URL + "/assets/images/form.jpg"}
-          alt="form-icon"
-        />
+        <img src={formImg} alt="form-icon" className="auth-left-bg-img"/>
       </section>
       <section className="auth-right-bg">
         <div className="auth-form-bg">
@@ -65,7 +60,7 @@ const Login = () => {
               <label className="form-label">Email</label>
               <input
                 className="form-input"
-                name="mail"
+                name="email"
                 type="email"
                 placeholder="Ex: abc@gmail.com"
                 onChange={handleChange}
