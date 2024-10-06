@@ -1,97 +1,79 @@
-import { useState, useContext } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useContext } from "react";
+import { useForm } from "react-hook-form";
+import { NavLink, useNavigate } from "react-router-dom";
 
-import formImg from "../../assets/images/form.jpg";
-
+import "../../assets/styles/auth.css";
 import { CommonContext } from "../../contexts/CommonContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const { baseUrl } = useContext(CommonContext);
 
-  const [loginCredentials, setLoginCredentials] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setLoginCredentials((prevValue) => {
-      return {
-        ...prevValue,
-        [name]: value,
-      };
-    });
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    console.log("form data", loginCredentials);
-
+  const onSubmit = async (data) => {
     try {
-      const loginData = await axios.post(`${baseUrl}/login`, loginCredentials);
+      const resp = await axios.post(`${baseUrl}/login`, data);
 
-      console.log("login data from response", loginData);
-
-      if (loginData.data.token) {
-        console.log("token from response", loginData.data.token);
-        localStorage.setItem("token", loginData.data.token);
-        console.log("token from localstorage", localStorage.getItem("token"));
+      if (resp?.data?.token) {
+        localStorage.setItem("token", resp.data.token);
         navigate("/");
-      } else {
-        alert("Enter the required fields");
       }
     } catch (err) {
-      alert(err.response.data.message);
+      console.log(err.response.data.message);
     }
   };
 
   return (
-    <div className="auth-bg">
-      <section className="auth-left-bg">
-        <img src={formImg} alt="form-icon" className="auth-left-bg-img"/>
-      </section>
-      <section className="auth-right-bg">
-        <div className="auth-form-bg">
-          <h1 className="form-title">Login</h1>
-          <form className="auth-form">
-            <div className="form-group">
-              <label className="form-label">Email</label>
-              <input
-                className="form-input"
-                name="email"
-                type="email"
-                placeholder="Ex: abc@gmail.com"
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Password</label>
-              <input
-                className="form-input"
-                name="password"
-                type="password"
-                placeholder="Ex: 6 digit password"
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <button className="form-btn" onClick={handleLogin}>
-                Login
-              </button>
-            </div>
-            <div className="form-group">
-              <p>
-                <NavLink to="/forgotpassword">Forgot Password </NavLink>
-              </p>
-              <p>
-                Don't have an account ? <NavLink to="/signup">signup</NavLink>
-              </p>
-            </div>
-          </form>
+    <div className="auth-bg d-grid grid-items-center">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="form-container d-flex flex-column gap-4 justify-content-start"
+      >
+        <h4 className="form-tite text-primary">Login</h4>
+        <div className="d-flex flex-column gap-1 justify-content-start">
+          <input
+            className="input-field"
+            type="email"
+            pattern="[A-Za-z0-9]+@[A-Za-z]+.[A-za-z]{2,3}"
+            placeholder="Email"
+            {...register("email", {
+              required: "Email is required",
+            })}
+          />
+          {errors.email && (
+            <p role="alert" className="error-text">
+              *{errors.email.message}
+            </p>
+          )}
         </div>
-      </section>
+        <div className="d-flex flex-column gap-1 justify-content-start">
+          <input
+            className="input-field"
+            type="password"
+            placeholder="Password"
+            {...register("password", {
+              required: "Password is required",
+            })}
+          />
+          {errors.password && (
+            <p role="alert" className="error-text">
+              *{errors.password.message}
+            </p>
+          )}
+        </div>
+        <button type="submit" className="form-btn btn-dark w-100">
+          Login
+        </button>
+        <NavLink to="/signup" className="form-link">
+          Create a new account
+        </NavLink>
+      </form>
     </div>
   );
 };

@@ -1,100 +1,96 @@
-import { useState, useContext } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useContext } from "react";
+import { useForm } from "react-hook-form";
+import { NavLink, useNavigate } from "react-router-dom";
 
-import formImg from "../../assets/images/form.jpg";
-
+import "../../assets/styles/auth.css";
 import { CommonContext } from "../../contexts/CommonContext";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const { baseUrl } = useContext(CommonContext);
 
-  const [user, setUser] = useState({
-    name: "",
-    eeemail: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUser((prevValue) => {
-      return {
-        ...prevValue,
-        [name]: value,
-      };
-    });
-  };
-
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    console.log("form data", user);
-
+  const onSubmit = async (data) => {
     try {
-      const userData = await axios.post(`${baseUrl}/signup`, user);
+      const resp = await axios.post(`${baseUrl}/signup`, data);
 
-      if (userData.data.data) {
-        console.log("user data from response", userData.data.data);
-        navigate("/");
+      if (resp?.data?.data) {
+        navigate("/login");
       }
     } catch (err) {
-      alert(err.response.data.message);
+      console.log(err.response.data.message);
     }
   };
 
   return (
-    <div className="auth-bg">
-      <section className="auth-left-bg">
-        <img src={formImg} alt="form-icon" className="auth-left-bg-img"/>
-      </section>
-      <section className="auth-right-bg">
-        <div className="auth-form-bg">
-          <h1 className="form-title">Signup</h1>
-          <form className="auth-form">
-            <div className="form-group">
-              <label className="form-label">Name</label>
-              <input
-                className="form-input"
-                type="text"
-                name="name"
-                placeholder="Ex: John Smith"
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Email</label>
-              <input
-                className="form-input"
-                type="email"
-                name="email"
-                placeholder="Ex: abc@gmail.com"
-                onChange={handleChange}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Password</label>
-              <input
-                className="form-input"
-                type="password"
-                name="password"
-                placeholder="Ex: 6 digit password"
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <button className="form-btn" onClick={handleSignup}>
-                Signup
-              </button>
-            </div>
-            <div className="form-group">
-              <p>
-                Already have an account ? <NavLink to="/">login</NavLink>
-              </p>
-            </div>
-          </form>
+    <div className="auth-bg d-grid grid-items-center">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="form-container d-flex flex-column gap-4 justify-content-start"
+      >
+        <h4 className="form-tite text-primary">Signup</h4>
+        <div className="d-flex flex-column gap-1 justify-content-start">
+          <input
+            className="input-field"
+            type="text"
+            pattern="[A-Za-z]+(\s[A-Za-z]+)*"
+            placeholder="Username"
+            {...register("username", {
+              required: "Username is required",
+              min: 3,
+            })}
+          />
+          {errors.username && (
+            <p role="alert" className="error-text">
+              *{errors.username.message}
+            </p>
+          )}
         </div>
-      </section>
+        <div className="d-flex flex-column gap-1 justify-content-start">
+          <input
+            className="input-field"
+            type="email"
+            pattern="[A-Za-z0-9]+@[A-Za-z]+.[A-za-z]{2,3}"
+            placeholder="Email"
+            {...register("email", {
+              required: "Email is required",
+            })}
+          />
+          {errors.email && (
+            <p role="alert" className="error-text">
+              *{errors.email.message}
+            </p>
+          )}
+        </div>
+        <div className="d-flex flex-column gap-1 justify-content-start">
+          <input
+            className="input-field"
+            type="password"
+            placeholder="Password"
+            {...register("password", {
+              required: "Password is required",
+              min: 6,
+            })}
+          />
+          {errors.password && (
+            <p role="alert" className="error-text">
+              *{errors.password.message}
+            </p>
+          )}
+        </div>
+        <button type="submit" className="form-btn btn-dark w-100">
+          Signup
+        </button>
+        <NavLink to="/login" className="form-link">
+          Have an existing account?
+        </NavLink>
+      </form>
     </div>
   );
 };
