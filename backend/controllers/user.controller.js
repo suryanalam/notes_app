@@ -1,12 +1,11 @@
-import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/User.js";
 
 const signup = async (req, res) => {
-  let { name, email, password } = req.body;
+  let { username, email, password } = req.body;
 
-  if (!name || !email || !password) {
+  if (!username || !email || !password) {
     return res.status(500).send({
       message: "Please fill the required details !!",
     });
@@ -26,7 +25,7 @@ const signup = async (req, res) => {
     });
   }
 
-  const newUser = { name, email, password };
+  const newUser = { username, email, password };
 
   try {
     const user = new User(newUser);
@@ -66,7 +65,7 @@ const login = async (req, res) => {
   const token = jwt.sign(
     {
       id: userData._id,
-      name: userData.name,
+      username: userData.username,
       email: userData.email,
     },
     process.env.JWT_SECRET_KEY
@@ -118,9 +117,9 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const id = req.params.id;
-  const { name, email, password } = req.body;
+  const { username, email, password } = req.body;
 
-  const updatedUser = { name, email, password };
+  const updatedUser = { username, email, password };
 
   let userData = await User.findOneAndUpdate(
     { _id: id },

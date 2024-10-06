@@ -1,5 +1,3 @@
-import mongoose from "mongoose";
-
 import Note from '../models/Note.js'
 
 const addNote = async (req, res) => {
