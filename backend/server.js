@@ -4,7 +4,8 @@ import cors from "cors";
 
 // Routes
 import userRouter from "./routes/userRouter.js";
-import noteRouter from "./routes/notesRouter.js";
+import noteRouter from "./routes/noteRouter.js";
+import pinnedNoteRouter from "./routes/pinnedNoteRouter.js";
 
 // Middlewares
 import authorizeLogin from "./middlewares/authorizeLogin.js";
@@ -32,8 +33,9 @@ app.use(express.urlencoded({ extended: true }));
 dbConnection();
 
 // Define all Api's related to the application
-app.use(userRouter);
-app.use("/note", authorizeLogin, noteRouter);
+app.use('/api', userRouter);
+app.use("/api/note", authorizeLogin, noteRouter);
+app.use("/api/pinned_note", authorizeLogin, pinnedNoteRouter);
 
 app.listen(process.env.PORT, () => {
   console.log("server started at port", process.env.PORT);

@@ -1,33 +1,35 @@
-import { useContext, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
-import { CommonContext } from "../contexts/CommonContext";
-
-export const useFetch = (url, tokenData) => {
-  const { setNotesData, setMsg, confirmDelete } = useContext(CommonContext);
+export const useFetch = (url, token) => {
+  const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetch = async () => {
+      setLoading(true);
       try {
-        let savedNoteData = await axios.get(url, {
+        const resp = await axios.get(url, {
           headers: {
-            Authorization: tokenData,
+            Authorization: token,
           },
         });
 
-        console.log("response from db", savedNoteData);
-        const resData = savedNoteData.data.data;
-
-        if (resData.length > 0) {
-          setNotesData(resData);
-          setMsg("");
+        if (!resp) {
+          throw new Error("Response not found !!");
         }
+
+        setData(resp?.data?.data);
       } catch (err) {
-        console.log(err.response.data.message);
-        setMsg(err.response.data.message);
+        setError(err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchData();
-  }, [url, tokenData, setNotesData, setMsg, confirmDelete]);
+    fetch();
+  }, [url, token]);
+
+  return { data, error, loading };
 };

@@ -1,74 +1,131 @@
-import { useContext } from "react";
+import "../assets/styles/card.css";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { RiPushpinFill } from "react-icons/ri";
 import axios from "axios";
 
-// icons
-import { MdEdit, MdDelete } from "react-icons/md";
-
-import { useFetch } from "../composables/useFetch";
 import { CommonContext } from "../contexts/CommonContext";
 
-const Card = ({ note }) => {
-  const { _id, title, desc, createdAt, updatedAt } = note;
-
+const Card = ({ pinnedNote, note, isPinned }) => {
   const navigate = useNavigate();
 
-  let { setUpdatingNote,confirmDelete, setConfirmDelete,baseUrl } = useContext(CommonContext);
+  const { baseUrl, options, fetchNotes, fetchPinnedNotes } =
+    useContext(CommonContext);
 
-  let tokenData = localStorage.getItem("token");
+  const [userId, setUserId] = useState(null);
+  const [timestamp, setTimestamp] = useState(null);
+  const [pinnedNoteId, setPinnedNoteId] = useState(null);
+  const [noteDetails, setNoteDetails] = useState({
+    id: "",
+    title: "",
+    content: "",
+    createdAt: "",
+    updatedAt: "",
+  });
 
-  useFetch(`${baseUrl}/task`, tokenData, confirmDelete);
+  // function to pin the note
+  const addPinnedNote = async (url, payload, options) => {
+    try {
+      const resp = await axios.post(url, payload, options);
+      if (resp.status !== 201) {
+        throw new Error("something went wrong !!");
+      }
 
-  const handleEditNote = () => {
-    setUpdatingNote({
-      _id,
-      title,
-      desc,
-    });
-    navigate("/updateTask");
+      // call the GET api's to update the states synchronously !!
+      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+    } catch (err) {
+      console.log("Error:", err);
+    }
   };
 
-  const handleDeleteNote = async () => {
-    let confirmation = window.confirm(
-      "Are you sure you want to delete this note?"
-    );
+  // function to un-pin the note
+  const removePinnedNote = async (url, options) => {
+    try {
+      const resp = await axios.delete(url, options);
+      if (resp.status !== 200) {
+        throw new Error("something went wrong !!");
+      }
 
-    if (!confirmation) {
-      navigate("/");
+      // call the GET api's to update the states synchronously !!
+      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+    } catch (err) {
+      console.log("Error:", err);
+    }
+  };
+
+  // trigger the api functions based on the type of note (pinned | un-pinned)
+  const handleClick = async (e) => {
+    e.stopPropagation();
+
+    if (isPinned) {
+      removePinnedNote(
+        `${baseUrl}/pinned_note/delete/${pinnedNoteId}`,
+        options
+      );
+    } else {
+      const payload = { uid: userId, nid: noteDetails.id };
+      addPinnedNote(`${baseUrl}/pinned_note/create`, payload, options);
+    }
+  };
+
+  // update local states based on the props data
+  useEffect(() => {
+    if (pinnedNote) {
+      const { _id: pinnedNoteId, uid, nid: note } = pinnedNote;
+      const { _id: id, title, content, createdAt, updatedAt } = note;
+
+      setUserId(uid);
+      setPinnedNoteId(pinnedNoteId);
+      setNoteDetails({
+        id,
+        title,
+        content,
+        createdAt,
+        updatedAt,
+      });
+    } else if (note) {
+      const { _id: id, uid, title, content, createdAt, updatedAt } = note;
+
+      setUserId(uid);
+      setNoteDetails({
+        id,
+        title,
+        content,
+        createdAt,
+        updatedAt,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // format the timestamp using createdAt or updatedAt;
+  useEffect(() => {
+    let date;
+
+    if (noteDetails.updatedAt) {
+      date = noteDetails.updatedAt.split("T")[0];
+    } else {
+      date = noteDetails.createdAt.split("T")[0];
     }
 
-    await axios
-      .delete(`${baseUrl}/task/${_id}`, {
-        headers: {
-          Authorization: tokenData,
-        },
-      })
-      .then((res) => {
-        console.log("response from db of deleted item: ", res.data.data);
-        setConfirmDelete(!confirmDelete);
-      })
-      .catch((err) => {
-        console.log("error while deleting tasks in card.js: ", err);
-      });
-  };
+    setTimestamp(date);
+  }, [noteDetails.createdAt, noteDetails.updatedAt]);
 
   return (
-    <div className="card-bg" key={_id}>
-      <section className="card-title-div">
-        <h3 className="title-text">{title}</h3>
-      </section>
-
-      <section className="card-content-div">
-        <p className="card-content">{desc}</p>
-      </section>
-
-      <section className="card-footer" key={_id}>
-        <p className="date-time">{updatedAt ? updatedAt : createdAt}</p>
-        <div className="icons-div">
-          <MdEdit fontSize="20px" color="#00000" onClick={handleEditNote} />
-          <MdDelete fontSize="20px" color="#00000" onClick={handleDeleteNote} />
-        </div>
-      </section>
+    <div
+      className="card-bg d-flex flex-column gap-2 cursor-pointer"
+      target="_blank"
+      onClick={() => navigate(`/note/${noteDetails.id}`)}
+    >
+      <div className="d-flex flex-align-center flex-justify-between">
+        <h2 className="card-title">{noteDetails.title}</h2>
+        <RiPushpinFill
+          className={`pin-icon ${isPinned && "pin-active"}`}
+          onClick={(e) => handleClick(e)}
+        />
+      </div>
+      <p className="card-content">{noteDetails.content}</p>
+      <p className="card-timestamp">{timestamp}</p>
     </div>
   );
 };

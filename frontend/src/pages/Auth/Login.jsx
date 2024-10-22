@@ -33,9 +33,9 @@ const Login = () => {
     <div className="auth-bg d-grid grid-items-center">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="form-container d-flex flex-column gap-4 justify-content-start"
+        className="form-container d-flex flex-column gap-4 justify-content-center"
       >
-        <h4 className="form-tite text-primary">Login</h4>
+        <h4 className="form-tite text-primary text-center">Login</h4>
         <div className="d-flex flex-column gap-1 justify-content-start">
           <input
             className="input-field"

@@ -1,0 +1,15 @@
+.note-bg {
+  padding: 2rem;
+  min-height: 92dvh;
+}
+
+.note-title {
+  font-size: var(--fs-2xl);
+  padding-bottom: var(--gap-lg);
+  border-bottom: 2px solid var(--clr-gray-200);
+}
+
+.note-content{
+    margin-top: var(--gap-md);
+    font-size: var(--fs-lg);
+}

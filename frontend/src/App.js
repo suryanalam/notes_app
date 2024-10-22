@@ -4,11 +4,11 @@ import { Routes, Route } from "react-router-dom";
 import Signup from "./pages/auth/Signup";
 import Login from "./pages/auth/Login";
 import Home from "./pages/Home";
-import AddCard from "./components/AddCard";
-import UpdateCard from "./components/UpdateCard";
+import Note from "./pages/Note";
 
 //middleware
 import Authenticate from "./middlewares/Authenticate";
+
 
 function App() {
   return (
@@ -18,8 +18,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route element={<Authenticate />}>
           <Route exact path="/" element={<Home />} />
-          <Route path="/addTask" element={<AddCard />} />
-          <Route path="/updateTask" element={<UpdateCard />} />
+          <Route path="/note/:id" element={<Note />} />
           <Route path="*" element={<h1>Page Not Found</h1>} />
         </Route>
       </Routes>

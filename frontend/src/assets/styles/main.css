@@ -1,5 +1,5 @@
-@import url('./common.css');
-@import url('./display.css');
+@import url("./common.css");
+@import url("./display.css");
 
 * {
   margin: 0;
@@ -20,6 +20,49 @@ body {
   color: var(--clr-white);
 }
 
+:root {
+  /* spacing */
+  --gap-none: 0px;
+  --gap-xs: 4px;
+  --gap-sm: 6px;
+  --gap-base: 8px;
+  --gap-md: 10px;
+  --gap-lg: 12px;
+  --gap-xl: 16px;
+  --gap-2xl: 20px;
+  --gap-3xl: 24px;
+
+  /* border radius */
+  --br-none: 0px;
+  --br-xs: 4px;
+  --br-sm: 6px;
+  --br-base: 8px;
+  --br-md: 10px;
+  --br-lg: 12px;
+  --br-xl: 16px;
+  --br-2xl: 20px;
+  --br-3xl: 24px;
+  --br-full: 100%;
+
+  /* font sizes */
+  --fs-xs: 0.5rem;   /* 4px */
+  --fs-sm: 0.75rem;  /* 6px */
+  --fs-base: 1rem;   /* 8px */
+  --fs-md: 1.25rem;  /* 10px */
+  --fs-lg: 1.5rem;   /* 12px */
+  --fs-xl: 2rem;     /* 16px */
+  --fs-2xl: 2.5rem;  /* 20px */
+  --fs-3xl: 3rem;    /* 24px */
+
+  /* color schema */
+  --clr-black: #181818;
+  --clr-white: #f0f0f0;
+  --clr-primary: #c09c10;
+  --clr-gray-100: #d5d5d5;
+  --clr-gray-200: #555555;
+  --clr-gray-300: #2b2b2b;
+}
+
 li {
   list-style-type: none;
 }
@@ -29,33 +72,14 @@ a {
   font-weight: 500;
 }
 
-a:hover{
+a:hover {
   text-decoration: underline;
 }
 
 button {
+  border: none;
   border-radius: 8px;
+  font-family: sans-serif;
   font-weight: 600;
   cursor: pointer;
-}
-
-:root {
-  /* font sizes */
-  --fs-xxxl: 3rem;  /* 24px */
-  --fs-xxl: 2.5rem; /* 20px */
-  --fs-xl: 2rem;   /* 16px */
-  --fs-lg: 2.5rem;  /* 14px */
-  --fs-md: 1.5rem;  /* 12px */
-  --fs-sm: 1.25rem; /* 10px */
-  --fs-base: 1rem; /* 8px */
-  --fs-xs: 0.75rem; /* 6px */
-  --fs-xxs: 0.5rem;  /* 4px */
-
-  /* color schema */
-  --clr-black: #181818;
-  --clr-white: #f0f0f0;
-  --clr-primary: #c09c10;
-  --clr-gray-100: #d5d5d5;
-  --clr-gray-200: #555555;
-  --clr-gray-300: #2b2b2b;
 }

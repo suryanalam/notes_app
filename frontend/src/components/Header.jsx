@@ -1,30 +1,20 @@
 import { useNavigate } from "react-router-dom";
+import "../assets/styles/header.css";
 
 const Header = () => {
   const navigate = useNavigate();
 
-  let tokenData = localStorage.getItem("token");
-  let payload;
-
-  if (tokenData) {
-    payload = JSON.parse(atob(tokenData.split(".")[1]));
-  }
-
-  const handleLogout = async () => {
-    await localStorage.removeItem("token");
-    console.log("token from localstorage", localStorage.getItem("token"));
+  const handleLogout = () => {
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
   return (
-    <header>
-      <h2>JOT IT</h2>
-      <section className="header-profile-div">
-        <p>Welcome, {payload.name} !!</p>
-        <button className="header-login-btn" onClick={handleLogout}>
-          Logout
-        </button>
-      </section>
+    <header className="w-100 d-flex flex-justify-between flex-align-center">
+      <h1 className="logo-text">JOT IT</h1>
+      <button className="logout-btn btn-dark" onClick={handleLogout}>
+        Logout
+      </button>
     </header>
   );
 };
