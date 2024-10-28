@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import Note from "../models/Note.js";
 
 const addNote = async (req, res) => {
-  const { uid, title, content } = req.body;
+  const { id: uid } = req.user;
+  const { title, content } = req.body;
 
   if (!uid || !title || !content) {
     return res.status(400).send({

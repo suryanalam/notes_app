@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import PinnedNote from "../models/PinnedNote.js";
 
 const addPinnedNote = async (req, res) => {

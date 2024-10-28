@@ -95,6 +95,7 @@ const Card = ({ pinnedNote, note, isPinned }) => {
         updatedAt,
       });
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -113,12 +114,12 @@ const Card = ({ pinnedNote, note, isPinned }) => {
 
   return (
     <div
-      className="card-bg d-flex flex-column gap-2 cursor-pointer"
+      className="card-bg w-100 d-flex flex-column gap-2 cursor-pointer"
       target="_blank"
       onClick={() => navigate(`/note/${noteDetails.id}`)}
     >
       <div className="d-flex flex-align-center flex-justify-between">
-        <h2 className="card-title">{noteDetails.title}</h2>
+        <h1 className="card-title">{noteDetails.title}</h1>
         <RiPushpinFill
           className={`pin-icon ${isPinned && "pin-active"}`}
           onClick={(e) => handleClick(e)}

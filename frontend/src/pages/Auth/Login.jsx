@@ -14,7 +14,7 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const { baseUrl } = useContext(CommonContext);
+  const { baseUrl, setToken } = useContext(CommonContext);
 
   const onSubmit = async (data) => {
     try {
@@ -22,6 +22,8 @@ const Login = () => {
 
       if (resp?.data?.token) {
         localStorage.setItem("token", resp.data.token);
+        const token = localStorage.getItem("token");
+        setToken(token);
         navigate("/");
       }
     } catch (err) {
@@ -35,7 +37,7 @@ const Login = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="form-container d-flex flex-column gap-4 justify-content-center"
       >
-        <h4 className="form-tite text-primary text-center">Login</h4>
+        <h1 className="form-tite text-primary text-center">Login</h1>
         <div className="d-flex flex-column gap-1 justify-content-start">
           <input
             className="input-field"
@@ -47,7 +49,7 @@ const Login = () => {
             })}
           />
           {errors.email && (
-            <p role="alert" className="error-text">
+            <p role="alert" className="text-red">
               *{errors.email.message}
             </p>
           )}
@@ -62,7 +64,7 @@ const Login = () => {
             })}
           />
           {errors.password && (
-            <p role="alert" className="error-text">
+            <p role="alert" className="text-red">
               *{errors.password.message}
             </p>
           )}

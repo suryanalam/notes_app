@@ -1,12 +1,15 @@
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
   padding: var(--gap-lg) var(--gap-xl);
   background-color: var(--clr-primary);
   color: var(--clr-gray-300);
 }
 
 .logo-text{
-  font-size: var(--fs-xl);
-  font-weight: 700;
+  font-weight: var(--font-weight-extrabold);
+  font-family: var(--font-primary);
 }
 
 .logout-btn{

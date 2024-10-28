@@ -1,6 +1,5 @@
 import "../assets/styles/home.css";
 import { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { IoMdAdd } from "react-icons/io";
 
 import { CommonContext } from "../contexts/CommonContext";
@@ -8,11 +7,10 @@ import { CommonContext } from "../contexts/CommonContext";
 // Components
 import Header from "../components/Header";
 import Card from "../components/Card";
+import NoteForm from "../components/NoteForm";
 
 const Home = () => {
-  const navigate = useNavigate();
-
-  const { notes, pinnedNotes, fetchNotes, fetchPinnedNotes } =
+  const { notes, pinnedNotes, fetchNotes, fetchPinnedNotes, setShowNoteForm } =
     useContext(CommonContext);
 
   useEffect(() => {
@@ -26,34 +24,27 @@ const Home = () => {
   return (
     <>
       <Header />
-      <section className="home-bg w-100 d-flex flex-column gap-2">
-        {pinnedNotes && (
-          <div className="notes-cards-container w-100 d-grid grid-col-1 gap-3">
-            {pinnedNotes.map((pinnedNote) => (
-              <Card
-                pinnedNote={pinnedNote}
-                key={pinnedNote._id}
-                isPinned={true}
-              />
-            ))}
-          </div>
-        )}
-
-        {notes && (
-          <div className="notes-cards-container w-100 d-grid grid-col-1 gap-3">
-            {notes.map((note) => (
-              <Card note={note} key={note._id} isPinned={false} />
-            ))}
-          </div>
-        )}
-
-        <div
-          className="create-icon-div p-fixed d-flex flex-align-center flex-justify-center cursor-pointer"
-          onClick={() => navigate("/addTask")}
-        >
-          <IoMdAdd className="create-icon" />
-        </div>
-      </section>
+      <div className="notes-container w-100 h-100 d-grid grid-col-1 p gap-3">
+        {pinnedNotes &&
+          pinnedNotes.map((pinnedNote) => (
+            <Card
+              pinnedNote={pinnedNote}
+              key={pinnedNote._id}
+              isPinned={true}
+            />
+          ))}
+        {notes &&
+          notes.map((note) => (
+            <Card note={note} key={note._id} isPinned={false} />
+          ))}
+      </div>
+      <div
+        className="create-icon-div p-fixed d-flex flex-align-center flex-justify-center cursor-pointer"
+        onClick={() => setShowNoteForm(true)}
+      >
+        <IoMdAdd className="create-icon" />
+      </div>
+      <NoteForm />
     </>
   );
 };

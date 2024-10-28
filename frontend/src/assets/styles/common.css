@@ -6,34 +6,34 @@
   height: 100%;
 }
 
-.p-absolute{
+.p-absolute {
   position: absolute;
 }
 
-.p-relative{
+.p-relative {
   position: relative;
 }
 
-.p-fixed{
+.p-fixed {
   position: fixed;
 }
 
-.text-center{
+.text-center {
   text-align: center;
 }
 
-.text-left{
+.text-left {
   text-align: left;
 }
 
-.text-right{
+.text-right {
   text-align: right;
 }
 
 .text-red {
   color: #f00;
-  font-weight: 500;
-  font-size: var(--fs-base);
+  font-size: var(--fs-md);
+  font-weight: var(--font-weight-semibold);
 }
 
 .btn-primary {
@@ -51,6 +51,24 @@
   background-color: var(--clr-white);
 }
 
-.cursor-pointer{
+.cursor-pointer {
   cursor: pointer;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }

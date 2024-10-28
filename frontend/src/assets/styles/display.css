@@ -46,6 +46,11 @@
   justify-content: space-between;
 }
 
+
+.flex-wrap{
+  flex-wrap: wrap;
+}
+
 .d-grid {
   display: grid;
 }

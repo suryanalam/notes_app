@@ -34,7 +34,7 @@ const Signup = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="form-container d-flex flex-column gap-4 justify-content-center"
       >
-        <h4 className="form-tite text-primary text-center">Signup</h4>
+        <h1 className="form-tite text-primary text-center">Signup</h1>
         <div className="d-flex flex-column gap-1 justify-content-start">
           <input
             className="input-field"
@@ -47,7 +47,7 @@ const Signup = () => {
             })}
           />
           {errors.username && (
-            <p role="alert" className="error-text">
+            <p role="alert" className="text-red">
               *{errors.username.message}
             </p>
           )}
@@ -63,7 +63,7 @@ const Signup = () => {
             })}
           />
           {errors.email && (
-            <p role="alert" className="error-text">
+            <p role="alert" className="text-red">
               *{errors.email.message}
             </p>
           )}
@@ -79,7 +79,7 @@ const Signup = () => {
             })}
           />
           {errors.password && (
-            <p role="alert" className="error-text">
+            <p role="alert" className="text-red">
               *{errors.password.message}
             </p>
           )}

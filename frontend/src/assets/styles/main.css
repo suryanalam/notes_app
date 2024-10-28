@@ -13,9 +13,9 @@ html {
 }
 
 body {
-  font-family: sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-secondary);
   background-color: var(--clr-black);
   color: var(--clr-white);
 }
@@ -44,15 +44,25 @@ body {
   --br-3xl: 24px;
   --br-full: 100%;
 
-  /* font sizes */
-  --fs-xs: 0.5rem;   /* 4px */
-  --fs-sm: 0.75rem;  /* 6px */
-  --fs-base: 1rem;   /* 8px */
-  --fs-md: 1.25rem;  /* 10px */
-  --fs-lg: 1.5rem;   /* 12px */
-  --fs-xl: 2rem;     /* 16px */
-  --fs-2xl: 2.5rem;  /* 20px */
-  --fs-3xl: 3rem;    /* 24px */
+  /* font size */
+  --fs-xs: 0.5rem; /* 4px */
+  --fs-sm: 0.75rem; /* 6px */
+  --fs-base: 1rem; /* 8px */
+  --fs-md: 1.25rem; /* 10px */
+  --fs-lg: 1.5rem; /* 12px */
+  --fs-xl: 2rem; /* 16px */
+  --fs-2xl: 2.5rem; /* 20px */
+  --fs-3xl: 3rem; /* 24px */
+
+  /* font family */
+  --font-primary: "Poppins", sans-serif;
+  --font-secondary: "Nato Sans", sans-serif;
+
+  /* font weight */
+  --font-weight-regular: 400;
+  --font-weight-semibold: 500;
+  --font-weight-bold: 600;
+  --font-weight-extrabold: 700;
 
   /* color schema */
   --clr-black: #181818;
@@ -67,9 +77,13 @@ li {
   list-style-type: none;
 }
 
+textarea {
+  resize: none;
+}
+
 a {
   text-decoration: none;
-  font-weight: 500;
+  font-weight: var(--font-weight-semibold);
 }
 
 a:hover {
@@ -77,9 +91,15 @@ a:hover {
 }
 
 button {
-  border: none;
-  border-radius: 8px;
-  font-family: sans-serif;
-  font-weight: 600;
+  padding: var(--fs-md) var(--gap-lg);
+  border-radius: var(--br-sm);
+  font-size: var(--fs-lg);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-primary);
   cursor: pointer;
+  border: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }

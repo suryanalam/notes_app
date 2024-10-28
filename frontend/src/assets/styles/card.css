@@ -6,21 +6,21 @@
 
 .card-title {
   color: var(--clr-primary);
-  font-size: var(--fs-xl);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-primary);
 }
 
 .card-content {
+  width: 150px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   color: var(--clr-white);
   font-size: var(--fs-lg);
-  font-weight: 500;
+  font-weight: var(--font-weight-semibold);
 }
 
 .card-timestamp {
   color: var(--clr-gray-100);
   font-size: var(--fs-base);
-  font-weight: 500;
 }

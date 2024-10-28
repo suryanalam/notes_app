@@ -16,22 +16,31 @@
 .form-tite {
   margin-bottom: var(--gap-sm);
   color: var(--clr-primary);
-  font-size: var(--fs-xl);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-primary);
+}
+
+.input-label{
+  color: var(--clr-gray-100);
+  font-size: var(--fs-lg);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-primary);
 }
 
 .input-field {
   padding: var(--gap-lg);
-  border-radius: var(--br-base);
+  border-radius: var(--br-sm);
   border: 2px solid var(--clr-gray-200);
   background-color: var(--clr-gray-300);
   color: var(--clr-gray-100);
-  font-size: var(--fs-md);
   outline: 0;
   transition: all 0.2s ease-in-out;
 }
 
 .input-field::placeholder {
-  color: var(--clr-gray-100);
+  color: var(--clr-gray-200);
+  font-size: var(--fs-lg);
+  font-weight: var(--font-weight-bold);
 }
 
 .input-field:focus {
@@ -40,9 +49,7 @@
 
 .form-btn {
   margin: var(--gap-sm) auto;
-  padding: var(--gap-lg);
   border: 2px solid var(--clr-gray-200);
-  font-size: var(--fs-md);
   transition: all 0.2s ease-in-out;
 }
 
