@@ -55,6 +55,19 @@
   cursor: pointer;
 }
 
+.loader-backdrop{
+  top: 0;
+  left: 0;
+  background-color: var(--clr-black);
+  opacity: 0.8;
+  z-index: 999;
+}
+
+.loader-backdrop > p {
+  font-size: var(--fs-xl);
+  font-weight: var(--font-weight-semibold);
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

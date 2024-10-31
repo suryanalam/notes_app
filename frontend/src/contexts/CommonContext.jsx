@@ -11,7 +11,7 @@ export const CommonProvider = ({ children }) => {
   const [notes, setNotes] = useState(null);
   const [pinnedNotes, setPinnedNotes] = useState(null);
   const [noteDetails, setNoteDetails] = useState({
-    id: "",
+    _id: "",
     title: "",
     content: "",
     createdAt: "",

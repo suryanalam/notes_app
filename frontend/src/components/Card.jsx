@@ -4,26 +4,27 @@ import { useNavigate } from "react-router-dom";
 import { RiPushpinFill } from "react-icons/ri";
 import axios from "axios";
 
+// store
 import { CommonContext } from "../contexts/CommonContext";
 
-const Card = ({ pinnedNote, note, isPinned }) => {
+const Card = ({ pinnedNote, note }) => {
   const navigate = useNavigate();
 
   const { baseUrl, options, fetchNotes, fetchPinnedNotes } =
     useContext(CommonContext);
 
   const [userId, setUserId] = useState(null);
-  const [timestamp, setTimestamp] = useState(null);
   const [pinnedNoteId, setPinnedNoteId] = useState(null);
-  const [noteDetails, setNoteDetails] = useState({
-    id: "",
+
+  const [isPinned, setIsPinned] = useState(false);
+  const [cardData, setCardData] = useState({
+    _id: "",
     title: "",
     content: "",
     createdAt: "",
     updatedAt: "",
   });
 
-  // function to pin the note
   const addPinnedNote = async (url, payload, options) => {
     try {
       const resp = await axios.post(url, payload, options);
@@ -38,7 +39,6 @@ const Card = ({ pinnedNote, note, isPinned }) => {
     }
   };
 
-  // function to un-pin the note
   const removePinnedNote = async (url, options) => {
     try {
       const resp = await axios.delete(url, options);
@@ -53,7 +53,7 @@ const Card = ({ pinnedNote, note, isPinned }) => {
     }
   };
 
-  // trigger the api functions based on the type of note (pinned | un-pinned)
+  // fetch api's based on the type of note (pinned | un-pinned)
   const handleClick = async (e) => {
     e.stopPropagation();
 
@@ -63,70 +63,57 @@ const Card = ({ pinnedNote, note, isPinned }) => {
         options
       );
     } else {
-      const payload = { uid: userId, nid: noteDetails.id };
+      const payload = { uid: userId, nid: cardData?._id };
       addPinnedNote(`${baseUrl}/pinned_note/create`, payload, options);
     }
   };
 
-  // update local states based on the props data
+  // update the card based on the type of note (pinned || un-pinned)
   useEffect(() => {
     if (pinnedNote) {
+      setIsPinned(true);
+
       const { _id: pinnedNoteId, uid, nid: note } = pinnedNote;
-      const { _id: id, title, content, createdAt, updatedAt } = note;
+      const { _id, title, content, createdAt, updatedAt } = note;
 
       setUserId(uid);
       setPinnedNoteId(pinnedNoteId);
-      setNoteDetails({
-        id,
+      setCardData({
+        _id,
         title,
         content,
         createdAt,
         updatedAt,
       });
     } else if (note) {
-      const { _id: id, uid, title, content, createdAt, updatedAt } = note;
+      const { _id, uid, title, content, createdAt, updatedAt } = note;
 
       setUserId(uid);
-      setNoteDetails({
-        id,
+      setCardData({
+        _id,
         title,
         content,
         createdAt,
         updatedAt,
       });
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // format the timestamp using createdAt or updatedAt;
-  useEffect(() => {
-    let date;
-
-    if (noteDetails.updatedAt) {
-      date = noteDetails.updatedAt.split("T")[0];
-    } else {
-      date = noteDetails.createdAt.split("T")[0];
-    }
-
-    setTimestamp(date);
-  }, [noteDetails.createdAt, noteDetails.updatedAt]);
 
   return (
     <div
       className="card-bg w-100 d-flex flex-column gap-2 cursor-pointer"
-      target="_blank"
-      onClick={() => navigate(`/note/${noteDetails.id}`)}
+      onClick={() => navigate(`/note/${cardData?._id}`)}
     >
       <div className="d-flex flex-align-center flex-justify-between">
-        <h1 className="card-title">{noteDetails.title}</h1>
+        <h1 className="card-title">{cardData?.title}</h1>
         <RiPushpinFill
           className={`pin-icon ${isPinned && "pin-active"}`}
           onClick={(e) => handleClick(e)}
         />
       </div>
-      <p className="card-content">{noteDetails.content}</p>
-      <p className="card-timestamp">{timestamp}</p>
+      <p className="card-content">{cardData?.content}</p>
+      <p className="card-timestamp">{cardData?.updatedAt.split("T")[0]}</p>
     </div>
   );
 };

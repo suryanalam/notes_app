@@ -1,4 +1,4 @@
-.note-bg {
+.note-container {
   margin-top: 54px; /* Header Height */
   padding: var(--gap-xl);
 }
@@ -20,7 +20,7 @@
 
 .menu-options-bg {
   left: 0;
-  bottom: 20px;
+  bottom: 16px;
 }
 
 .menu-options-container {

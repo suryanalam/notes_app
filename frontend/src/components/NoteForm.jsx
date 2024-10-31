@@ -1,5 +1,4 @@
-import { useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 
@@ -9,21 +8,22 @@ import { CommonContext } from "../contexts/CommonContext";
 import BottomSheet from "./BottomSheet";
 
 const NoteForm = () => {
-  const { id } = useParams();
-
   const {
     register,
     reset,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm();
 
   const {
+    baseUrl,
+    options,
+    noteDetails,
     showNoteForm,
     setShowNoteForm,
     isEditForm,
-    baseUrl,
-    options,
+    setIsEditForm,
     fetchNotes,
     fetchPinnedNotes,
   } = useContext(CommonContext);
@@ -31,12 +31,15 @@ const NoteForm = () => {
   const handleCloseForm = () => {
     reset();
     setShowNoteForm(false);
+    if (isEditForm) {
+      setIsEditForm(false);
+    }
   };
 
   const createNote = async (payload) => {
     try {
       const resp = await axios.post(`${baseUrl}/note/create`, payload, options);
-      
+
       if (resp.status !== 201 || !resp?.data?.data) {
         throw new Error("Something went wrong !!");
       }
@@ -51,7 +54,7 @@ const NoteForm = () => {
   const updateNote = async (payload) => {
     try {
       const resp = await axios.put(
-        `${baseUrl}/note/update/${id}`,
+        `${baseUrl}/note/update/${noteDetails?._id}`,
         payload,
         options
       );
@@ -71,13 +74,22 @@ const NoteForm = () => {
     const { title, content } = data;
     const payload = { title, content };
 
-    if (isEditForm && id) {
+    if (isEditForm) {
       updateNote(payload);
       return;
     }
 
     await createNote(payload);
   };
+
+  // set the form values with note details if the edit form is opened
+  useEffect(() => {
+    if (isEditForm) {
+      setValue("title", noteDetails?.title);
+      setValue("content", noteDetails?.content);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditForm]);
 
   return (
     <BottomSheet
