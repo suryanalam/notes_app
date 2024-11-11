@@ -20,19 +20,16 @@ const Home = () => {
   useEffect(() => {
     async function fetch() {
       setLoading(true);
-
       if (!notes) {
         await fetchNotes();
       }
-
       if (!pinnedNotes) {
         await fetchPinnedNotes();
       }
-
       setLoading(false);
     }
-    fetch();
 
+    fetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -9,8 +9,11 @@ const BottomSheet = ({
 }) => {
   if (showBottomSheet) {
     return (
-      <div className="bottomsheet-bg">
-        <div className="bottomsheet-backdrop" />
+      <div className="bottomsheet-bg p-fixed">
+        <div
+          className="bottomsheet-backdrop w-100 h-100"
+          onClick={handleClose}
+        />
         <div className="bottomsheet-container">
           <div className="bottomsheet-header d-flex flex-align-center flex-justify-between">
             <h1 className="bottomsheet-title">{bottomSheetTitle}</h1>

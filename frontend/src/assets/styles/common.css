@@ -51,6 +51,11 @@
   background-color: var(--clr-white);
 }
 
+.btn-red {
+  color: var(--clr-white);
+  background-color: var(--clr-red);
+}
+
 .cursor-pointer {
   cursor: pointer;
 }

@@ -3,25 +3,15 @@
   padding: var(--gap-lg);
 }
 
-.pin-icon {
-  color: var(--clr-gray-200);
-  font-size: var(--fs-xl);
-}
-
-.pin-icon:hover,
-.pin-active {
-  color: var(--clr-gray-100);
-}
-
 .create-icon-div {
-  right: 15px;
   bottom: 15px;
+  right: 15px;
   padding: var(--gap-base);
   width: 50px;
   height: 50px;
+  font-size: var(--fs-md);
   border-radius: var(--br-full);
   background-color: var(--clr-primary);
-  font-size: var(--fs-md);
   z-index: 99;
 }
 

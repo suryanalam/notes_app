@@ -1,40 +1,38 @@
-.bottomsheet-bg {
+.dialog-bg {
   top: 0;
   left: 0;
   width: 100dvw;
   height: 100dvh;
-  z-index: 999;
 }
 
-.bottomsheet-backdrop {
+.dialog-backdrop {
+  top: 0;
+  left: 0;
   background-color: #000;
   opacity: 0.5;
   animation: fade-in 0.5s;
 }
 
-.bottomsheet-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
+.dialog-container {
   padding: var(--gap-xl);
-  width: 100%;
+  width: min(90%, 400px);
   color: var(--clr-gray-100);
   background-color: var(--clr-gray-300);
-  border-radius: var(--br-lg) var(--br-lg) 0 0;
-  animation: slide-up 0.5s;
+  border-radius: var(--br-lg);
+  z-index: 999;
 }
 
-.bottomsheet-header {
+.dialog-header {
   margin-bottom: var(--gap-xl);
 }
 
-.bottomsheet-title {
+.dialog-title {
   color: var(--clr-primary);
   font-weight: var(--font-weight-bold);
   font-family: var(--font-primary);
 }
 
-.bottomsheet-close-icon {
+.dialog-close-icon {
   width: 16px;
   height: 16px;
 }

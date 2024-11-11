@@ -22,8 +22,7 @@ const Login = () => {
 
       if (resp?.data?.token) {
         localStorage.setItem("token", resp.data.token);
-        const token = localStorage.getItem("token");
-        setToken(token);
+        setToken(resp.data.token);
         navigate("/");
       }
     } catch (err) {

@@ -24,3 +24,13 @@
   color: var(--clr-gray-100);
   font-size: var(--fs-base);
 }
+
+.pin-icon {
+  color: var(--clr-gray-200);
+  font-size: var(--fs-xl);
+}
+
+.pin-icon:hover,
+.pin-active {
+  color: var(--clr-gray-100);
+}

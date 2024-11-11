@@ -7,6 +7,7 @@ export const CommonProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [isEditForm, setIsEditForm] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const [notes, setNotes] = useState(null);
   const [pinnedNotes, setPinnedNotes] = useState(null);
@@ -67,23 +68,90 @@ export const CommonProvider = ({ children }) => {
     }
   };
 
+  const addPinnedNote = async (payload) => {
+    try {
+      const resp = await axios.post(
+        `${baseUrl}/pinned_note/create`,
+        payload,
+        options
+      );
+      if (resp.status !== 201) {
+        throw new Error("something went wrong !!");
+      }
+
+      // call the GET api's to update the states synchronously !!
+      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+    } catch (err) {
+      console.log("Error:", err);
+    }
+  };
+
+  const removePinnedNote = async (id) => {
+    try {
+      const resp = await axios.delete(
+        `${baseUrl}/pinned_note/delete/${id}`,
+        options
+      );
+      if (resp.status !== 200) {
+        throw new Error("something went wrong !!");
+      }
+
+      // call the GET api's to update the states synchronously !!
+      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+    } catch (err) {
+      console.log("Error:", err);
+    }
+  };
+
+  const deleteNote = async (id) => {
+    try {
+      const resp = await axios.delete(`${baseUrl}/note/delete/${id}`, options);
+
+      if (resp.status !== 200 || !resp?.data?.data) {
+        throw new Error("Something went wrong !!");
+      }
+
+      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+    } catch (err) {
+      console.log("Error:", err);
+    }
+  };
+
+  const resetStore = () => {
+    setNotes(null);
+    setPinnedNotes(null);
+    setNoteDetails({
+      _id: "",
+      title: "",
+      content: "",
+      createdAt: "",
+      updatedAt: "",
+    });
+  };
+
   return (
     <CommonContext.Provider
       value={{
         baseUrl,
         options,
+        isEditForm,
+        showNoteForm,
+        showDeleteDialog,
+        noteDetails,
         notes,
         pinnedNotes,
-        noteDetails,
-        showNoteForm,
-        isEditForm,
+        resetStore,
         setToken,
+        setIsEditForm,
+        setShowNoteForm,
+        setShowDeleteDialog,
         setNoteDetails,
+        addPinnedNote,
+        removePinnedNote,
+        deleteNote,
         fetchNotes,
         fetchPinnedNotes,
         fetchNoteDetails,
-        setShowNoteForm,
-        setIsEditForm,
       }}
     >
       {children}

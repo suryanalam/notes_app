@@ -20,6 +20,7 @@ const NoteForm = () => {
     baseUrl,
     options,
     noteDetails,
+    setNoteDetails,
     showNoteForm,
     setShowNoteForm,
     isEditForm,
@@ -64,6 +65,7 @@ const NoteForm = () => {
       }
 
       handleCloseForm();
+      setNoteDetails({ ...resp.data.data });
       await Promise.all([fetchNotes(), fetchPinnedNotes()]);
     } catch (err) {
       console.log("Error:", err);

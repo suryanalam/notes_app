@@ -1,7 +1,6 @@
 import "../assets/styles/note.css";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 // icons
 import { FiHome } from "react-icons/fi";
@@ -15,15 +14,17 @@ import { CommonContext } from "../contexts/CommonContext";
 
 // components
 import Loader from "../components/Loader";
+import DeleteDialog from "../components/DeleteDialog";
 
 const Note = () => {
   const params = useParams();
   const navigate = useNavigate();
 
   const {
+    noteDetails,
     setIsEditForm,
     setShowNoteForm,
-    noteDetails,
+    setShowDeleteDialog,
     setNoteDetails,
     fetchNoteDetails,
   } = useContext(CommonContext);
@@ -43,13 +44,12 @@ const Note = () => {
       });
   };
 
-  const handleEditNote = () => {
+  const handleShare = () => {};
+
+  const handleEdit = () => {
     setShowNoteForm(true);
     setIsEditForm(true);
   };
-
-  const handleShareNote = () => {};
-  const handleDeleteNote = () => {};
 
   useEffect(() => {
     const fetch = async () => {
@@ -58,10 +58,8 @@ const Note = () => {
       setLoading(false);
     };
 
-    console.log('prev: ', noteDetails?._id, 'new: ', params?.id);
-
-    if(params?.id !== noteDetails?._id){
-      console.log('fetch call...');
+    // fetch the api only when note details doesn't exist in the store.
+    if (params?.id !== noteDetails?._id) {
       setNoteDetails({
         _id: "",
         title: "",
@@ -98,20 +96,21 @@ const Note = () => {
           <div className="menu-option cursor-pointer" onClick={copyToClipboard}>
             <LuCopy />
           </div>
-          <div className="menu-option cursor-pointer" onClick={handleEditNote}>
+          <div className="menu-option cursor-pointer" onClick={handleEdit}>
             <FiEdit />
           </div>
-          <div className="menu-option cursor-pointer" onClick={handleShareNote}>
+          <div className="menu-option cursor-pointer" onClick={handleShare}>
             <RxShare1 />
           </div>
           <div
             className="menu-option cursor-pointer"
-            onClick={handleDeleteNote}
+            onClick={() => setShowDeleteDialog(true)}
           >
             <FiTrash2 />
           </div>
         </div>
       </div>
+      <DeleteDialog />
     </>
   );
 };

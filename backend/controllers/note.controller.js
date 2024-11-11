@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Note from "../models/Note.js";
+import PinnedNote from "../models/PinnedNote.js";
 
 const addNote = async (req, res) => {
   const { id: uid } = req.user;
@@ -109,8 +110,8 @@ const updateNote = async (req, res) => {
   const { title, content } = req.body;
 
   if (!title || !content) {
-    return res.status(500).send({
-      message: "please fill all the required fields !!",
+    return res.status(400).send({
+      message: "Invalid input data !!",
     });
   }
 
@@ -139,11 +140,20 @@ const deleteNote = async (req, res) => {
 
   try {
     const deletedNote = await Note.findOneAndDelete({ _id: id });
+    const deletedPinnedNote = await PinnedNote.findOneAndDelete({ nid: id });
 
-    res.status(200).send({
-      message: "Note deleted successfully !!",
-      data: deletedNote,
-    });
+    if(deletedPinnedNote){
+      res.status(200).send({
+        message: "Pinned Note deleted successfully !!",
+        data: deletedNote,
+      });
+    } else if (deletedNote) {
+      res.status(200).send({
+        message: "Note deleted successfully !!",
+        data: deletedNote,
+      });
+    }
+    
   } catch {
     res.status(500).send({
       message: "Error while deleting a note !!",
