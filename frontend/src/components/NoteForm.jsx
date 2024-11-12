@@ -2,9 +2,14 @@ import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 
+// custom hooks
+import useDevice from "../hooks/useDevice";
+
+// store
 import { CommonContext } from "../contexts/CommonContext";
 
 // Components
+import Dialog from "./Dialog";
 import BottomSheet from "./BottomSheet";
 
 const NoteForm = () => {
@@ -28,6 +33,8 @@ const NoteForm = () => {
     fetchNotes,
     fetchPinnedNotes,
   } = useContext(CommonContext);
+
+  const { device } = useDevice();
 
   const handleCloseForm = () => {
     reset();
@@ -86,7 +93,7 @@ const NoteForm = () => {
 
   // set the form values with note details if the edit form is opened
   useEffect(() => {
-    if (isEditForm) {
+    if (isEditForm && noteDetails) {
       setValue("title", noteDetails?.title);
       setValue("content", noteDetails?.content);
     }
@@ -94,65 +101,131 @@ const NoteForm = () => {
   }, [isEditForm]);
 
   return (
-    <BottomSheet
-      showBottomSheet={showNoteForm}
-      handleClose={handleCloseForm}
-      bottomSheetTitle={isEditForm ? "Update Note" : "Create Note"}
-    >
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="d-flex flex-column gap-4"
-      >
-        <div className="d-flex flex-column gap-1 justify-content-start">
-          <label htmlFor="title" className="input-label">
-            Title
-          </label>
-          <input
-            className="input-field"
-            type="text"
-            placeholder="Ex: Daily Routine"
-            {...register("title", {
-              required: "Title is required",
-            })}
-          />
-          {errors.title && (
-            <p role="alert" className="text-red">
-              *{errors.title.message}
-            </p>
-          )}
-        </div>
-        <div className="d-flex flex-column gap-1 justify-content-start">
-          <label htmlFor="content" className="input-label">
-            Content
-          </label>
-          <textarea
-            className="input-field"
-            placeholder="Write something here..."
-            rows={8}
-            {...register("content", {
-              required: "Content is required",
-            })}
-          ></textarea>
-          {errors.content && (
-            <p role="alert" className="text-red">
-              *{errors.content.message}
-            </p>
-          )}
-        </div>
-        <div className="d-flex gap-2">
-          <button
-            className="btn w-100 btn-white"
-            type="reset"
-            onClick={handleCloseForm}
+    <>
+      {device === "mobile" && (
+        <BottomSheet
+          showBottomSheet={showNoteForm}
+          handleClose={handleCloseForm}
+          bottomSheetTitle={isEditForm ? "Update Note" : "Create Note"}
+        >
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="d-flex flex-column gap-4"
           >
-            Cancel
-          </button>
-          <button className="btn w-100 btn-primary" type="submit">
-            Submit
-          </button>
-        </div>
-      </form>
-    </BottomSheet>
+            <div className="d-flex flex-column gap-1 justify-content-start">
+              <label htmlFor="title" className="input-label">
+                Title
+              </label>
+              <input
+                className="input-field"
+                type="text"
+                placeholder="Ex: Daily Routine"
+                {...register("title", {
+                  required: "Title is required",
+                })}
+              />
+              {errors.title && (
+                <p role="alert" className="text-red">
+                  *{errors.title.message}
+                </p>
+              )}
+            </div>
+            <div className="d-flex flex-column gap-1 justify-content-start">
+              <label htmlFor="content" className="input-label">
+                Content
+              </label>
+              <textarea
+                className="input-field"
+                placeholder="Write something here..."
+                rows={8}
+                {...register("content", {
+                  required: "Content is required",
+                })}
+              ></textarea>
+              {errors.content && (
+                <p role="alert" className="text-red">
+                  *{errors.content.message}
+                </p>
+              )}
+            </div>
+            <div className="d-flex gap-2">
+              <button
+                className="btn w-100 btn-white"
+                type="reset"
+                onClick={handleCloseForm}
+              >
+                Cancel
+              </button>
+              <button className="btn w-100 btn-primary" type="submit">
+                Submit
+              </button>
+            </div>
+          </form>
+        </BottomSheet>
+      )}
+      
+      {device === "desktop" && (
+        <Dialog
+          showDialog={showNoteForm}
+          handleClose={handleCloseForm}
+          dialogTitle={isEditForm ? "Update Note" : "Create Note"}
+        >
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="d-flex flex-column gap-4"
+          >
+            <div className="d-flex flex-column gap-1 justify-content-start">
+              <label htmlFor="title" className="input-label">
+                Title
+              </label>
+              <input
+                className="input-field"
+                type="text"
+                placeholder="Ex: Daily Routine"
+                {...register("title", {
+                  required: "Title is required",
+                })}
+              />
+              {errors.title && (
+                <p role="alert" className="text-red">
+                  *{errors.title.message}
+                </p>
+              )}
+            </div>
+            <div className="d-flex flex-column gap-1 justify-content-start">
+              <label htmlFor="content" className="input-label">
+                Content
+              </label>
+              <textarea
+                className="input-field"
+                placeholder="Write something here..."
+                rows={8}
+                {...register("content", {
+                  required: "Content is required",
+                })}
+              ></textarea>
+              {errors.content && (
+                <p role="alert" className="text-red">
+                  *{errors.content.message}
+                </p>
+              )}
+            </div>
+            <div className="d-flex gap-2">
+              <button
+                className="btn w-100 btn-white"
+                type="reset"
+                onClick={handleCloseForm}
+              >
+                Cancel
+              </button>
+              <button className="btn w-100 btn-primary" type="submit">
+                Submit
+              </button>
+            </div>
+          </form>
+        </Dialog>
+      )}
+    </>
   );
 };
 

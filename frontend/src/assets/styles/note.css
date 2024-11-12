@@ -24,8 +24,8 @@
 }
 
 .menu-options-container {
-  width: 90%;
-  padding: var(--gap-base);
+  width: min(90%, 600px);
+  padding: var(--gap-lg) var(--gap-base);
   border-radius: var(--br-base);
   background-color: var(--clr-gray-300);
   color: var(--clr-gray-100);
@@ -41,4 +41,17 @@
 
 .menu-option:hover {
   background-color: var(--clr-gray-200);
+}
+
+.menu-text{
+  display: none;
+  font-size: var(--fs-lg);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-primary);
+}
+
+@media screen and (min-width: 501px) {
+  .menu-text {
+    display: block;
+  }
 }

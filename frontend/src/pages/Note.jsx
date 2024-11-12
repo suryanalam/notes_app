@@ -88,25 +88,34 @@ const Note = () => {
       <div className="menu-options-bg p-fixed w-100 d-flex flex-align-center flex-justify-center">
         <div className="menu-options-container w-100 d-flex flex-align-center flex-justify-around">
           <div
-            className="menu-option cursor-pointer"
+            className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <FiHome />
-          </div>
-          <div className="menu-option cursor-pointer" onClick={copyToClipboard}>
-            <LuCopy />
-          </div>
-          <div className="menu-option cursor-pointer" onClick={handleEdit}>
-            <FiEdit />
-          </div>
-          <div className="menu-option cursor-pointer" onClick={handleShare}>
-            <RxShare1 />
+            <FiHome className="menu-icon"/> <p className="menu-text">Home</p>
           </div>
           <div
-            className="menu-option cursor-pointer"
+            className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
+            onClick={copyToClipboard}
+          >
+            <LuCopy className="menu-icon"/> <p className="menu-text">Copy</p>
+          </div>
+          <div
+            className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
+            onClick={handleEdit}
+          >
+            <FiEdit className="menu-icon"/> <p className="menu-text">Edit</p>
+          </div>
+          <div
+            className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
+            onClick={handleShare}
+          >
+            <RxShare1 className="menu-icon"/> <p className="menu-text">Share</p>
+          </div>
+          <div
+            className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
             onClick={() => setShowDeleteDialog(true)}
           >
-            <FiTrash2 />
+            <FiTrash2 className="menu-icon"/> <p className="menu-text">Delete</p>
           </div>
         </div>
       </div>
