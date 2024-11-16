@@ -31,13 +31,6 @@ const addNote = async (req, res) => {
 
 const getAllNotes = async (req, res) => {
   let { id } = req.user;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send({
-      message: "Invalid User Id !!",
-    });
-  }
-
   id = new mongoose.Types.ObjectId(id);
 
   try {

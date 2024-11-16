@@ -1,0 +1,31 @@
+.share-text {
+  font-size: var(--fs-lg);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-primary);
+  line-height: var(--gap-2xl);
+}
+
+.link-div {
+  padding: var(--gap-lg);
+  border-radius: var(--br-sm);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.link {
+  font-size: var(--fs-md);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-primary);
+  overflow-x: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.info-icon{
+  width: 10px;
+  height: 10px;
+}
+
+.info-text{
+  font-size: var(--fs-base);
+  font-family: var(--font-primary);
+}

@@ -14,6 +14,7 @@ import { CommonContext } from "../contexts/CommonContext";
 
 // components
 import Loader from "../components/Loader";
+import ShareDialog from "../components/ShareDialog";
 import DeleteDialog from "../components/DeleteDialog";
 
 const Note = () => {
@@ -24,6 +25,7 @@ const Note = () => {
     noteDetails,
     setIsEditForm,
     setShowNoteForm,
+    setShowShareDialog,
     setShowDeleteDialog,
     setNoteDetails,
     fetchNoteDetails,
@@ -43,8 +45,6 @@ const Note = () => {
         console.error("Failed to copy text: ", err);
       });
   };
-
-  const handleShare = () => {};
 
   const handleEdit = () => {
     setShowNoteForm(true);
@@ -107,7 +107,7 @@ const Note = () => {
           </div>
           <div
             className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
-            onClick={handleShare}
+            onClick={() => setShowShareDialog(true)}
           >
             <RxShare1 className="menu-icon"/> <p className="menu-text">Share</p>
           </div>
@@ -119,6 +119,8 @@ const Note = () => {
           </div>
         </div>
       </div>
+      
+      <ShareDialog />
       <DeleteDialog />
     </>
   );

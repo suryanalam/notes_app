@@ -8,6 +8,7 @@ export const CommonProvider = ({ children }) => {
   const [isEditForm, setIsEditForm] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
 
   const [notes, setNotes] = useState(null);
   const [pinnedNotes, setPinnedNotes] = useState(null);
@@ -18,6 +19,7 @@ export const CommonProvider = ({ children }) => {
     createdAt: "",
     updatedAt: "",
   });
+  const [sharedNoteLink, setSharedNoteLink] = useState('https://localhost:5000/share/...');
 
   const baseUrl = "http://localhost:5000/api";
   const tokenString = localStorage.getItem("token");
@@ -137,7 +139,9 @@ export const CommonProvider = ({ children }) => {
         isEditForm,
         showNoteForm,
         showDeleteDialog,
+        showShareDialog, 
         noteDetails,
+        sharedNoteLink,
         notes,
         pinnedNotes,
         resetStore,
@@ -145,7 +149,9 @@ export const CommonProvider = ({ children }) => {
         setIsEditForm,
         setShowNoteForm,
         setShowDeleteDialog,
+        setShowShareDialog,
         setNoteDetails,
+        setSharedNoteLink,
         addPinnedNote,
         removePinnedNote,
         deleteNote,

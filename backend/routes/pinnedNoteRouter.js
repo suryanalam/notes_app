@@ -1,10 +1,10 @@
 import express from "express";
-import { getNote, updateNote } from "../controllers/note.controller.js";
 import {
   addPinnedNote,
   getAllPinnedNotes,
   deletePinnedNote,
 } from "../controllers/pinnedNote.controller.js";
+
 // create a note router instance
 const pinnedNoteRouter = express.Router();
 

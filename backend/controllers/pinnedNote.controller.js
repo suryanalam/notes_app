@@ -28,12 +28,6 @@ const addPinnedNote = async (req, res) => {
 const getAllPinnedNotes = async (req, res) => {
   const { id } = req.user;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send({
-      message: "Invalid User Id !!",
-    });
-  }
-
   try {
     const pinnedNotesData = await PinnedNote.find({ uid: id })
       .populate("nid")

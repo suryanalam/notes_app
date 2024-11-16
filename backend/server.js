@@ -6,12 +6,14 @@ import cors from "cors";
 import userRouter from "./routes/userRouter.js";
 import noteRouter from "./routes/noteRouter.js";
 import pinnedNoteRouter from "./routes/pinnedNoteRouter.js";
+import sharedNoteRouter from "./routes/sharedNoteRouter.js";
 
 // Middlewares
 import authorizeLogin from "./middlewares/authorizeLogin.js";
 
 // DB Connection
 import dbConnection from "./dbConnection.js";
+
 
 // Config the dotenv to track ENV variables
 dotenv.config();
@@ -36,6 +38,7 @@ dbConnection();
 app.use('/api', userRouter);
 app.use("/api/note", authorizeLogin, noteRouter);
 app.use("/api/pinned_note", authorizeLogin, pinnedNoteRouter);
+app.use('/api/shared_note', sharedNoteRouter);
 
 app.listen(process.env.PORT, () => {
   console.log("server started at port", process.env.PORT);
