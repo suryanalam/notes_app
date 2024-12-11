@@ -29,7 +29,7 @@ const getSharedNote = async (req, res) => {
   const link = req.params.link;
 
   try {
-    const sharedNoteData = await SharedNote.find({ link }).populate("nid");
+    const sharedNoteData = await SharedNote.findOne({ link }).populate("nid");
 
     res.status(200).send({
       message: "Shared Note found successfully !!",
@@ -46,7 +46,7 @@ const findSharedNote = async (req, res) => {
   const nid = req.params.noteId;
 
   try {
-    const sharedNoteData = await SharedNote.find({ nid });
+    const sharedNoteData = await SharedNote.findOne({ nid });
     res.status(200).send({
       message: "Shared Note found successfully !!",
       data: sharedNoteData,

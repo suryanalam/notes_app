@@ -1,5 +1,6 @@
 import "../assets/styles/shareDialog.css";
 import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 
 // icons
@@ -8,8 +9,12 @@ import { MdInfoOutline } from "react-icons/md";
 
 // store
 import { CommonContext } from "../contexts/CommonContext";
+
+// components
 import Dialog from "./Dialog";
-import { useParams } from "react-router-dom";
+
+// helpers
+import generateHexCode from "../helpers/generateHexCode";
 
 const ShareDialog = () => {
   const params = useParams();
@@ -23,6 +28,8 @@ const ShareDialog = () => {
   } = useContext(CommonContext);
 
   const [isLinkExist, setIsLinkExist] = useState(false);
+  const [btnText, setBtnText] = useState("Generate Link");
+  const [isLinkGenerating, setIsLinkGenerating] = useState(false);
 
   const handleCloseDialog = () => {
     setShowShareDialog(false);
@@ -39,68 +46,98 @@ const ShareDialog = () => {
       });
   };
 
-  const createSharedNote = async(payload) => {
+  const createSharedNote = async (payload) => {
     try {
+      setIsLinkGenerating(true);
       const resp = await axios.post(
         `${baseUrl}/shared_note/create`,
         payload,
         options
       );
+
       if (resp.status !== 201) {
         throw new Error("something went wrong !!");
       }
+
+      const link = resp.data.data?.link;
+      setSharedNoteLink(`http://localhost:3000/share/${link}`);
+      setIsLinkExist(true);
     } catch (err) {
       console.log("Error:", err);
+    } finally {
+      setIsLinkGenerating(false);
     }
-  }
+  };
 
   const handleClick = () => {
     if (isLinkExist) {
       copyToClipboard(sharedNoteLink);
     } else {
       // generate a 16 digit hexa-decimal code
-      let hexDecCode;
+      let hexDecCode = generateHexCode();
       const payload = {
         nid: params?.id,
         link: hexDecCode,
-      }
+      };
+
       createSharedNote(payload);
     }
   };
 
   useEffect(() => {
-    const id = params?.id;
-
-    // check if the shareable link for the note has been generated or not 
-    const findSharedNote = async (id) => {
+    // check if the shareable link for the note has been generated or not
+    const findSharedNote = async () => {
       try {
         const resp = await axios.get(
-          `${baseUrl}/shared_note/find/${id}`,
+          `${baseUrl}/shared_note/find/${params?.id}`,
           options
         );
 
-        if (resp.status !== 200 || !resp?.data?.data) {
+        if (resp.status !== 200) {
           throw new Error("Somethng went wrong !!");
         }
 
-        return resp.data.data;
+        // if link exist, set the states accordingly to update DOM
+        let link = resp.data.data?.link;
+
+        if (link) {
+          link = `http://localhost:3000/share/${link}`;
+          setSharedNoteLink(link);
+          setIsLinkExist(true);
+        } else {
+          setSharedNoteLink("http://localhost:3000/share/...");
+          setIsLinkExist(false);
+        }
       } catch (err) {
         console.log("Error:", err);
-        return null;
       }
     };
 
-    const resp = findSharedNote(id);
-
-    // if link exist, set the states accordingly to update DOM
-    if (resp !== null) {
-      let link = resp.data.data?.link;
-      link = `https://localhost:5000/share/${link}`;
-      setSharedNoteLink(link);
-      setIsLinkExist(true);
+    if (showShareDialog) {
+      findSharedNote();
     }
+
+    return () => {
+      setSharedNoteLink("http://localhost:3000/share/...");
+      setIsLinkExist(false);
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [showShareDialog]);
+
+  useEffect(() => {
+    if (isLinkGenerating) {
+      setBtnText("Generating...");
+    } else if (isLinkExist) {
+      setBtnText("Copy Link");
+    } else {
+      setBtnText("Generate Link");
+    }
+
+    return () => {
+      setBtnText("Generate Link");
+    };
+  }, [isLinkExist, isLinkGenerating]);
 
   return (
     <Dialog
@@ -131,7 +168,7 @@ const ShareDialog = () => {
           onClick={handleClick}
         >
           <FaLink className="link-icon" />
-          {isLinkExist ? "Copy Link" : "Generate Link"}
+          {btnText}
         </button>
       </div>
     </Dialog>

@@ -19,7 +19,14 @@ export const CommonProvider = ({ children }) => {
     createdAt: "",
     updatedAt: "",
   });
-  const [sharedNoteLink, setSharedNoteLink] = useState('https://localhost:5000/share/...');
+  const [sharedNoteLink, setSharedNoteLink] = useState('http://localhost:3000/share/...');
+  const [sharedNoteDetails, setSharedNoteDetails] = useState({
+    _id: "",
+    title: "",
+    content: "",
+    createdAt: "",
+    updatedAt: "",
+  });
 
   const baseUrl = "http://localhost:5000/api";
   const tokenString = localStorage.getItem("token");
@@ -65,6 +72,19 @@ export const CommonProvider = ({ children }) => {
         throw new Error("Somethng went wrong !!");
       }
       setNoteDetails(resp.data.data);
+    } catch (err) {
+      console.log("Error:", err);
+    }
+  };
+
+  const fetchSharedNoteDetails = async (link) => {
+    try {
+      const resp = await axios.get(`${baseUrl}/shared_note/get/${link}`, options);
+      if (resp.status !== 200 || !resp?.data?.data) {
+        throw new Error("Somethng went wrong !!");
+      }
+      const note = resp.data.data.nid;
+      setSharedNoteDetails(note);
     } catch (err) {
       console.log("Error:", err);
     }
@@ -141,6 +161,7 @@ export const CommonProvider = ({ children }) => {
         showDeleteDialog,
         showShareDialog, 
         noteDetails,
+        sharedNoteDetails,
         sharedNoteLink,
         notes,
         pinnedNotes,
@@ -151,6 +172,7 @@ export const CommonProvider = ({ children }) => {
         setShowDeleteDialog,
         setShowShareDialog,
         setNoteDetails,
+        setSharedNoteDetails,
         setSharedNoteLink,
         addPinnedNote,
         removePinnedNote,
@@ -158,6 +180,7 @@ export const CommonProvider = ({ children }) => {
         fetchNotes,
         fetchPinnedNotes,
         fetchNoteDetails,
+        fetchSharedNoteDetails,
       }}
     >
       {children}
