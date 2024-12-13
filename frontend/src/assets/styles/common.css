@@ -32,27 +32,37 @@
 
 .text-red {
   color: #f00;
+  letter-spacing: .5px;
   font-size: var(--fs-md);
-  font-weight: var(--font-weight-semibold);
 }
 
 .btn-primary {
   color: var(--clr-black);
+  border-color: var(--clr-primary);
   background-color: var(--clr-primary);
+}
+
+.btn-outline{
+  color: var(--clr-white);
+  border-color: var(--clr-white);
+  background-color: transparent;
 }
 
 .btn-dark {
   color: var(--clr-white);
+  border-color: var(--clr-black);
   background-color: var(--clr-black);
 }
 
 .btn-light {
   color: var(--clr-black);
+  border-color: var(--clr-white);
   background-color: var(--clr-white);
 }
 
 .btn-red {
   color: var(--clr-white);
+  border-color: var(--clr-red);
   background-color: var(--clr-red);
 }
 

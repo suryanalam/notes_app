@@ -49,7 +49,7 @@
 
 .form-btn {
   margin: var(--gap-sm) auto;
-  border: 2px solid var(--clr-gray-200);
+  border-color: var(--clr-gray-200);
   transition: all 0.2s ease-in-out;
 }
 
@@ -57,7 +57,15 @@
   border-color: var(--clr-gray-100);
 }
 
-.form-link {
-  color: var(--clr-gray-100);
+.form-link-text, .form-link {
   font-size: var(--fs-md);
+}
+
+.form-link-text{
+  color: var(--clr-gray-100);
+}
+
+.form-link{
+  margin-left: var(--gap-xs);
+  color: var(--clr-primary);
 }

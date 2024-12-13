@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 // custom hooks
@@ -46,36 +47,32 @@ const NoteForm = () => {
 
   const createNote = async (payload) => {
     try {
-      const resp = await axios.post(`${baseUrl}/note/create`, payload, options);
-
-      if (resp.status !== 201 || !resp?.data?.data) {
-        throw new Error("Something went wrong !!");
-      }
-
-      handleCloseForm();
+      await axios.post(`${baseUrl}/note/create`, payload, options);
+      toast.success("Note Created Successfully");
       await Promise.all([fetchNotes(), fetchPinnedNotes()]);
     } catch (err) {
       console.log("Error:", err);
+      toast.error("Error while creating note");
+    } finally {
+      handleCloseForm();
     }
   };
 
-  const updateNote = async (payload) => {
+  const updateNote = async (id, payload) => {
     try {
       const resp = await axios.put(
-        `${baseUrl}/note/update/${noteDetails?._id}`,
+        `${baseUrl}/note/update/${id}`,
         payload,
         options
       );
-
-      if (resp.status !== 200 || !resp?.data?.data) {
-        throw new Error("Something went wrong !!");
-      }
-
-      handleCloseForm();
       setNoteDetails({ ...resp.data.data });
+      toast.success("Note Updated Successfully");
       await Promise.all([fetchNotes(), fetchPinnedNotes()]);
     } catch (err) {
       console.log("Error:", err);
+      toast.error("Error while updating note");
+    } finally {
+      handleCloseForm();
     }
   };
 
@@ -84,7 +81,7 @@ const NoteForm = () => {
     const payload = { title, content };
 
     if (isEditForm) {
-      updateNote(payload);
+      updateNote(noteDetails?._id,payload);
       return;
     }
 
@@ -150,7 +147,7 @@ const NoteForm = () => {
             </div>
             <div className="d-flex gap-2">
               <button
-                className="btn w-100 btn-white"
+                className="btn w-100 btn-outline"
                 type="reset"
                 onClick={handleCloseForm}
               >
@@ -163,7 +160,7 @@ const NoteForm = () => {
           </form>
         </BottomSheet>
       )}
-      
+
       {device === "desktop" && (
         <Dialog
           showDialog={showNoteForm}
@@ -212,7 +209,7 @@ const NoteForm = () => {
             </div>
             <div className="d-flex gap-2">
               <button
-                className="btn w-100 btn-white"
+                className="btn w-100 btn-outline"
                 type="reset"
                 onClick={handleCloseForm}
               >

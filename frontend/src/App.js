@@ -1,28 +1,51 @@
 import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-//middleware
-import Authenticate from "./middlewares/Authenticate";
+// Route middlewares
+import ProtectedRoutes from "./middlewares/ProtectedRoutes";
+import AuthenticateRoutes from "./middlewares/AuthenticateRoutes";
 
-//pages
+// pages
 import Signup from "./pages/auth/Signup";
 import Login from "./pages/auth/Login";
 import Home from "./pages/Home";
 import Note from "./pages/Note";
 import SharedNote from "./pages/SharedNote";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/share/:link" element={<SharedNote />} />
-        <Route element={<Authenticate />}>
+        {/* Authentication Routes */}
+        <Route element={<AuthenticateRoutes />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Route>
+
+         {/* Protected Routes */}
+        <Route element={<ProtectedRoutes />}>
           <Route exact path="/" element={<Home />} />
           <Route path="/note/:id" element={<Note />} />
-          <Route path="*" element={<h1>Page Not Found</h1>} />
         </Route>
+
+        {/* Public Routes */}
+        <Route path="/share/:link" element={<SharedNote />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import "../assets/styles/shareDialog.css";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 // icons
@@ -55,15 +56,12 @@ const ShareDialog = () => {
         options
       );
 
-      if (resp.status !== 201) {
-        throw new Error("something went wrong !!");
-      }
-
       const link = resp.data.data?.link;
       setSharedNoteLink(`http://localhost:3000/share/${link}`);
       setIsLinkExist(true);
     } catch (err) {
       console.log("Error:", err);
+      toast.error('Error while generating link');
     } finally {
       setIsLinkGenerating(false);
     }

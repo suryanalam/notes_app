@@ -1,38 +1,37 @@
-import {useState, useEffect, useContext } from "react";
-import Header from "../components/Header";
-import Loader from "../components/Loader";
-import { CommonContext } from "../contexts/CommonContext";
+import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 
+// Components
+import Header from "../components/Header";
+import Loader from "../components/Loader";
+
+// Store
+import { CommonContext } from "../contexts/CommonContext";
+
 const SharedNote = () => {
-
   const params = useParams();
-
-  const {sharedNoteDetails, fetchSharedNoteDetails} = useContext(CommonContext);
-  
-  const { title, content } = sharedNoteDetails;
+  const { sharedNoteDetails, setSharedNoteDetails, fetchSharedNoteDetails } =
+    useContext(CommonContext);
 
   const [loading, setLoading] = useState(false);
+  const [isNoteExist, setIsNoteExist] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
-      await fetchSharedNoteDetails(params?.link);
+      const data = await fetchSharedNoteDetails(params?.link);
+      
+      if (!data) {
+        setIsNoteExist(false);
+        setLoading(false);
+        return; 
+      }
+
+      setSharedNoteDetails(data);
+      setIsNoteExist(true);
       setLoading(false);
     };
-
     fetch();
-
-    // fetch the api only when note details doesn't exist in the store.
-    // if (params?.id !== sharedNoteDetails?._id) {
-    //   setSharedNoteDetails({
-    //     _id: "",
-    //     title: "",
-    //     content: "",
-    //     createdAt: "",
-    //     updatedAt: "",
-    //   });
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -43,10 +42,16 @@ const SharedNote = () => {
         <Loader />
       ) : (
         <div className="note-container w-100">
-          <div className="note-details-container">
-            <h1 className="note-title">{title}</h1>
-            <p className="note-content">{content}</p>
-          </div>
+          {isNoteExist ? (
+            <div className="note-details-container">
+              <h1 className="note-title">{sharedNoteDetails.title}</h1>
+              <p className="note-content">{sharedNoteDetails.content}</p>
+            </div>
+          ) : (
+            <div className="note-details-container">
+              <p className="note-content">Invalid URL</p>
+            </div>
+          )}
         </div>
       )}
     </>

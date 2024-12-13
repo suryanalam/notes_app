@@ -1,45 +1,44 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
+import { toast } from "react-toastify";
 import axios from "axios";
 
 export const CommonContext = createContext();
 
 export const CommonProvider = ({ children }) => {
-  const [token, setToken] = useState(null);
-  const [isEditForm, setIsEditForm] = useState(false);
-  const [showNoteForm, setShowNoteForm] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showShareDialog, setShowShareDialog] = useState(false);
-
+  // App Data
   const [notes, setNotes] = useState(null);
   const [pinnedNotes, setPinnedNotes] = useState(null);
-  const [noteDetails, setNoteDetails] = useState({
-    _id: "",
-    title: "",
-    content: "",
-    createdAt: "",
-    updatedAt: "",
-  });
-  const [sharedNoteLink, setSharedNoteLink] = useState('http://localhost:3000/share/...');
-  const [sharedNoteDetails, setSharedNoteDetails] = useState({
-    _id: "",
-    title: "",
-    content: "",
-    createdAt: "",
-    updatedAt: "",
-  });
+  const [noteDetails, setNoteDetails] = useState(null);
+  const [sharedNoteDetails, setSharedNoteDetails] = useState(null);
+  const [sharedNoteLink, setSharedNoteLink] = useState(
+    "http://localhost:3000/share/..."
+  );
 
-  const baseUrl = "http://localhost:5000/api";
+  // Toggling States
+  const [isEditForm, setIsEditForm] = useState(false);
+  const [showNoteForm, setShowNoteForm] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  // Authentication
   const tokenString = localStorage.getItem("token");
+  const [token, setToken] = useState(tokenString);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  useEffect(() => {
+    if (token === null || token === undefined) {
+      setIsAuthenticated(false);
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [token]);
+
+  // CONSTANTS VARIABLES
+  const baseUrl = "http://localhost:5000/api";
   const options = {
     headers: {
       Authorization: token,
     },
   };
-
-  // Set the token when it is present in local storage but the state is null
-  if (!token && tokenString) {
-    setToken(tokenString);
-  }
 
   const fetchNotes = async () => {
     try {
@@ -50,6 +49,7 @@ export const CommonProvider = ({ children }) => {
       setNotes(resp.data.data);
     } catch (err) {
       console.log("Error:", err);
+      toast.error(err.resp.data.message);
     }
   };
 
@@ -62,6 +62,7 @@ export const CommonProvider = ({ children }) => {
       setPinnedNotes(resp.data.data);
     } catch (err) {
       console.log("Error:", err);
+      toast.error(err.resp.data.message);
     }
   };
 
@@ -74,19 +75,22 @@ export const CommonProvider = ({ children }) => {
       setNoteDetails(resp.data.data);
     } catch (err) {
       console.log("Error:", err);
+      toast.error(err.resp.data.message);
     }
   };
 
   const fetchSharedNoteDetails = async (link) => {
     try {
-      const resp = await axios.get(`${baseUrl}/shared_note/get/${link}`, options);
-      if (resp.status !== 200 || !resp?.data?.data) {
-        throw new Error("Somethng went wrong !!");
-      }
-      const note = resp.data.data.nid;
-      setSharedNoteDetails(note);
+      const resp = await axios.get(
+        `${baseUrl}/shared_note/get/${link}`,
+        options
+      );
+      const note = resp.data.data?.nid;
+      return note;
     } catch (err) {
       console.log("Error:", err);
+      toast.error(err.resp.data.message);
+      return null;
     }
   };
 
@@ -125,24 +129,18 @@ export const CommonProvider = ({ children }) => {
     }
   };
 
-  const deleteNote = async (id) => {
-    try {
-      const resp = await axios.delete(`${baseUrl}/note/delete/${id}`, options);
-
-      if (resp.status !== 200 || !resp?.data?.data) {
-        throw new Error("Something went wrong !!");
-      }
-
-      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
-    } catch (err) {
-      console.log("Error:", err);
-    }
-  };
-
   const resetStore = () => {
     setNotes(null);
     setPinnedNotes(null);
     setNoteDetails({
+      _id: "",
+      title: "",
+      content: "",
+      createdAt: "",
+      updatedAt: "",
+    });
+    setSharedNoteLink("http://localhost:3000/share/...");
+    setSharedNoteDetails({
       _id: "",
       title: "",
       content: "",
@@ -154,29 +152,30 @@ export const CommonProvider = ({ children }) => {
   return (
     <CommonContext.Provider
       value={{
+        token,
         baseUrl,
         options,
         isEditForm,
         showNoteForm,
         showDeleteDialog,
-        showShareDialog, 
+        showShareDialog,
         noteDetails,
-        sharedNoteDetails,
         sharedNoteLink,
+        sharedNoteDetails,
         notes,
         pinnedNotes,
-        resetStore,
+        isAuthenticated,
         setToken,
+        resetStore,
         setIsEditForm,
         setShowNoteForm,
         setShowDeleteDialog,
         setShowShareDialog,
         setNoteDetails,
-        setSharedNoteDetails,
         setSharedNoteLink,
+        setSharedNoteDetails,
         addPinnedNote,
         removePinnedNote,
-        deleteNote,
         fetchNotes,
         fetchPinnedNotes,
         fetchNoteDetails,

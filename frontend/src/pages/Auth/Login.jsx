@@ -1,13 +1,16 @@
-import axios from "axios";
 import { useContext } from "react";
+import { NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
 
+// styles
 import "../../assets/styles/auth.css";
+
+// store
 import { CommonContext } from "../../contexts/CommonContext";
 
 const Login = () => {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -19,14 +22,15 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       const resp = await axios.post(`${baseUrl}/login`, data);
-
       if (resp?.data?.token) {
         localStorage.setItem("token", resp.data.token);
         setToken(resp.data.token);
-        navigate("/");
+      } else {
+        toast.error("Login Failed");
       }
     } catch (err) {
-      console.log(err.response.data.message);
+      console.log("Error while Login: ", err);
+      toast.error(err?.response?.data?.message || "Login Failed");
     }
   };
 
@@ -36,7 +40,7 @@ const Login = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="form-container d-flex flex-column gap-4 justify-content-center"
       >
-        <h1 className="form-tite text-primary text-center">Login</h1>
+        <h1 className="form-tite text-primary text-center">Welcome Back</h1>
         <div className="d-flex flex-column gap-1 justify-content-start">
           <input
             className="input-field"
@@ -71,9 +75,12 @@ const Login = () => {
         <button type="submit" className="form-btn btn-dark w-100">
           Login
         </button>
-        <NavLink to="/signup" className="form-link">
-          Create a new account
-        </NavLink>
+        <div className="w-100">
+         <span className="form-link-text">Don't have an account?</span>
+          <NavLink to="/signup" className="form-link">
+            Create
+          </NavLink>
+        </div>
       </form>
     </div>
   );

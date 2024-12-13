@@ -1,0 +1,5 @@
+.not-found-container {
+    margin-top: 54px; /* Header Height */
+    padding: var(--gap-lg);
+    height: calc(100dvh - 55px);
+}

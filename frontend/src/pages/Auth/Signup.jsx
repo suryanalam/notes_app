@@ -1,30 +1,37 @@
-import axios from "axios";
 import { useContext } from "react";
-import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import axios from "axios";
 
+// styles
 import "../../assets/styles/auth.css";
+
+// store
 import { CommonContext } from "../../contexts/CommonContext";
 
 const Signup = () => {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const navigate = useNavigate();
 
   const { baseUrl } = useContext(CommonContext);
 
   const onSubmit = async (data) => {
     try {
       const resp = await axios.post(`${baseUrl}/signup`, data);
-
       if (resp?.data?.data) {
-        navigate("/login");
+        toast.success("Your Account is created Successfully");
+        navigate('/login');
+      } else {
+        toast.error("Signup Failed");
       }
     } catch (err) {
-      console.log(err.response.data.message);
+      console.log("Error while Signup: ", err);
+      toast.error(err?.response?.data?.message || "Signup Failed");
     }
   };
 
@@ -34,7 +41,7 @@ const Signup = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="form-container d-flex flex-column gap-4 justify-content-center"
       >
-        <h1 className="form-tite text-primary text-center">Signup</h1>
+        <h1 className="form-tite text-primary text-center">Create an Account</h1>
         <div className="d-flex flex-column gap-1 justify-content-start">
           <input
             className="input-field"
@@ -87,9 +94,12 @@ const Signup = () => {
         <button type="submit" className="form-btn btn-dark w-100">
           Signup
         </button>
-        <NavLink to="/login" className="form-link">
-          Have an existing account?
-        </NavLink>
+        <div className="w-100">
+          <span className="form-link-text">Have an existing account?</span>
+          <NavLink to="/login" className="form-link">
+            Login
+          </NavLink>
+        </div>
       </form>
     </div>
   );
