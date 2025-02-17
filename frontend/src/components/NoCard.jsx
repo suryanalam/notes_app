@@ -1,9 +1,9 @@
-import notaskImg from "../assets/images/no-task.jpg";
+import noData from "../assets/images/no-data.png";
 
 const NoCard = () => {
   return (
     <div className="no-data-div">
-      <img src={notaskImg} alt="notask-icon" className="no-task-img" />
+      <img src={noData} alt="notask-icon" className="no-task-img" />
       <h1>No Tasks Available</h1>
     </div>
   );

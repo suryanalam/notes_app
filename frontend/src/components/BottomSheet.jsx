@@ -17,7 +17,7 @@ const BottomSheet = ({
         <div className="bottomsheet-container">
           <div className="bottomsheet-header d-flex flex-align-center flex-justify-between">
             <h1 className="bottomsheet-title">{bottomSheetTitle}</h1>
-            <span onClick={handleClose}>
+            <span className="bottomsheet-close-div" onClick={handleClose}>
               <IoClose className="bottomsheet-close-icon cursor-pointer" />
             </span>
           </div>

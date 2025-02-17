@@ -10,35 +10,41 @@ import { CommonContext } from "../contexts/CommonContext";
 // components
 import Card from "../components/Card";
 import Loader from "../components/Loader";
+import EmptyNotes from "../components/EmptyNotes";
 
 const Home = () => {
-  const { notes, pinnedNotes, fetchNotes, fetchPinnedNotes, setShowNoteForm } =
+  const { setShowNoteForm, notes, pinnedNotes, fetchNotes, fetchPinnedNotes } =
     useContext(CommonContext);
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isNotesDataEmpty, setIsNotesDataEmpty] = useState(false);
 
   useEffect(() => {
-    async function fetch() {
-      setLoading(true);
-      if (!notes) {
-        await fetchNotes();
-      }
-      if (!pinnedNotes) {
-        await fetchPinnedNotes();
-      }
-      setLoading(false);
-    }
+    const fetch = async () => {
+      setIsLoading(true);
+      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
+      setIsLoading(false);
+    };
 
     fetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!notes?.length) {
+      setIsNotesDataEmpty(true);
+    } else {
+      setIsNotesDataEmpty(false);
+    }
+  }, [notes, pinnedNotes]);
+
   return (
     <>
-      {loading ? (
-        <Loader />
+      {isLoading && <Loader />}
+      {isNotesDataEmpty ? (
+        <EmptyNotes />
       ) : (
-        <div className="notes-container w-100 d-grid grid-col-1 p gap-3">
+        <div className="notes-container w-100 d-grid grid-col-1 gap-3">
           {pinnedNotes?.map((pinnedNote) => (
             <Card pinnedNote={pinnedNote} key={pinnedNote._id} />
           ))}

@@ -1,0 +1,24 @@
+.loader-backdrop {
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 999;
+}
+
+.loader {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 3px solid var(--clr-gray-200);
+  border-top: 3px solid var(--clr-primary);
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

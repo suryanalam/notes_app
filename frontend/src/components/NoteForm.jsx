@@ -1,7 +1,5 @@
 import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import axios from "axios";
 
 // custom hooks
 import useDevice from "../hooks/useDevice";
@@ -14,6 +12,7 @@ import Dialog from "./Dialog";
 import BottomSheet from "./BottomSheet";
 
 const NoteForm = () => {
+  const { device } = useDevice();
   const {
     register,
     reset,
@@ -21,59 +20,20 @@ const NoteForm = () => {
     setValue,
     formState: { errors },
   } = useForm();
-
   const {
-    baseUrl,
-    options,
-    noteDetails,
-    setNoteDetails,
-    showNoteForm,
-    setShowNoteForm,
     isEditForm,
     setIsEditForm,
-    fetchNotes,
-    fetchPinnedNotes,
+    showNoteForm,
+    setShowNoteForm,
+    noteDetails,
+    createNote,
+    updateNote,
   } = useContext(CommonContext);
-
-  const { device } = useDevice();
 
   const handleCloseForm = () => {
     reset();
     setShowNoteForm(false);
-    if (isEditForm) {
-      setIsEditForm(false);
-    }
-  };
-
-  const createNote = async (payload) => {
-    try {
-      await axios.post(`${baseUrl}/note/create`, payload, options);
-      toast.success("Note Created Successfully");
-      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
-    } catch (err) {
-      console.log("Error:", err);
-      toast.error("Error while creating note");
-    } finally {
-      handleCloseForm();
-    }
-  };
-
-  const updateNote = async (id, payload) => {
-    try {
-      const resp = await axios.put(
-        `${baseUrl}/note/update/${id}`,
-        payload,
-        options
-      );
-      setNoteDetails({ ...resp.data.data });
-      toast.success("Note Updated Successfully");
-      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
-    } catch (err) {
-      console.log("Error:", err);
-      toast.error("Error while updating note");
-    } finally {
-      handleCloseForm();
-    }
+    if (isEditForm) setIsEditForm(false);
   };
 
   const onSubmit = async (data) => {
@@ -81,14 +41,15 @@ const NoteForm = () => {
     const payload = { title, content };
 
     if (isEditForm) {
-      updateNote(noteDetails?._id,payload);
-      return;
+      await updateNote(noteDetails?.id, payload);
+    } else {
+      await createNote(payload);
     }
 
-    await createNote(payload);
+    reset();
   };
 
-  // set the form values with note details if the edit form is opened
+  // set the form values with note details
   useEffect(() => {
     if (isEditForm && noteDetails) {
       setValue("title", noteDetails?.title);
@@ -147,7 +108,7 @@ const NoteForm = () => {
             </div>
             <div className="d-flex gap-2">
               <button
-                className="btn w-100 btn-outline"
+                className="btn btn-outline w-100"
                 type="reset"
                 onClick={handleCloseForm}
               >
@@ -209,7 +170,7 @@ const NoteForm = () => {
             </div>
             <div className="d-flex gap-2">
               <button
-                className="btn w-100 btn-outline"
+                className="btn btn-outline w-100"
                 type="reset"
                 onClick={handleCloseForm}
               >

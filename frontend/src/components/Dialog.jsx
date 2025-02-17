@@ -12,7 +12,7 @@ const Dialog = ({ children, showDialog, dialogTitle, handleClose }) => {
         <div className="dialog-container">
           <div className="dialog-header d-flex flex-align-center flex-justify-between">
             <h1 className="dialog-title">{dialogTitle}</h1>
-            <span onClick={handleClose}>
+            <span className="dialog-close-div" onClick={handleClose}>
               <IoClose className="dialog-close-icon cursor-pointer" />
             </span>
           </div>

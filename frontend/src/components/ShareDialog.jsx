@@ -1,8 +1,6 @@
 import "../assets/styles/shareDialog.css";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import axios from "axios";
 
 // icons
 import { FaLink } from "react-icons/fa6";
@@ -11,118 +9,58 @@ import { MdInfoOutline } from "react-icons/md";
 // store
 import { CommonContext } from "../contexts/CommonContext";
 
-// components
-import Dialog from "./Dialog";
-
 // helpers
 import generateHexCode from "../helpers/generateHexCode";
+import copyToClipboard from "../helpers/copyToClipboard";
+
+// components
+import Dialog from "./Dialog";
 
 const ShareDialog = () => {
   const params = useParams();
   const {
-    baseUrl,
-    options,
     showShareDialog,
     setShowShareDialog,
     sharedNoteLink,
-    setSharedNoteLink,
+    getSharedNote,
+    createSharedNote,
   } = useContext(CommonContext);
 
-  const [isLinkExist, setIsLinkExist] = useState(false);
   const [btnText, setBtnText] = useState("Generate Link");
+  const [isLinkExist, setIsLinkExist] = useState(false);
   const [isLinkGenerating, setIsLinkGenerating] = useState(false);
 
-  const handleCloseDialog = () => {
-    setShowShareDialog(false);
-  };
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        console.log("Text copied to clipboard");
-      })
-      .catch((err) => {
-        console.error("Failed to copy text: ", err);
-      });
-  };
-
-  const createSharedNote = async (payload) => {
-    try {
-      setIsLinkGenerating(true);
-      const resp = await axios.post(
-        `${baseUrl}/shared_note/create`,
-        payload,
-        options
-      );
-
-      const link = resp.data.data?.link;
-      setSharedNoteLink(`http://localhost:3000/share/${link}`);
-      setIsLinkExist(true);
-    } catch (err) {
-      console.log("Error:", err);
-      toast.error('Error while generating link');
-    } finally {
-      setIsLinkGenerating(false);
-    }
-  };
-
-  const handleClick = () => {
+  const handleClick = async () => {
     if (isLinkExist) {
       copyToClipboard(sharedNoteLink);
-    } else {
-      // generate a 16 digit hexa-decimal code
-      let hexDecCode = generateHexCode();
-      const payload = {
-        nid: params?.id,
-        link: hexDecCode,
-      };
-
-      createSharedNote(payload);
+      setBtnText('Copied');
+      return;
     }
+
+    let hexCode = generateHexCode();
+    const payload = {
+      nid: params?.id,
+      link: hexCode,
+    };
+    setIsLinkGenerating(true);
+    const resp = await createSharedNote(payload);
+    if (resp) setIsLinkExist(true);
+    setIsLinkGenerating(false);
   };
 
+  // check if the shareable link has been generated or not
   useEffect(() => {
-    // check if the shareable link for the note has been generated or not
     const findSharedNote = async () => {
-      try {
-        const resp = await axios.get(
-          `${baseUrl}/shared_note/find/${params?.id}`,
-          options
-        );
-
-        if (resp.status !== 200) {
-          throw new Error("Somethng went wrong !!");
-        }
-
-        // if link exist, set the states accordingly to update DOM
-        let link = resp.data.data?.link;
-
-        if (link) {
-          link = `http://localhost:3000/share/${link}`;
-          setSharedNoteLink(link);
-          setIsLinkExist(true);
-        } else {
-          setSharedNoteLink("http://localhost:3000/share/...");
-          setIsLinkExist(false);
-        }
-      } catch (err) {
-        console.log("Error:", err);
-      }
+      const resp = await getSharedNote(params?.id);
+      if (resp) setIsLinkExist(true);
     };
 
-    if (showShareDialog) {
-      findSharedNote();
-    }
-
-    return () => {
-      setSharedNoteLink("http://localhost:3000/share/...");
-      setIsLinkExist(false);
-    };
-
+    // trigger this api only when share dialog is opened
+    if(showShareDialog) findSharedNote();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showShareDialog]);
 
+  // update the button based on the toggling states
   useEffect(() => {
     if (isLinkGenerating) {
       setBtnText("Generating...");
@@ -131,17 +69,13 @@ const ShareDialog = () => {
     } else {
       setBtnText("Generate Link");
     }
-
-    return () => {
-      setBtnText("Generate Link");
-    };
   }, [isLinkExist, isLinkGenerating]);
 
   return (
     <Dialog
       showDialog={showShareDialog}
       dialogTitle="Share Note"
-      handleClose={handleCloseDialog}
+      handleClose={() => setShowShareDialog(false)}
     >
       <div className="w-100 d-flex flex-column gap-4 flex-align-start flex-justify-center">
         <p className="share-text">

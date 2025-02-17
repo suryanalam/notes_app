@@ -40,7 +40,7 @@ const Login = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="form-container d-flex flex-column gap-4 justify-content-center"
       >
-        <h1 className="form-tite text-primary text-center">Welcome Back</h1>
+        <h1 className="form-tite text-primary text-center">Welcome Back!</h1>
         <div className="d-flex flex-column gap-1 justify-content-start">
           <input
             className="input-field"

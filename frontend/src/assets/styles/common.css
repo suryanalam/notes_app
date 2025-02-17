@@ -32,7 +32,7 @@
 
 .text-red {
   color: #f00;
-  letter-spacing: .5px;
+  letter-spacing: 0.5px;
   font-size: var(--fs-md);
 }
 
@@ -42,9 +42,9 @@
   background-color: var(--clr-primary);
 }
 
-.btn-outline{
+.btn-outline {
   color: var(--clr-white);
-  border-color: var(--clr-white);
+  border-color: var(--clr-gray-200);
   background-color: transparent;
 }
 
@@ -68,19 +68,6 @@
 
 .cursor-pointer {
   cursor: pointer;
-}
-
-.loader-backdrop{
-  top: 0;
-  left: 0;
-  background-color: var(--clr-black);
-  opacity: 0.8;
-  z-index: 999;
-}
-
-.loader-backdrop > p {
-  font-size: var(--fs-xl);
-  font-weight: var(--font-weight-semibold);
 }
 
 @keyframes fade-in {

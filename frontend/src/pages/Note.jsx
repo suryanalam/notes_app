@@ -12,6 +12,9 @@ import { FiTrash2 } from "react-icons/fi";
 // store
 import { CommonContext } from "../contexts/CommonContext";
 
+// helpers
+import copyToClipboard from "../helpers/copyToClipboard";
+
 // components
 import Loader from "../components/Loader";
 import ShareDialog from "../components/ShareDialog";
@@ -20,35 +23,20 @@ import DeleteDialog from "../components/DeleteDialog";
 const Note = () => {
   const params = useParams();
   const navigate = useNavigate();
-
   const {
     noteDetails,
     setIsEditForm,
     setShowNoteForm,
     setShowShareDialog,
     setShowDeleteDialog,
-    setNoteDetails,
     fetchNoteDetails,
   } = useContext(CommonContext);
 
-  const { title, content } = noteDetails;
-
   const [loading, setLoading] = useState(false);
 
-  const copyToClipboard = () => {
-    navigator.clipboard
-      .writeText(content)
-      .then(() => {
-        console.log("Text copied to clipboard");
-      })
-      .catch((err) => {
-        console.error("Failed to copy text: ", err);
-      });
-  };
-
   const handleEdit = () => {
-    setShowNoteForm(true);
     setIsEditForm(true);
+    setShowNoteForm(true);
   };
 
   useEffect(() => {
@@ -58,68 +46,53 @@ const Note = () => {
       setLoading(false);
     };
 
-    // fetch the api only when note details doesn't exist in the store.
-    if (params?.id !== noteDetails?._id) {
-      setNoteDetails({
-        _id: "",
-        title: "",
-        content: "",
-        createdAt: "",
-        updatedAt: "",
-      });
-      fetch();
-    }
+    fetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <>
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className="note-container w-100">
-          <div className="note-details-container">
-            <h1 className="note-title">{title}</h1>
-            <p className="note-content">{content}</p>
-          </div>
-        </div>
-      )}
-
+      {loading && <Loader />}
+      <div className="note-container w-100">
+        <h1 className="note-title">{noteDetails?.title}</h1>
+        <p className="note-content">{noteDetails?.content}</p>
+      </div>
       <div className="menu-options-bg p-fixed w-100 d-flex flex-align-center flex-justify-center">
         <div className="menu-options-container w-100 d-flex flex-align-center flex-justify-around">
           <div
             className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <FiHome className="menu-icon"/> <p className="menu-text">Home</p>
+            <FiHome className="menu-icon" /> <p className="menu-text">Home</p>
           </div>
           <div
             className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
-            onClick={copyToClipboard}
+            onClick={() => copyToClipboard(noteDetails?.content)}
           >
-            <LuCopy className="menu-icon"/> <p className="menu-text">Copy</p>
+            <LuCopy className="menu-icon" /> <p className="menu-text">Copy</p>
           </div>
           <div
             className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
             onClick={handleEdit}
           >
-            <FiEdit className="menu-icon"/> <p className="menu-text">Edit</p>
+            <FiEdit className="menu-icon" /> <p className="menu-text">Edit</p>
           </div>
           <div
             className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
             onClick={() => setShowShareDialog(true)}
           >
-            <RxShare1 className="menu-icon"/> <p className="menu-text">Share</p>
+            <RxShare1 className="menu-icon" />{" "}
+            <p className="menu-text">Share</p>
           </div>
           <div
             className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
             onClick={() => setShowDeleteDialog(true)}
           >
-            <FiTrash2 className="menu-icon"/> <p className="menu-text">Delete</p>
+            <FiTrash2 className="menu-icon" />{" "}
+            <p className="menu-text">Delete</p>
           </div>
         </div>
       </div>
-      
       <ShareDialog />
       <DeleteDialog />
     </>

@@ -34,6 +34,18 @@
   font-family: var(--font-primary);
 }
 
+.bottomsheet-close-div {
+  padding: var(--gap-sm);
+  border: none;
+  border-radius: var(--br-full);
+  background-color: transparent;
+  transition: all 0.5s ease-in-out;
+}
+
+.bottomsheet-close-div:hover {
+  background-color: var(--clr-gray-200);
+}
+
 .bottomsheet-close-icon {
   width: 16px;
   height: 16px;

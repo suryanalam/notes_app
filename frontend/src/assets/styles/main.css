@@ -68,7 +68,7 @@ body {
   --clr-red: #d32424;
   --clr-black: #181818;
   --clr-white: #f5f5f5;
-  --clr-primary: #c09c10;
+  --clr-primary:  #dbb728;
   --clr-gray-100: #d5d5d5;
   --clr-gray-200: #555555;
   --clr-gray-300: #2b2b2b;
@@ -117,11 +117,13 @@ button {
   padding: var(--fs-md) var(--gap-lg);
   border-radius: var(--br-sm);
   font-size: var(--fs-lg);
+  line-height: var(--fs-xl);
   font-weight: var(--font-weight-bold);
   font-family: var(--font-primary);
   cursor: pointer;
   border: 2px solid;
   outline: 0;
+  transition: all 0.5s ease-in-out;
 }
 
 ::-webkit-scrollbar {
