@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Note from "../models/Note.js";
 import PinnedNote from "../models/PinnedNote.js";
+import SharedNote from "../models/SharedNote.js";
 
 const addNote = async (req, res) => {
   const { id: uid } = req.user;
@@ -134,6 +135,7 @@ const deleteNote = async (req, res) => {
   try {
     const deletedNote = await Note.findOneAndDelete({ _id: id });
     const deletedPinnedNote = await PinnedNote.findOneAndDelete({ nid: id });
+    await SharedNote.findOneAndDelete({ nid: id });
 
     if(deletedPinnedNote){
       res.status(200).send({

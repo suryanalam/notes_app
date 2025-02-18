@@ -31,10 +31,10 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (!notes?.length) {
-      setIsNotesDataEmpty(true);
-    } else {
+    if (notes?.length || pinnedNotes?.length) {
       setIsNotesDataEmpty(false);
+    } else {
+      setIsNotesDataEmpty(true);
     }
   }, [notes, pinnedNotes]);
 

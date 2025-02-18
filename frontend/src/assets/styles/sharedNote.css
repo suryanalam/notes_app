@@ -1,0 +1,28 @@
+.shared-note-container {
+  padding: var(--gap-xl);
+  min-height: calc(100dvh - 55px);
+}
+
+.shared-note-title {
+  padding-bottom: var(--gap-lg);
+  font-size: var(--fs-2xl);
+  font-weight: var(--font-weight-bold);
+  font-family: var(--font-primary);
+  border-bottom: 2px solid var(--clr-gray-200);
+}
+
+.shared-note-content {
+  margin-top: var(--gap-md);
+  font-size: var(--fs-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--fs-2xl);
+}
+
+.shared-note-broken-link {
+    width: 100px;
+    height: 100px;
+}
+
+.shared-note-container > button:hover {
+    border-color: var(--clr-white);
+}

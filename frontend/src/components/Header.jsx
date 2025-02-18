@@ -5,13 +5,12 @@ import { useNavigate } from "react-router-dom";
 // store
 import { CommonContext } from "../contexts/CommonContext";
 
-const Header = ({ isGuest = false }) => {
+const Header = () => {
   const navigate = useNavigate();
-  const { resetStore, isAuthenticated, setToken } = useContext(CommonContext);
+  const { resetStore, isAuthenticated } = useContext(CommonContext);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setToken(null);
     resetStore();
     navigate("/login");
   };
@@ -21,7 +20,7 @@ const Header = ({ isGuest = false }) => {
       <h1 className="logo-text cursor-pointer" onClick={() => navigate("/")}>
         JOT IT
       </h1>
-      {isGuest || !isAuthenticated ? (
+      {!isAuthenticated ? (
         <button
           className="logout-btn btn-dark"
           onClick={() => navigate("/login")}

@@ -1,6 +1,7 @@
 import "../assets/styles/note.css";
 import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // icons
 import { FiHome } from "react-icons/fi";
@@ -34,6 +35,11 @@ const Note = () => {
 
   const [loading, setLoading] = useState(false);
 
+  const handleCopy = () => {
+    copyToClipboard(noteDetails?.content);
+    toast.success('Note copied successfully !!');
+  }
+
   const handleEdit = () => {
     setIsEditForm(true);
     setShowNoteForm(true);
@@ -42,7 +48,8 @@ const Note = () => {
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
-      await fetchNoteDetails(params?.id);
+      const resp = await fetchNoteDetails(params?.id);
+      if(!resp) navigate('/');
       setLoading(false);
     };
 
@@ -67,7 +74,7 @@ const Note = () => {
           </div>
           <div
             className="menu-option d-flex gap-2 flex-align-center cursor-pointer"
-            onClick={() => copyToClipboard(noteDetails?.content)}
+            onClick={handleCopy}
           >
             <LuCopy className="menu-icon" /> <p className="menu-text">Copy</p>
           </div>

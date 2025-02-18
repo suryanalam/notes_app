@@ -22,7 +22,8 @@ const ShareDialog = () => {
     showShareDialog,
     setShowShareDialog,
     sharedNoteLink,
-    getSharedNote,
+    setSharedNoteLink,
+    findSharedNote,
     createSharedNote,
   } = useContext(CommonContext);
 
@@ -50,13 +51,21 @@ const ShareDialog = () => {
 
   // check if the shareable link has been generated or not
   useEffect(() => {
-    const findSharedNote = async () => {
-      const resp = await getSharedNote(params?.id);
+    const findNote = async () => {
+      const resp = await findSharedNote(params?.id);
       if (resp) setIsLinkExist(true);
     };
 
     // trigger this api only when share dialog is opened
-    if(showShareDialog) findSharedNote();
+    if(showShareDialog) findNote();
+
+    // cleanup function
+    return () => {
+      setIsLinkExist(false);
+      setIsLinkGenerating(false);
+      setBtnText('Generate Link');
+      setSharedNoteLink("http://localhost:3000/share/...");
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showShareDialog]);
 

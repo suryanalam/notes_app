@@ -8,15 +8,17 @@ import { RiPushpinFill } from "react-icons/ri";
 // store
 import { CommonContext } from "../contexts/CommonContext";
 
+// components
+import Loader from "../components/Loader";
+
 const Card = ({ pinnedNote, note }) => {
   const navigate = useNavigate();
-
   const { addPinnedNote, removePinnedNote } = useContext(CommonContext);
 
   const [userId, setUserId] = useState(null);
-  const [pinnedNoteId, setPinnedNoteId] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
+  const [pinnedNoteId, setPinnedNoteId] = useState(null);
   const [cardData, setCardData] = useState({
     _id: "",
     title: "",
@@ -25,52 +27,53 @@ const Card = ({ pinnedNote, note }) => {
     updatedAt: "",
   });
 
-  // fetch api's based on the type of note (pinned | un-pinned)
+  // handle api's based on the type of note (pinned | un-pinned)
   const handlePin = async (e) => {
     e.stopPropagation();
-
+    setIsLoading(true);
     if (isPinned) {
-      removePinnedNote(pinnedNoteId);
+      await removePinnedNote(pinnedNoteId);
     } else {
-      const payload = { uid: userId, nid: cardData?._id };
-      addPinnedNote(payload);
+      const payload = { uid: userId, nid: cardData?.id };
+      await addPinnedNote(payload);
     }
+    setIsLoading(false);
   };
 
   // update the card based on the type of note (pinned || un-pinned)
   useEffect(() => {
     if (pinnedNote) {
-      const { _id: pinnedNoteId, uid, nid: note } = pinnedNote;
-
+      const { _id: pinnedNoteId, uid, nid: noteDetails } = pinnedNote;
       setUserId(uid);
-      setPinnedNoteId(pinnedNoteId);
-
       setIsPinned(true);
-      setCardData({ ...note });
-    } else if (note) {
-      const { uid, ...rem } = note;
-
+      setPinnedNoteId(pinnedNoteId);
+      setCardData({ ...noteDetails, id: noteDetails._id });
+    } else {
+      const { uid, ...noteDetails } = note;
       setUserId(uid);
-      setCardData({ ...rem });
+      setCardData({ ...noteDetails, id: noteDetails._id });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div
-      className="card-bg w-100 d-flex flex-column gap-2 cursor-pointer"
-      onClick={() => navigate(`/note/${cardData?._id}`)}
-    >
-      <div className="d-flex flex-align-center flex-justify-between">
-        <h1 className="card-title">{cardData?.title}</h1>
-        <RiPushpinFill
-          className={`pin-icon ${isPinned && "pin-active"}`}
-          onClick={(e) => handlePin(e)}
-        />
+    <>
+      {isLoading && <Loader />}
+      <div
+        className="card-bg w-100 d-flex flex-column gap-2 cursor-pointer"
+        onClick={() => navigate(`/note/${cardData?.id}`)}
+      >
+        <div className="d-flex flex-align-center flex-justify-between">
+          <h1 className="card-title">{cardData?.title}</h1>
+          <RiPushpinFill
+            className={`pin-icon ${isPinned && "pin-active"}`}
+            onClick={(e) => handlePin(e)}
+          />
+        </div>
+        <p className="card-content">{cardData?.content}</p>
+        <p className="card-timestamp">{cardData?.updatedAt.split("T")[0]}</p>
       </div>
-      <p className="card-content">{cardData?.content}</p>
-      <p className="card-timestamp">{cardData?.updatedAt.split("T")[0]}</p>
-    </div>
+    </>
   );
 };
 
