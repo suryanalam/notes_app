@@ -1,0 +1,24 @@
+.tooltip-container {
+    top: 0;
+    left: 50%;
+    width: 52px;
+    display: none;
+    padding: var(--gap-sm) var(--gap-md);
+    border-radius: var(--br-sm);
+    background-color: var(--clr-gray-200);
+    transform: translate(-45%, -140%);
+  }
+
+  .tooltip-container p {
+    font-size: var(--fs-md);
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+  }
+  
+  .tooltip-arrow {
+    left: 0;
+    bottom: 0;
+    transform: translate(200%, 100%);
+    border: 5px solid var(--clr-gray-300);
+    border-top-color: var(--clr-gray-200);
+  }

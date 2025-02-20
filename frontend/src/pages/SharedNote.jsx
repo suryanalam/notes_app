@@ -38,7 +38,7 @@ const SharedNote = () => {
           <p className="shared-note-content">{sharedNoteDetails.content}</p>
         </div>
       ) : (
-        <div className="shared-note-container w-100 d-flex flex-column flex-align-center flex-justify-center gap-3">
+        <div className="shared-note-empty-container w-100 d-flex flex-column flex-align-center flex-justify-center gap-3">
           <img src={brokenLink} alt="broken link" draggable="false" className="shared-note-broken-link" />
           <h1 className="text-center">Whoops! Link was broken.</h1>
           <button className="btn btn-primary" onClick={() => navigate("/")}>

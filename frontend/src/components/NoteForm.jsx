@@ -22,6 +22,7 @@ const NoteForm = () => {
   } = useForm();
   const {
     isEditForm,
+    disableBtn,
     setIsEditForm,
     showNoteForm,
     setShowNoteForm,
@@ -41,6 +42,13 @@ const NoteForm = () => {
     const payload = { title, content };
 
     if (isEditForm) {
+      // don't trigger update api if new form values are same as previous
+      if (title === noteDetails?.title && content === noteDetails?.content) {
+        reset();
+        setIsEditForm(false);
+        setShowNoteForm(false);
+        return;
+      }
       await updateNote(noteDetails?.id, payload);
     } else {
       await createNote(payload);
@@ -110,11 +118,16 @@ const NoteForm = () => {
               <button
                 className="btn btn-outline w-100"
                 type="reset"
+                disabled={disableBtn}
                 onClick={handleCloseForm}
               >
                 Cancel
               </button>
-              <button className="btn w-100 btn-primary" type="submit">
+              <button
+                className="btn w-100 btn-primary"
+                type="submit"
+                disabled={disableBtn}
+              >
                 Submit
               </button>
             </div>
@@ -172,11 +185,16 @@ const NoteForm = () => {
               <button
                 className="btn btn-outline w-100"
                 type="reset"
+                disabled={disableBtn}
                 onClick={handleCloseForm}
               >
                 Cancel
               </button>
-              <button className="btn w-100 btn-primary" type="submit">
+              <button
+                className="btn w-100 btn-primary"
+                type="submit"
+                disabled={disableBtn}
+              >
                 Submit
               </button>
             </div>

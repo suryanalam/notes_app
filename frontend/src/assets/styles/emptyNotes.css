@@ -1,9 +1,0 @@
-.empty-container {
-  padding: 0 var(--gap-lg);
-  min-height: calc(100dvh - 58px);
-}
-
-.empty-container > img {
-  width: 100px;
-  height: 100px;
-}

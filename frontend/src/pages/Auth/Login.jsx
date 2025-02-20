@@ -1,11 +1,7 @@
+import "../../assets/styles/auth.css";
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import axios from "axios";
-
-// styles
-import "../../assets/styles/auth.css";
 
 // store
 import { CommonContext } from "../../contexts/CommonContext";
@@ -17,21 +13,10 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const { baseUrl, setToken } = useContext(CommonContext);
+  const { login, disableBtn } = useContext(CommonContext);
 
   const onSubmit = async (data) => {
-    try {
-      const resp = await axios.post(`${baseUrl}/login`, data);
-      if (resp?.data?.token) {
-        localStorage.setItem("token", resp.data.token);
-        setToken(resp.data.token);
-      } else {
-        toast.error("Login Failed");
-      }
-    } catch (err) {
-      console.log("Error while Login: ", err);
-      toast.error(err?.response?.data?.message || "Login Failed");
-    }
+    await login(data);
   };
 
   return (
@@ -45,10 +30,13 @@ const Login = () => {
           <input
             className="input-field"
             type="email"
-            pattern="[A-Za-z0-9]+@[A-Za-z]+.[A-za-z]{2,3}"
             placeholder="Email"
             {...register("email", {
               required: "Email is required",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Please enter a valid email address",
+              },
             })}
           />
           {errors.email && (
@@ -64,6 +52,12 @@ const Login = () => {
             placeholder="Password"
             {...register("password", {
               required: "Password is required",
+              pattern: {
+                value:
+                  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&_#-])[A-Za-z\d@$!%*?&_#-]{8,20}$/,
+                message:
+                  "Password must be 8-20 characters long, include uppercase, lowercase, number, and a special character.",
+              },
             })}
           />
           {errors.password && (
@@ -72,11 +66,15 @@ const Login = () => {
             </p>
           )}
         </div>
-        <button type="submit" className="form-btn btn-dark w-100">
+        <button
+          type="submit"
+          className="form-btn btn-dark w-100"
+          disabled={disableBtn}
+        >
           Login
         </button>
         <div className="w-100">
-         <span className="form-link-text">Don't have an account?</span>
+          <span className="form-link-text">Don't have an account?</span>
           <NavLink to="/signup" className="form-link">
             Create
           </NavLink>

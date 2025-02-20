@@ -1,11 +1,7 @@
-import { useContext } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import axios from "axios";
-
-// styles
 import "../../assets/styles/auth.css";
+import { useContext } from "react";
+import { NavLink } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 // store
 import { CommonContext } from "../../contexts/CommonContext";
@@ -16,23 +12,11 @@ const Signup = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const navigate = useNavigate();
 
-  const { baseUrl } = useContext(CommonContext);
+  const { signup, disableBtn } = useContext(CommonContext);
 
   const onSubmit = async (data) => {
-    try {
-      const resp = await axios.post(`${baseUrl}/signup`, data);
-      if (resp?.data?.data) {
-        toast.success("Your Account is created Successfully");
-        navigate('/login');
-      } else {
-        toast.error("Signup Failed");
-      }
-    } catch (err) {
-      console.log("Error while Signup: ", err);
-      toast.error(err?.response?.data?.message || "Signup Failed");
-    }
+    await signup(data);
   };
 
   return (
@@ -41,16 +25,21 @@ const Signup = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="form-container d-flex flex-column gap-4 justify-content-center"
       >
-        <h1 className="form-tite text-primary text-center">Create an Account</h1>
+        <h1 className="form-tite text-primary text-center">
+          Create an Account
+        </h1>
         <div className="d-flex flex-column gap-1 justify-content-start">
           <input
             className="input-field"
             type="text"
-            pattern="[A-Za-z]+(\s[A-Za-z]+)*"
             placeholder="Username"
             {...register("username", {
               required: "Username is required",
-              min: 3,
+              pattern: {
+                value: /^[a-zA-Z][a-zA-Z0-9._]{2,19}$/,
+                message:
+                  "Username must start with a letter and can contain letters, numbers, dots, and underscores (3-20 characters).",
+              },
             })}
           />
           {errors.username && (
@@ -63,10 +52,13 @@ const Signup = () => {
           <input
             className="input-field"
             type="email"
-            pattern="[A-Za-z0-9]+@[A-Za-z]+.[A-za-z]{2,3}"
             placeholder="Email"
             {...register("email", {
               required: "Email is required",
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Please enter a valid email address",
+              },
             })}
           />
           {errors.email && (
@@ -82,7 +74,12 @@ const Signup = () => {
             placeholder="Password"
             {...register("password", {
               required: "Password is required",
-              min: 6,
+              pattern: {
+                value:
+                  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&_#-])[A-Za-z\d@$!%*?&_#-]{8,20}$/,
+                message:
+                  "Password must be 8-20 characters long, include uppercase, lowercase, number, and a special character.",
+              },
             })}
           />
           {errors.password && (
@@ -91,7 +88,7 @@ const Signup = () => {
             </p>
           )}
         </div>
-        <button type="submit" className="form-btn btn-dark w-100">
+        <button type="submit" className="form-btn btn-dark w-100" disabled={disableBtn}>
           Signup
         </button>
         <div className="w-100">

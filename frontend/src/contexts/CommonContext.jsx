@@ -27,6 +27,7 @@ export const CommonProvider = ({ children }) => {
   };
 
   // Toggling States
+  const [disableBtn, setDisableBtn] = useState(false);
   const [isEditForm, setIsEditForm] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
@@ -36,10 +37,44 @@ export const CommonProvider = ({ children }) => {
   const [notes, setNotes] = useState(null);
   const [pinnedNotes, setPinnedNotes] = useState(null);
   const [noteDetails, setNoteDetails] = useState(null);
+  const [sharedNoteLink, setSharedNoteLink] = useState("");
   const [sharedNoteDetails, setSharedNoteDetails] = useState(null);
-  const [sharedNoteLink, setSharedNoteLink] = useState(
-    "http://localhost:3000/share/..."
-  );
+
+  const login = async (data) => {
+    setDisableBtn(true);
+    try {
+      const resp = await axios.post(`${baseUrl}/login`, data);
+      if (!resp?.data?.token) {
+        toast.error("Something went wrong !!");
+        return;
+      }
+      localStorage.setItem("token", resp.data.token);
+      setToken(resp.data.token);
+      setIsAuthenticated(true);
+      navigate("/");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Login Failed");
+    } finally {
+      setDisableBtn(false);
+    }
+  };
+
+  const signup = async (data) => {
+    setDisableBtn(true);
+    try {
+      const resp = await axios.post(`${baseUrl}/signup`, data);
+      if (!resp?.data?.data) {
+        toast.error("Something went wrong !!");
+        return;
+      }
+      toast.success("Your account is created successfully");
+      navigate("/login");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Signup Failed");
+    } finally {
+      setDisableBtn(false);
+    }
+  };
 
   const fetchNotes = async () => {
     try {
@@ -96,22 +131,26 @@ export const CommonProvider = ({ children }) => {
   };
 
   const createNote = async (payload) => {
+    setDisableBtn(true);
     try {
       const resp = await axios.post(`${baseUrl}/note/create`, payload, options);
       if (!resp?.data?.data) {
         toast.error("Something went wrong!!");
         return;
       }
-      setShowNoteForm(false);
       toast.success("Note Created Successfully");
-      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
       return resp.data.data;
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong!!");
+    } finally {
+      setDisableBtn(false);
+      setShowNoteForm(false);
     }
   };
 
   const updateNote = async (id, payload) => {
+    setDisableBtn(true);
     try {
       const resp = await axios.put(
         `${baseUrl}/note/update/${id}`,
@@ -122,18 +161,21 @@ export const CommonProvider = ({ children }) => {
         toast.error("Something went wrong!!");
         return;
       }
-      setIsEditForm(false);
-      setShowNoteForm(false);
       toast.success("Note updated successfully !!");
       setNoteDetails({ ...resp?.data?.data, id: resp.data.data?._id });
-      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
       return resp.data.data;
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong!!");
+    } finally {
+      setDisableBtn(false);
+      setIsEditForm(false);
+      setShowNoteForm(false);
     }
   };
 
   const deleteNote = async (id) => {
+    setDisableBtn(true);
     try {
       const resp = await axios.delete(`${baseUrl}/note/delete/${id}`, options);
       if (!resp?.data?.data) {
@@ -141,11 +183,12 @@ export const CommonProvider = ({ children }) => {
         return;
       }
       toast.success("Note deleted Successfully");
-      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
       navigate("/");
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong!!");
     } finally {
+      setDisableBtn(false);
       setShowDeleteDialog(false);
     }
   };
@@ -161,7 +204,7 @@ export const CommonProvider = ({ children }) => {
         toast.error("Something went wrong!!");
         return;
       }
-      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
       return resp.data.data;
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong!!");
@@ -178,7 +221,7 @@ export const CommonProvider = ({ children }) => {
         toast.error("Something went wrong!!");
         return;
       }
-      await Promise.all([fetchNotes(), fetchPinnedNotes()]);
+      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
       return resp.data.data;
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong!!");
@@ -195,13 +238,7 @@ export const CommonProvider = ({ children }) => {
         toast.error("Something went wrong!!");
         return;
       }
-      const link = resp.data.data?.link;
-      if (!link) {
-        setSharedNoteLink("http://localhost:3000/share/...");
-        return;
-      }
-      setSharedNoteLink(`http://localhost:3000/share/${link}`);
-      return link;
+      return resp.data.data?.link;
     } catch (err) {
       if (err?.response?.status === 404) return;
       toast.error(err?.response?.data?.message || "Something went wrong!!");
@@ -218,18 +255,19 @@ export const CommonProvider = ({ children }) => {
         toast.error("Something went wrong!!");
         return;
       }
-
       setSharedNoteDetails({
         ...resp.data.data.nid,
         id: resp.data.data.nid._id,
       });
       return resp.data.data;
     } catch (err) {
+      if (err?.response?.status === 404) return;
       toast.error(err?.response?.data?.message || "Something went wrong!!");
     }
   };
 
   const createSharedNote = async (payload) => {
+    setDisableBtn(true);
     try {
       const resp = await axios.post(
         `${baseUrl}/shared_note/create`,
@@ -238,34 +276,26 @@ export const CommonProvider = ({ children }) => {
       );
       if (!resp?.data?.data) {
         toast.error("Something went wrong!!");
+        setShowShareDialog(false);
         return;
       }
-      const link = resp.data.data?.link;
-      link && setSharedNoteLink(`http://localhost:3000/share/${link}`);
-      return link;
+      return resp.data.data?.link;
     } catch (err) {
+      setShowShareDialog(false);
       toast.error(err?.response?.data?.message || "Something went wrong!!");
+    } finally {
+      setDisableBtn(false);
     }
   };
 
   const resetStore = () => {
+    setToken(null);
+    setIsAuthenticated(false);
     setNotes(null);
     setPinnedNotes(null);
-    setNoteDetails({
-      _id: "",
-      title: "",
-      content: "",
-      createdAt: "",
-      updatedAt: "",
-    });
-    setSharedNoteLink("http://localhost:3000/share/...");
-    setSharedNoteDetails({
-      _id: "",
-      title: "",
-      content: "",
-      createdAt: "",
-      updatedAt: "",
-    });
+    setNoteDetails(null);
+    setSharedNoteLink("");
+    setSharedNoteDetails(null);
   };
 
   return (
@@ -275,6 +305,7 @@ export const CommonProvider = ({ children }) => {
         options,
         token,
         isAuthenticated,
+        disableBtn,
         isEditForm,
         showNoteForm,
         showShareDialog,
@@ -285,6 +316,8 @@ export const CommonProvider = ({ children }) => {
         sharedNoteLink,
         sharedNoteDetails,
         setToken,
+        setIsAuthenticated,
+        setDisableBtn,
         setIsEditForm,
         setShowNoteForm,
         setShowShareDialog,
@@ -292,6 +325,8 @@ export const CommonProvider = ({ children }) => {
         setNoteDetails,
         setSharedNoteLink,
         setSharedNoteDetails,
+        login,
+        signup,
         fetchNotes,
         fetchPinnedNotes,
         fetchNoteDetails,

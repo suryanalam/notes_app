@@ -1,4 +1,7 @@
 header {
+  position: fixed;
+  top: 0;
+  left: 0;
   padding: var(--gap-lg) var(--gap-xl);
   background-color: var(--clr-primary);
   color: var(--clr-gray-300);

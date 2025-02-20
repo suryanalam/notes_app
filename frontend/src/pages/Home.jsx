@@ -1,4 +1,5 @@
 import "../assets/styles/home.css";
+import noData from "../assets/images/no-data.png";
 import { useContext, useEffect, useState } from "react";
 
 // icons
@@ -10,7 +11,6 @@ import { CommonContext } from "../contexts/CommonContext";
 // components
 import Card from "../components/Card";
 import Loader from "../components/Loader";
-import EmptyNotes from "../components/EmptyNotes";
 
 const Home = () => {
   const { setShowNoteForm, notes, pinnedNotes, fetchNotes, fetchPinnedNotes } =
@@ -42,7 +42,15 @@ const Home = () => {
     <>
       {isLoading && <Loader />}
       {isNotesDataEmpty ? (
-        <EmptyNotes />
+        <div className="empty-container d-flex flex-column flex-align-center flex-justify-center gap-4">
+          <img
+            src={noData}
+            alt="empty notes"
+            className="no-task-img"
+            draggable="false"
+          />
+          <h1 className="text-center">Notes not found! Start by adding one.</h1>
+        </div>
       ) : (
         <div className="notes-container w-100 d-grid grid-col-1 gap-3">
           {pinnedNotes?.map((pinnedNote) => (

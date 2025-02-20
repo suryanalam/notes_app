@@ -20,7 +20,7 @@ const Card = ({ pinnedNote, note }) => {
   const [isPinned, setIsPinned] = useState(false);
   const [pinnedNoteId, setPinnedNoteId] = useState(null);
   const [cardData, setCardData] = useState({
-    _id: "",
+    id: "",
     title: "",
     content: "",
     createdAt: "",

@@ -1,5 +1,6 @@
 .notes-container {
-  padding: var(--gap-lg);
+  margin-top: 55px;
+  padding: var(--gap-xl);
 }
 
 .create-icon-div {
@@ -17,6 +18,15 @@
 .create-icon {
   color: var(--clr-black);
   font-size: var(--fs-3xl);
+}
+
+.empty-container {
+  height: 100dvh;
+}
+
+.empty-container > img {
+  width: 100px;
+  height: 100px;
 }
 
 @media screen and (min-width: 426px) {

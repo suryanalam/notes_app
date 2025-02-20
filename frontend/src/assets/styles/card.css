@@ -2,6 +2,12 @@
   padding: var(--gap-lg);
   border-radius: var(--gap-base);
   background-color: var(--clr-gray-300);
+  border: 2px solid var(--clr-gray-300);
+  transition: all 0.3s ease-in-out;
+}
+
+.card-bg:hover{
+  border-color: var(--clr-gray-200);
 }
 
 .card-title {
