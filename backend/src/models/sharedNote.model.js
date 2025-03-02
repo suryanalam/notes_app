@@ -12,6 +12,7 @@ const sharedNoteSchema = new mongoose.Schema(
     },
     link: {
       type: String,
+      trim: true,
       unique: true,
       required: true,
     },

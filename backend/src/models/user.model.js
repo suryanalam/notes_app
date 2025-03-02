@@ -7,18 +7,22 @@ const userSchema = new mongoose.Schema(
       trim: true,
       unique: true,
       required: true,
+      lowercase: true,
     },
     email: {
       type: String,
+      trim: true,
       unique: true,
       required: true,
-      match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$/, "is invalid"],
+      lowercase: true,
     },
     password: {
       type: String,
-      minlength: 6,
       required: true,
     },
+    refreshToken: {
+      type: String, 
+    }
   },
   { timestamps: true }
 );

@@ -8,8 +8,8 @@ import {
 // create a note router instance
 const pinnedNoteRouter = express.Router();
 
-pinnedNoteRouter.post("/create", addPinnedNote); // add task
-pinnedNoteRouter.get("/getAll", getAllPinnedNotes); // get all tasks
-pinnedNoteRouter.delete("/delete/:id", deletePinnedNote); // delete task by id
+pinnedNoteRouter.post("/", addPinnedNote);
+pinnedNoteRouter.get("/", getAllPinnedNotes);
+pinnedNoteRouter.delete("/:id", deletePinnedNote);
 
 export default pinnedNoteRouter;

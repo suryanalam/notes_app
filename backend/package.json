@@ -1,15 +1,21 @@
 {
-  "name": "backend",
+  "name": "jot_it",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "A note taking application",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "build":"npm install",
-    "start":"nodemon server.js" 
+    "build": "npm install",
+    "start": "nodemon src/index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "notes",
+    "track",
+    "MERN",
+    "CRUD",
+    "Javascript"
+  ],
+  "author": "Surya Nalam",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -20,6 +26,7 @@
     "mongoose": "^7.3.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "prettier": "^3.5.2"
   }
 }
