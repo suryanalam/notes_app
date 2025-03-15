@@ -1,158 +1,130 @@
 import mongoose from "mongoose";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import Note from "../models/note.model.js";
 import PinnedNote from "../models/pinnedNote.model.js";
 import SharedNote from "../models/sharedNote.model.js";
 
-const addNote = async (req, res) => {
-  const { id: uid } = req.user;
+const addNote = asyncHandler(async (req, res) => {
+  const uid = req?.user?.id;
   const { title, content } = req.body;
 
-  if (!uid || !title || !content) {
-    return res.status(400).send({
-      message: "Invalid input data !!",
-    });
+  if ([uid, title, content].some((field) => field?.trim() === "")) {
+    throw new ApiError(400, "Please fill the required details");
   }
 
   const data = { uid, title, content };
-
-  try {
-    const note = new Note(data);
-    const newNote = await note.save();
-
-    res.status(201).send({
-      message: "Note created successfully !!",
-      data: newNote,
-    });
-  } catch {
-    res.status(500).send({
-      message: "Error while adding a note !!",
-    });
+  const note = await Note.create(data);
+  if (!note) {
+    throw new ApiError(500, "Error while creating note");
   }
-};
 
-const getAllNotes = async (req, res) => {
-  let { id } = req.user;
-  id = new mongoose.Types.ObjectId(id);
+  res.status(201).send(new ApiResponse("Note created successfully", note));
+});
 
-  try {
-    const notesData = await Note.aggregate([
-      {
-        $match: {
-          uid: id,
-        },
-      },
-      {
-        $lookup: {
-          from: "pinned_notes",
-          localField: "_id",
-          foreignField: "nid",
-          as: "pinnedNotes",
-        },
-      },
-      {
-        $match: {
-          $expr: {
-            $eq: [
-              {
-                $size: "$pinnedNotes",
-              },
-              0,
-            ],
-          },
-        },
-      },
-      {
-        $unset: "pinnedNotes",
-      },
-      {
-        $sort: {
-          updatedAt: -1,
-        },
-      },
-    ]);
+const getAllNotes = asyncHandler(async (req, res) => {
+  let id = req?.user?.id;
 
-    res.status(200).send({
-      message: "Notes found successfully !!",
-      data: notesData,
-    });
-  } catch {
-    res.status(404).send({
-      message: "Notes not found !!",
-    });
+  if (!id ||!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid input");
   }
-};
 
-const getNote = async (req, res) => {
-  const id = req.params.id;
-
-  try {
-    const noteDetails = await Note.findOne({ _id: id });
-
-    res.status(200).send({
-      message: "Note found successfully !!",
-      data: noteDetails,
-    });
-  } catch {
-    return res.status(404).send({
-      message: "Note not found !!",
-    });
+  const notes = await Note.aggregate([
+    {
+      $match: {
+        uid: new mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $lookup: {
+        from: "pinned_notes",
+        localField: "_id",
+        foreignField: "nid",
+        as: "pinnedNotes",
+      },
+    },
+    {
+      $match: {
+        $expr: {
+          $eq: [
+            {
+              $size: "$pinnedNotes",
+            },
+            0,
+          ],
+        },
+      },
+    },
+    {
+      $unset: "pinnedNotes",
+    },
+    {
+      $sort: {
+        updatedAt: -1,
+      },
+    },
+  ]);
+  if (!notes) {
+    throw new ApiError(500, "Error while fetching notes");
   }
-};
+
+  res.status(200).send(new ApiResponse("Notes found successfully", notes));
+});
+
+const getNote = asyncHandler(async (req, res) => {
+  const id = req?.params?.id;
+
+  if (!id) {
+    throw new ApiError(400, "Invalid input");
+  }
+
+  const note = await Note.findById(id);
+  if (!note) {
+    throw new ApiError(404, "Note not found");
+  }
+
+  res.status(200).send(new ApiResponse("Note found successfully", note));
+});
 
 const updateNote = async (req, res) => {
-  const id = req.params.id;
+  const id = req?.params?.id;
+
+  if (!id) {
+    throw new ApiError(400, "Invalid input");
+  }
+
   const { title, content } = req.body;
 
-  if (!title || !content) {
-    return res.status(400).send({
-      message: "Invalid input data !!",
-    });
+  if ([title, content].some((field) => field?.trim() === "")) {
+    throw new ApiError(400, "Please fill the required details");
   }
 
   const data = { title, content };
-
-  try {
-    const updatedNote = await Note.findOneAndUpdate(
-      { _id: id },
-      { $set: data },
-      { new: true }
-    );
-
-    res.status(200).send({
-      message: "Note updated successfully !!",
-      data: updatedNote,
-    });
-  } catch {
-    res.status(500).send({
-      message: "Error while updating a note !!",
-    });
+  const note = await Note.findByIdAndUpdate(id, { $set: data }, { new: true });
+  if (!note) {
+    throw new ApiError(404, "Error while updating the note");
   }
+
+  res.status(200).send(new ApiResponse("Note updated successfully", note));
 };
 
-const deleteNote = async (req, res) => {
-  const id = req.params.id;
+const deleteNote = asyncHandler(async (req, res) => {
+  const id = req?.params?.id;
 
-  try {
-    const deletedNote = await Note.findOneAndDelete({ _id: id });
-    const deletedPinnedNote = await PinnedNote.findOneAndDelete({ nid: id });
-    await SharedNote.findOneAndDelete({ nid: id });
-
-    if (deletedPinnedNote) {
-      res.status(200).send({
-        message: "Pinned Note deleted successfully !!",
-        data: deletedNote,
-      });
-    } else if (deletedNote) {
-      res.status(200).send({
-        message: "Note deleted successfully !!",
-        data: deletedNote,
-      });
-    }
-  } catch {
-    res.status(500).send({
-      message: "Error while deleting a note !!",
-    });
+  if (!id) {
+    throw new ApiError(400, "Invalid input");
   }
-};
+
+  const note = await Note.findByIdAndDelete(id);
+  await PinnedNote.findOneAndDelete({ nid: id });
+  await SharedNote.findOneAndDelete({ nid: id });
+
+  if(!note) {
+    throw new ApiError(404, "Error while deleting the note");
+  }
+
+  res.status(200).send(new ApiResponse("Note deleted successfully", note));
+});
 
 export { addNote, getAllNotes, getNote, updateNote, deleteNote };

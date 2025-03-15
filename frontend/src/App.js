@@ -7,8 +7,8 @@ import ProtectedRoutes from "./middlewares/ProtectedRoutes";
 import AuthenticateRoutes from "./middlewares/AuthenticateRoutes";
 
 // pages
-import Signup from "./pages/auth/Signup";
-import Login from "./pages/auth/Login";
+import Signup from "./pages/Auth/Signup";
+import Login from "./pages/Auth/Login";
 import Home from "./pages/Home";
 import Note from "./pages/Note";
 import SharedNote from "./pages/SharedNote";

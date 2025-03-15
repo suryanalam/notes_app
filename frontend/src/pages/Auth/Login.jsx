@@ -8,6 +8,7 @@ import { CommonContext } from "../../contexts/CommonContext";
 
 const Login = () => {
   const {
+    reset,
     register,
     handleSubmit,
     formState: { errors },
@@ -17,6 +18,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     await login(data);
+    reset();
   };
 
   return (
@@ -31,6 +33,7 @@ const Login = () => {
             className="input-field"
             type="email"
             placeholder="Email"
+            disabled={disableBtn}
             {...register("email", {
               required: "Email is required",
               pattern: {
@@ -50,6 +53,7 @@ const Login = () => {
             className="input-field"
             type="password"
             placeholder="Password"
+            disabled={disableBtn}
             {...register("password", {
               required: "Password is required",
               pattern: {

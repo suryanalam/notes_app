@@ -52,7 +52,7 @@ const Home = () => {
           <h1 className="text-center">Notes not found! Start by adding one.</h1>
         </div>
       ) : (
-        <div className="notes-container w-100 d-grid grid-col-1 gap-3">
+        <div className="notes-container w-100 d-grid grid-col-1 gap-2">
           {pinnedNotes?.map((pinnedNote) => (
             <Card pinnedNote={pinnedNote} key={pinnedNote._id} />
           ))}

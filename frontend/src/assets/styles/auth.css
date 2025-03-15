@@ -50,11 +50,6 @@
 .form-btn {
   margin: var(--gap-sm) auto;
   border-color: var(--clr-gray-200);
-  transition: all 0.2s ease-in-out;
-}
-
-.form-btn:hover {
-  border-color: var(--clr-gray-100);
 }
 
 .form-link-text, .form-link {

@@ -36,9 +36,13 @@ const Note = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleCopy = () => {
-    copyToClipboard(noteDetails?.content);
-    toast.success("Note copied successfully !!");
+  const handleCopy = async () => {
+    const isCopied = await copyToClipboard(noteDetails?.content);
+    if(isCopied) {
+      toast.success("Note copied successfully");
+    } else{
+      toast.error("Failed to copy note");
+    }
   };
 
   const handleEdit = () => {

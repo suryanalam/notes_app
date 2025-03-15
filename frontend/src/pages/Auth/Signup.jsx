@@ -8,6 +8,7 @@ import { CommonContext } from "../../contexts/CommonContext";
 
 const Signup = () => {
   const {
+    reset,
     register,
     handleSubmit,
     formState: { errors },
@@ -17,6 +18,7 @@ const Signup = () => {
 
   const onSubmit = async (data) => {
     await signup(data);
+    reset();
   };
 
   return (
@@ -33,12 +35,21 @@ const Signup = () => {
             className="input-field"
             type="text"
             placeholder="Username"
+            disabled={disableBtn}
             {...register("username", {
               required: "Username is required",
               pattern: {
-                value: /^[a-zA-Z][a-zA-Z0-9._]{2,19}$/,
+                value: /^[a-z][a-z0-9_]{3,15}$/,
                 message:
-                  "Username must start with a letter and can contain letters, numbers, dots, and underscores (3-20 characters).",
+                  "Username must start with a letter and contain only lower case letters, numbers and underscore.",
+              },
+              minLength: {
+                value: 4,
+                message: "Username must contain atleast 4 characters."
+              },
+              maxLength: {
+                value: 16,
+                message: "Username must contain less than or equal to 16 characters."
               },
             })}
           />
@@ -53,6 +64,7 @@ const Signup = () => {
             className="input-field"
             type="email"
             placeholder="Email"
+            disabled={disableBtn}
             {...register("email", {
               required: "Email is required",
               pattern: {
@@ -72,13 +84,22 @@ const Signup = () => {
             className="input-field"
             type="password"
             placeholder="Password"
+            disabled={disableBtn}
             {...register("password", {
               required: "Password is required",
               pattern: {
                 value:
                   /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&_#-])[A-Za-z\d@$!%*?&_#-]{8,20}$/,
                 message:
-                  "Password must be 8-20 characters long, include uppercase, lowercase, number, and a special character.",
+                  "Password should include uppercase, lowercase, number, and a special character.",
+              },
+              minLength: {
+                value: 8,
+                message: "Password must contain atleast 8 characters."
+              },
+              maxLength: {
+                value: 20,
+                message: "Password must contain less than or equal to 20 characters."
               },
             })}
           />

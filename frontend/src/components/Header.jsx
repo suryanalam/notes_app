@@ -18,7 +18,7 @@ const Header = () => {
   return (
     <header className="w-100 d-flex flex-justify-between flex-align-center">
       <h1 className="logo-text cursor-pointer" onClick={() => navigate("/")}>
-        JOT IT
+        Jotit
       </h1>
       {!isAuthenticated ? (
         <button

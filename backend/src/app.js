@@ -1,5 +1,11 @@
 import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
+
+// Config the dotenv to track ENV variables
+dotenv.config({
+  path: "./.env",
+}); 
 
 // Create an express server instance
 const app = express();
@@ -25,7 +31,7 @@ import sharedNoteRouter from "./routes/sharedNote.routes.js";
 import authenticateUser from "./middlewares/auth.middleware.js";
 
 // Utils
-import ApiError from "../utils/ApiError.js";
+import ApiError from "./utils/ApiError.js";
 
 // Define API endpoints
 app.use("/api", userRouter);
@@ -46,7 +52,7 @@ app.use((err, _req, res, _next) => {
       // Handle generic errors
       res.status(500).json({
           success: false,
-          message: 'Internal Server Error',
+          message: err.message || "Internal server error",
           data: null
       });
   }

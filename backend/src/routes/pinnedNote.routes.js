@@ -5,7 +5,6 @@ import {
   deletePinnedNote,
 } from "../controllers/pinnedNote.controller.js";
 
-// create a note router instance
 const pinnedNoteRouter = express.Router();
 
 pinnedNoteRouter.post("/", addPinnedNote);

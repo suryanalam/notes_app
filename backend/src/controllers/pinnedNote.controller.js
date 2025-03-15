@@ -1,65 +1,56 @@
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import PinnedNote from "../models/pinnedNote.model.js";
 
-const addPinnedNote = async (req, res) => {
+const addPinnedNote = asyncHandler(async (req, res) => {
   const { nid, uid } = req.body;
 
   if (!nid || !uid) {
-    return res.status(400).send({
-      message: "Invalid input data !!",
-    });
+    throw new ApiError(400, "Invalid input");
   }
 
-  try {
-    const pinnedNote = new PinnedNote({ nid, uid });
-    const newPinnedNote = await pinnedNote.save();
-
-    res.status(201).send({
-      message: "Pinned the note successfully !!",
-      data: newPinnedNote,
-    });
-  } catch {
-    res.status(500).send({
-      message: "Error while adding a note !!",
-    });
+  const pinnedNote = await PinnedNote.create({ nid, uid });
+  if (!pinnedNote) {
+    throw new ApiError(500, "Error while creating pinned note");
   }
-};
 
-const getAllPinnedNotes = async (req, res) => {
-  const { id } = req.user;
+  res
+    .status(201)
+    .send(new ApiResponse("Pinned the note successfully", pinnedNote));
+});
 
-  try {
-    const pinnedNotesData = await PinnedNote.find({ uid: id })
-      .populate("nid")
-      .sort({ createdAt: -1 });
+const getAllPinnedNotes = asyncHandler(async (req, res) => {
+  const id = req?.user?.id;
 
-    res.status(200).send({
-      message: "Pinned notes found successfully !!",
-      data: pinnedNotesData,
-    });
-  } catch {
-    res.status(404).send({
-      message: "Pinned notes not found !!",
-    });
+  if (!id) {
+    throw new ApiError(400, "Invalid input");
   }
-};
+
+  const pinnedNotes = await PinnedNote.find({ uid: id })
+    .populate("nid")
+    .sort({ createdAt: -1 });
+  if (!pinnedNotes) {
+    throw new ApiError(500, "Error while fetching pinned notes");
+  }
+
+  res
+    .status(200)
+    .send(new ApiResponse("Pinned notes found successfully", pinnedNotes));
+});
 
 const deletePinnedNote = async (req, res) => {
-  const id = req.params.id;
+  const id = req?.params?.id;
 
-  try {
-    const deletedPinnedNote = await PinnedNote.findOneAndDelete({
-      _id: id,
-    });
-
-    res.status(200).send({
-      message: "Pinned note deleted successfully !!",
-      data: deletedPinnedNote,
-    });
-  } catch {
-    return res.status(500).send({
-      message: "Error while deleting the pinned note !!",
-    });
+  if (!id) {
+    throw new ApiError(400, "Invalid input");
   }
+
+  const pinnedNote = await PinnedNote.findByIdAndDelete(id);
+
+  res
+    .status(200)
+    .send(new ApiResponse("Pinned note deleted successfully !!", pinnedNote));
 };
 
 export { addPinnedNote, getAllPinnedNotes, deletePinnedNote };

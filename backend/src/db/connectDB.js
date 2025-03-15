@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    const db = await mongoose.connect(`${process.env.MONGO_URI}/${process.env.DB_NAME}`, {
+    await mongoose.connect(`${process.env.MONGO_URI}/${process.env.DB_NAME}`, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log(`DB Connected !! DB HOST: ${db.connection.host}`);
+    console.log("DB Connected");
   } catch (error) {
-    console.log("DB Connection Failed !! \n", error);
+    console.log("DB Connection Failed \n", error);
     process.exit(1);
   }
 };

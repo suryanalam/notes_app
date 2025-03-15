@@ -112,7 +112,7 @@ button:disabled{
   color: var(--clr-white);
   border-color: var(--clr-gray-200);
   background-color: var(--clr-gray-200);
-  cursor: not-allowed;
+  pointer-events: none;
 }
 
 ::-webkit-scrollbar {

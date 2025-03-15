@@ -11,7 +11,7 @@
   height: 45px;
   border-radius: 50%;
   border: 3px solid var(--clr-gray-200);
-  border-top: 3px solid var(--clr-primary);
+  border-top-color: var(--clr-primary);
   animation: spin 0.5s linear infinite;
 }
 
