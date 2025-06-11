@@ -8,9 +8,9 @@ import { MdInfoOutline } from "react-icons/md";
 // store
 import { CommonContext } from "../contexts/CommonContext";
 
-// helpers
-import generateHexCode from "../helpers/generateHexCode";
-import copyToClipboard from "../helpers/copyToClipboard";
+// utils
+import generateHexCode from "../utils/generateHexCode";
+import copyToClipboard from "../utils/copyToClipboard";
 
 // components
 import Dialog from "./Dialog";
@@ -18,8 +18,8 @@ import Dialog from "./Dialog";
 const ShareDialog = () => {
   const params = useParams();
   const {
-    disableBtn,
-    setDisableBtn,
+    apiInProgress,
+    setApiInProgress,
     showShareDialog,
     setShowShareDialog,
     sharedNoteLink,
@@ -35,12 +35,12 @@ const ShareDialog = () => {
   const handleClick = async () => {
     if (isLinkExist) {
       copyToClipboard(sharedNoteLink);
-      setDisableBtn(true);
+      setApiInProgress(true);
       setBtnText("Copied");
       text.current.select();
       setTimeout(() => {
         window.getSelection().removeAllRanges();
-        setDisableBtn(false);
+        setApiInProgress(false);
         setBtnText("Copy Link");
       }, 2000);
       return;
@@ -143,7 +143,7 @@ const ShareDialog = () => {
           </div>
           <button
             className="btn btn-primary w-100 dialog-btn d-flex gap-1 flex-align-center flex-justify-center"
-            disabled={disableBtn}
+            disabled={apiInProgress}
             onClick={handleClick}
           >
             {btnText}

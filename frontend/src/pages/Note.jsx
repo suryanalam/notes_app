@@ -13,8 +13,8 @@ import { FiTrash2 } from "react-icons/fi";
 // store
 import { CommonContext } from "../contexts/CommonContext";
 
-// helpers
-import copyToClipboard from "../helpers/copyToClipboard";
+// utils
+import copyToClipboard from "../utils/copyToClipboard";
 
 // components
 import Loader from "../components/Loader";

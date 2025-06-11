@@ -10,7 +10,7 @@ import Dialog from "./Dialog";
 
 const DeleteDialog = () => {
   const params = useParams();
-  const { disableBtn, showDeleteDialog, setShowDeleteDialog, deleteNote } =
+  const { apiInProgress, showDeleteDialog, setShowDeleteDialog, deleteNote } =
     useContext(CommonContext);
 
   return (
@@ -26,15 +26,15 @@ const DeleteDialog = () => {
         <div className="w-100 d-flex gap-2 flex-align-center flex-justify-end">
           <button
             className="btn btn-outline dialog-btn"
-            disabled={disableBtn}
+            disabled={apiInProgress}
             onClick={() => setShowDeleteDialog(false)}
           >
             Cancel
           </button>
           <button
             className="btn btn-red dialog-btn"
-            disabled={disableBtn}
-            onClick={()=> deleteNote(params?.id)}
+            disabled={apiInProgress}
+            onClick={() => deleteNote(params?.id)}
           >
             Delete
           </button>

@@ -14,7 +14,7 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const { login, disableBtn } = useContext(CommonContext);
+  const { login,apiInProgress } = useContext(CommonContext);
 
   const onSubmit = async (data) => {
     await login(data);
@@ -33,7 +33,7 @@ const Login = () => {
             className="input-field"
             type="email"
             placeholder="Email"
-            disabled={disableBtn}
+            disabled={apiInProgress}
             {...register("email", {
               required: "Email is required",
               pattern: {
@@ -53,7 +53,7 @@ const Login = () => {
             className="input-field"
             type="password"
             placeholder="Password"
-            disabled={disableBtn}
+            disabled={apiInProgress}
             {...register("password", {
               required: "Password is required",
               pattern: {
@@ -73,7 +73,7 @@ const Login = () => {
         <button
           type="submit"
           className="form-btn btn-dark w-100"
-          disabled={disableBtn}
+          disabled={apiInProgress}
         >
           Login
         </button>

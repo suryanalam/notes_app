@@ -1,16 +1,14 @@
 import { useState, useEffect, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import { Api } from "../api/api.js";
 
 export const CommonContext = createContext();
 
 export const CommonProvider = ({ children }) => {
   const navigate = useNavigate();
 
-  // Authentication
-  const tokenString = localStorage.getItem("token");
-  const [token, setToken] = useState(tokenString);
+  const token = localStorage.getItem("accessToken");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   useEffect(() => {
     if (token) {
@@ -18,166 +16,159 @@ export const CommonProvider = ({ children }) => {
     } else {
       setIsAuthenticated(false);
     }
-  }, [token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // CONSTANTS
-  const baseUrl = "http://localhost:5000/api";
-  const options = {
-    headers: { Authorization: `Bearer ${token}` },
-  };
-
-  // Toggling States
-  const [disableBtn, setDisableBtn] = useState(false);
   const [isEditForm, setIsEditForm] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
+  const [apiInProgress, setApiInProgress] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // Notes Data
   const [notes, setNotes] = useState(null);
   const [pinnedNotes, setPinnedNotes] = useState(null);
   const [noteDetails, setNoteDetails] = useState(null);
-  const [sharedNoteLink, setSharedNoteLink] = useState("");
+  const [sharedNoteLink, setSharedNoteLink] = useState(null);
   const [sharedNoteDetails, setSharedNoteDetails] = useState(null);
 
-  const login = async (data) => {
-    setDisableBtn(true);
+  const signup = async (data) => {
+    setApiInProgress(true);
     try {
-      const resp = await axios.post(`${baseUrl}/login`, data);
-      if (!resp?.data?.data) {
-        toast.error("Something went wrong");
+      const response = await Api.post(`/auth/signup`, data);
+      if (!response?.data?.data) {
+        toast.error("Response not found while signup");
         return;
       }
-      localStorage.setItem("token", resp.data.data?.accessToken);
-      setToken(resp?.data.data?.accessToken);
+
+      const { user, accessToken, refreshToken } = response.data.data;
+
+      localStorage.setItem("currentUser", user);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      setIsAuthenticated(true);
+      navigate("/");
+      toast.success("Your account is created successfully");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Signup Failed");
+    } finally {
+      setApiInProgress(false);
+    }
+  };
+
+  const login = async (data) => {
+    setApiInProgress(true);
+    try {
+      const response = await Api.post(`/auth/login`, data);
+      if (!response?.data?.data) {
+        toast.error("Response not found while login");
+        return;
+      }
+      const { user, accessToken, refreshToken } = response.data.data;
+
+      localStorage.setItem("currentUser", user);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
       setIsAuthenticated(true);
       navigate("/");
     } catch (err) {
       toast.error(err?.response?.data?.message || "Login Failed");
     } finally {
-      setDisableBtn(false);
+      setApiInProgress(false);
     }
   };
 
-  const signup = async (data) => {
-    setDisableBtn(true);
+  const logout = async () => {
+    setApiInProgress(true);
     try {
-      const resp = await axios.post(`${baseUrl}/signup`, data);
-      if (!resp?.data?.data) {
-        toast.error("Something went wrong");
-        return;
-      }
-      toast.success("Your account is created successfully");
+      await Api.put(`/auth/logout`);
+      localStorage.removeItem("currentUser");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      resetStore();
       navigate("/login");
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Signup Failed");
+      toast.error(err?.response?.data?.message || "Logout Failed");
     } finally {
-      setDisableBtn(false);
+      setApiInProgress(false);
     }
   };
 
   const fetchNotes = async () => {
     try {
-      const resp = await axios.get(`${baseUrl}/note`, options);
-      if (!resp?.data?.data) {
-        toast.error("Notes not found");
-        return;
-      }
+      const resp = await Api.get(`/note`);
       setNotes(resp?.data?.data);
     } catch (err) {
+      if (err?.response?.status === 401) return;
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
 
   const fetchPinnedNotes = async () => {
     try {
-      const resp = await axios.get(`${baseUrl}/pinned_note`, options);
-      if (!resp?.data?.data) {
-        toast.error("Pinned Notes not found");
-        return;
-      }
+      const resp = await Api.get(`/pinned_note`);
       setPinnedNotes(resp?.data?.data);
     } catch (err) {
+      if (err?.response?.status === 401) return;
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
 
   const fetchNoteDetails = async (id) => {
     try {
-      const resp = await axios.get(`${baseUrl}/note/${id}`, options);
+      const resp = await Api.get(`/note/${id}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
-      setNoteDetails({ ...resp?.data?.data, id: resp?.data?.data?._id });
-      return resp?.data?.data;
-    } catch (err) {
-      toast.error(err?.response?.data?.message || "Something went wrong");
-    }
-  };
-
-  const fetchSharedNoteDetails = async (id) => {
-    try {
-      const resp = await axios.get(`${baseUrl}/shared_note/${id}`, options);
-      if (!resp?.data?.data) {
-        toast.error("Something went wrong");
-        return;
-      }
-      setSharedNoteDetails({ ...resp?.data?.data, id: resp?.data?.data?._id });
-      return resp?.data?.data;
+      setNoteDetails({ ...resp.data.data, id: resp.data.data?._id });
+      return resp.data.data;
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
 
   const createNote = async (payload) => {
-    setDisableBtn(true);
+    setApiInProgress(true);
     try {
-      const resp = await axios.post(`${baseUrl}/note`, payload, options);
+      const resp = await Api.post(`/note`, payload);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
       toast.success("Note Created Successfully");
       await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
-      return resp?.data?.data;
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     } finally {
-      setDisableBtn(false);
+      setApiInProgress(false);
       setShowNoteForm(false);
     }
   };
 
   const updateNote = async (id, payload) => {
-    setDisableBtn(true);
+    setApiInProgress(true);
     try {
-      const resp = await axios.put(
-        `${baseUrl}/note/${id}`,
-        payload,
-        options
-      );
+      const resp = await Api.put(`/note/${id}`, payload);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
       toast.success("Note updated successfully");
-      setNoteDetails({ ...resp?.data?.data, id: resp?.data?.data?._id });
+      setNoteDetails({ ...resp.data.data, id: resp.data.data?._id });
       await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
-      return resp?.data?.data;
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     } finally {
-      setDisableBtn(false);
-      setIsEditForm(false);
+      setApiInProgress(false);
       setShowNoteForm(false);
+      setIsEditForm(false);
     }
   };
 
   const deleteNote = async (id) => {
-    setDisableBtn(true);
+    setApiInProgress(true);
     try {
-      const resp = await axios.delete(`${baseUrl}/note/${id}`, options);
+      const resp = await Api.delete(`/note/${id}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
@@ -188,24 +179,19 @@ export const CommonProvider = ({ children }) => {
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     } finally {
-      setDisableBtn(false);
+      setApiInProgress(false);
       setShowDeleteDialog(false);
     }
   };
 
   const addPinnedNote = async (payload) => {
     try {
-      const resp = await axios.post(
-        `${baseUrl}/pinned_note`,
-        payload,
-        options
-      );
+      const resp = await Api.post(`/pinned_note`, payload);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
       await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
-      return resp?.data?.data;
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
@@ -213,32 +199,25 @@ export const CommonProvider = ({ children }) => {
 
   const removePinnedNote = async (id) => {
     try {
-      const resp = await axios.delete(
-        `${baseUrl}/pinned_note/${id}`,
-        options
-      );
+      const resp = await Api.delete(`/pinned_note/${id}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
       await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
-      return resp?.data?.data;
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
 
-  const findSharedNote = async (noteId) => {
+  const findSharedNote = async (id) => {
     try {
-      const resp = await axios.get(
-        `${baseUrl}/shared_note/find/${noteId}`,
-        options
-      );
+      const resp = await Api.get(`/shared_note/find/${id}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
-      return resp?.data?.data?.link;
+      return resp.data.data?.link;
     } catch (err) {
       if (err?.response?.status === 404) return;
       toast.error(err?.response?.data?.message || "Something went wrong");
@@ -247,19 +226,15 @@ export const CommonProvider = ({ children }) => {
 
   const getSharedNote = async (link) => {
     try {
-      const resp = await axios.get(
-        `${baseUrl}/shared_note/${link}`,
-        options
-      );
+      const resp = await Api.get(`/shared_note/${link}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
       setSharedNoteDetails({
-        ...resp?.data?.data.nid,
-        id: resp?.data?.data.nid._id,
+        ...resp.data.data?.nid,
+        id: resp.data.data?.nid?._id,
       });
-      return resp?.data?.data;
     } catch (err) {
       if (err?.response?.status === 404) return;
       toast.error(err?.response?.data?.message || "Something went wrong");
@@ -267,45 +242,37 @@ export const CommonProvider = ({ children }) => {
   };
 
   const createSharedNote = async (payload) => {
-    setDisableBtn(true);
+    setApiInProgress(true);
     try {
-      const resp = await axios.post(
-        `${baseUrl}/shared_note`,
-        payload,
-        options
-      );
+      const resp = await Api.post(`/shared_note`, payload);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
-        setShowShareDialog(false);
         return;
       }
-      return resp?.data?.data?.link;
+      return resp.data.data?.link;
     } catch (err) {
-      setShowShareDialog(false);
       toast.error(err?.response?.data?.message || "Something went wrong");
     } finally {
-      setDisableBtn(false);
+      setApiInProgress(false);
+      setShowShareDialog(false);
     }
   };
 
   const resetStore = () => {
-    setToken(null);
     setIsAuthenticated(false);
     setNotes(null);
     setPinnedNotes(null);
     setNoteDetails(null);
-    setSharedNoteLink("");
+    setSharedNoteLink(null);
     setSharedNoteDetails(null);
   };
 
   return (
     <CommonContext.Provider
       value={{
-        baseUrl,
-        options,
         token,
         isAuthenticated,
-        disableBtn,
+        apiInProgress,
         isEditForm,
         showNoteForm,
         showShareDialog,
@@ -315,9 +282,8 @@ export const CommonProvider = ({ children }) => {
         noteDetails,
         sharedNoteLink,
         sharedNoteDetails,
-        setToken,
         setIsAuthenticated,
-        setDisableBtn,
+        setApiInProgress,
         setIsEditForm,
         setShowNoteForm,
         setShowShareDialog,
@@ -327,10 +293,10 @@ export const CommonProvider = ({ children }) => {
         setSharedNoteDetails,
         login,
         signup,
+        logout,
         fetchNotes,
         fetchPinnedNotes,
         fetchNoteDetails,
-        fetchSharedNoteDetails,
         createNote,
         updateNote,
         deleteNote,

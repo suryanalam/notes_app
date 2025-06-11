@@ -14,7 +14,7 @@ const Signup = () => {
     formState: { errors },
   } = useForm();
 
-  const { signup, disableBtn } = useContext(CommonContext);
+  const { signup, apiInProgress } = useContext(CommonContext);
 
   const onSubmit = async (data) => {
     await signup(data);
@@ -35,7 +35,7 @@ const Signup = () => {
             className="input-field"
             type="text"
             placeholder="Username"
-            disabled={disableBtn}
+            disabled={apiInProgress}
             {...register("username", {
               required: "Username is required",
               pattern: {
@@ -64,7 +64,7 @@ const Signup = () => {
             className="input-field"
             type="email"
             placeholder="Email"
-            disabled={disableBtn}
+            disabled={apiInProgress}
             {...register("email", {
               required: "Email is required",
               pattern: {
@@ -84,14 +84,14 @@ const Signup = () => {
             className="input-field"
             type="password"
             placeholder="Password"
-            disabled={disableBtn}
+            disabled={apiInProgress}
             {...register("password", {
               required: "Password is required",
               pattern: {
                 value:
                   /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&_#-])[A-Za-z\d@$!%*?&_#-]{8,20}$/,
                 message:
-                  "Password should include uppercase, lowercase, number, and a special character.",
+                  "Password must be 8-20 characters long, include uppercase, lowercase, number, and a special character.",
               },
               minLength: {
                 value: 8,
@@ -109,7 +109,7 @@ const Signup = () => {
             </p>
           )}
         </div>
-        <button type="submit" className="form-btn btn-dark w-100" disabled={disableBtn}>
+        <button type="submit" className="form-btn btn-dark w-100" disabled={apiInProgress}>
           Signup
         </button>
         <div className="w-100">

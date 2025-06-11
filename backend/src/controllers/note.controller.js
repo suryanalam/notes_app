@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
+
+// Utils
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+
+// Models
 import Note from "../models/note.model.js";
 import PinnedNote from "../models/pinnedNote.model.js";
 import SharedNote from "../models/sharedNote.model.js";

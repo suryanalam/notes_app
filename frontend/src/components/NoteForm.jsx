@@ -22,7 +22,7 @@ const NoteForm = () => {
   } = useForm();
   const {
     isEditForm,
-    disableBtn,
+   apiInProgress,
     setIsEditForm,
     showNoteForm,
     setShowNoteForm,
@@ -118,7 +118,7 @@ const NoteForm = () => {
               <button
                 className="btn btn-outline w-100"
                 type="reset"
-                disabled={disableBtn}
+                disabled={apiInProgress}
                 onClick={handleCloseForm}
               >
                 Cancel
@@ -126,7 +126,7 @@ const NoteForm = () => {
               <button
                 className="btn w-100 btn-primary"
                 type="submit"
-                disabled={disableBtn}
+                disabled={apiInProgress}
               >
                 Submit
               </button>
@@ -185,7 +185,7 @@ const NoteForm = () => {
               <button
                 className="btn btn-outline w-100"
                 type="reset"
-                disabled={disableBtn}
+                disabled={apiInProgress}
                 onClick={handleCloseForm}
               >
                 Cancel
@@ -193,7 +193,7 @@ const NoteForm = () => {
               <button
                 className="btn w-100 btn-primary"
                 type="submit"
-                disabled={disableBtn}
+                disabled={apiInProgress}
               >
                 Submit
               </button>
