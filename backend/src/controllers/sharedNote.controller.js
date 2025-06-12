@@ -1,37 +1,40 @@
+// Utils
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
+
+// Models
 import SharedNote from "../models/sharedNote.model.js";
 
-const getSharedNote = asyncHandler(async (req, res) => {
+const getSharedNoteByLink = asyncHandler(async (req, res) => {
   const link = req?.params?.link;
 
-  const sharedNote = await SharedNote.findOne({ link }).populate("nid");
-  if (!sharedNote) {
-    throw new ApiError(404, "Shareable link not found");
-  }
+  if (!link) throw new ApiError(404, "Invalid link");
 
-  res.status(200).send(new ApiResponse("Shearable link found", sharedNote));
+  const sharedNote = await SharedNote.findOne({ link }).populate("nid");
+  if (!sharedNote) throw new ApiError(404, "Note not found");
+
+  res.status(200).send(new ApiResponse("Note found", sharedNote));
 });
 
-const findSharedNote = asyncHandler(async (req, res) => {
-  const id = req?.params?.noteId;
+const getSharedNoteById = asyncHandler(async (req, res) => {
+  const nid = req?.params?.id;
 
-  const sharedNote = await SharedNote.findOne({ nid: id });
-  if (!sharedNote) {
-    throw new ApiError(404, "Shareable link not found");
-  }
+  if (!nid) throw new ApiError(404, "Invalid note id");
 
-  res.status(200).send(new ApiResponse("Shearable link found", sharedNote));
+  const sharedNote = await SharedNote.findOne({ nid }).populate("nid");
+  if (!sharedNote) throw new ApiError(404, "Note not found");
+
+  res.status(200).send(new ApiResponse("Note found", sharedNote));
 });
 
 const addSharedNote = asyncHandler(async (req, res) => {
   const uid = req?.user?.id;
   const { nid, link } = req.body;
 
-  if ([uid, nid, link].some((field) => field?.trim() === "")) {
-    throw new ApiError(400, "Please provide the required details");
-  }
+  if (!uid) throw new ApiError(400, "Invalid user id");
+  if (!nid) throw new ApiError(400, "Invalid note id");
+  if (link?.trim() === "") throw new ApiError(400, "Please provide the link");
 
   const sharedNote = await SharedNote.create({ uid, nid, link });
   if (!sharedNote) {
@@ -43,4 +46,4 @@ const addSharedNote = asyncHandler(async (req, res) => {
     .send(new ApiResponse("Shareable link created successfully", sharedNote));
 });
 
-export { getSharedNote, findSharedNote, addSharedNote };
+export { getSharedNoteByLink, getSharedNoteById, addSharedNote };

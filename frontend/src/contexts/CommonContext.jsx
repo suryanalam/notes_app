@@ -1,7 +1,7 @@
 import { useState, useEffect, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Api } from "../api/api.js";
+import { api } from "../api/api.js";
 
 export const CommonContext = createContext();
 
@@ -10,18 +10,10 @@ export const CommonProvider = ({ children }) => {
 
   const token = localStorage.getItem("accessToken");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  useEffect(() => {
-    if (token) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [apiInProgress, setApiInProgress] = useState(false);
 
   const [isEditForm, setIsEditForm] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
-  const [apiInProgress, setApiInProgress] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -31,10 +23,15 @@ export const CommonProvider = ({ children }) => {
   const [sharedNoteLink, setSharedNoteLink] = useState(null);
   const [sharedNoteDetails, setSharedNoteDetails] = useState(null);
 
-  const signup = async (data) => {
+  useEffect(() => {
+    token ? setIsAuthenticated(true) : setIsAuthenticated(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const signup = async (payload) => {
     setApiInProgress(true);
     try {
-      const response = await Api.post(`/auth/signup`, data);
+      const response = await api.post(`/auth/signup`, payload);
       if (!response?.data?.data) {
         toast.error("Response not found while signup");
         return;
@@ -42,7 +39,7 @@ export const CommonProvider = ({ children }) => {
 
       const { user, accessToken, refreshToken } = response.data.data;
 
-      localStorage.setItem("currentUser", user);
+      localStorage.setItem("currentUser", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       setIsAuthenticated(true);
@@ -55,17 +52,17 @@ export const CommonProvider = ({ children }) => {
     }
   };
 
-  const login = async (data) => {
+  const login = async (payload) => {
     setApiInProgress(true);
     try {
-      const response = await Api.post(`/auth/login`, data);
+      const response = await api.post(`/auth/login`, payload);
       if (!response?.data?.data) {
         toast.error("Response not found while login");
         return;
       }
       const { user, accessToken, refreshToken } = response.data.data;
 
-      localStorage.setItem("currentUser", user);
+      localStorage.setItem("currentUser", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       setIsAuthenticated(true);
@@ -80,7 +77,7 @@ export const CommonProvider = ({ children }) => {
   const logout = async () => {
     setApiInProgress(true);
     try {
-      await Api.put(`/auth/logout`);
+      await api.put(`/auth/logout`);
       localStorage.removeItem("currentUser");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
@@ -95,18 +92,13 @@ export const CommonProvider = ({ children }) => {
 
   const fetchNotes = async () => {
     try {
-      const resp = await Api.get(`/note`);
-      setNotes(resp?.data?.data);
-    } catch (err) {
-      if (err?.response?.status === 401) return;
-      toast.error(err?.response?.data?.message || "Something went wrong");
-    }
-  };
+      const resp = await api.get(`/note`);
+      if (resp?.data?.data === null || resp?.data?.data === undefined) {
+        toast.error("Something went wrong");
+        return;
+      }
 
-  const fetchPinnedNotes = async () => {
-    try {
-      const resp = await Api.get(`/pinned_note`);
-      setPinnedNotes(resp?.data?.data);
+      setNotes(resp.data.data);
     } catch (err) {
       if (err?.response?.status === 401) return;
       toast.error(err?.response?.data?.message || "Something went wrong");
@@ -115,7 +107,7 @@ export const CommonProvider = ({ children }) => {
 
   const fetchNoteDetails = async (id) => {
     try {
-      const resp = await Api.get(`/note/${id}`);
+      const resp = await api.get(`/note/${id}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
@@ -123,6 +115,7 @@ export const CommonProvider = ({ children }) => {
       setNoteDetails({ ...resp.data.data, id: resp.data.data?._id });
       return resp.data.data;
     } catch (err) {
+      if (err?.response?.status === 401) return;
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
@@ -130,13 +123,13 @@ export const CommonProvider = ({ children }) => {
   const createNote = async (payload) => {
     setApiInProgress(true);
     try {
-      const resp = await Api.post(`/note`, payload);
+      const resp = await api.post(`/note`, payload);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
       toast.success("Note Created Successfully");
-      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
+      await fetchNotes();
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     } finally {
@@ -148,14 +141,14 @@ export const CommonProvider = ({ children }) => {
   const updateNote = async (id, payload) => {
     setApiInProgress(true);
     try {
-      const resp = await Api.put(`/note/${id}`, payload);
+      const resp = await api.put(`/note/${id}`, payload);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
       toast.success("Note updated successfully");
       setNoteDetails({ ...resp.data.data, id: resp.data.data?._id });
-      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
+      await fetchNotes();
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     } finally {
@@ -168,13 +161,13 @@ export const CommonProvider = ({ children }) => {
   const deleteNote = async (id) => {
     setApiInProgress(true);
     try {
-      const resp = await Api.delete(`/note/${id}`);
+      const resp = await api.delete(`/note/${id}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
       toast.success("Note deleted Successfully");
-      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
+      await fetchNotes();
       navigate("/");
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
@@ -186,12 +179,12 @@ export const CommonProvider = ({ children }) => {
 
   const addPinnedNote = async (payload) => {
     try {
-      const resp = await Api.post(`/pinned_note`, payload);
+      const resp = await api.post(`/pinned-note`, payload);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
-      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
+      await fetchNotes();
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
@@ -199,34 +192,34 @@ export const CommonProvider = ({ children }) => {
 
   const removePinnedNote = async (id) => {
     try {
-      const resp = await Api.delete(`/pinned_note/${id}`);
+      const resp = await api.delete(`/pinned-note/${id}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
-      await Promise.allSettled([fetchNotes(), fetchPinnedNotes()]);
+      await fetchNotes();
     } catch (err) {
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
 
-  const findSharedNote = async (id) => {
+  const findSharedNoteById = async (id) => {
     try {
-      const resp = await Api.get(`/shared_note/find/${id}`);
+      const resp = await api.get(`/shared-note/find/${id}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
       }
       return resp.data.data?.link;
     } catch (err) {
-      if (err?.response?.status === 404) return;
+      if ([401, 404].includes(err?.response?.status)) return;
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
 
-  const getSharedNote = async (link) => {
+  const getSharedNoteByLink = async (link) => {
     try {
-      const resp = await Api.get(`/shared_note/${link}`);
+      const resp = await api.get(`/shared-note/${link}`);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
@@ -236,7 +229,7 @@ export const CommonProvider = ({ children }) => {
         id: resp.data.data?.nid?._id,
       });
     } catch (err) {
-      if (err?.response?.status === 404) return;
+      if ([401, 404].includes(err?.response?.status)) return;
       toast.error(err?.response?.data?.message || "Something went wrong");
     }
   };
@@ -244,7 +237,7 @@ export const CommonProvider = ({ children }) => {
   const createSharedNote = async (payload) => {
     setApiInProgress(true);
     try {
-      const resp = await Api.post(`/shared_note`, payload);
+      const resp = await api.post(`/shared-note`, payload);
       if (!resp?.data?.data) {
         toast.error("Something went wrong");
         return;
@@ -295,15 +288,14 @@ export const CommonProvider = ({ children }) => {
         signup,
         logout,
         fetchNotes,
-        fetchPinnedNotes,
         fetchNoteDetails,
         createNote,
         updateNote,
         deleteNote,
         addPinnedNote,
         removePinnedNote,
-        findSharedNote,
-        getSharedNote,
+        findSharedNoteById,
+        getSharedNoteByLink,
         createSharedNote,
         resetStore,
       }}

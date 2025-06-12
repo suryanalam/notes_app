@@ -31,12 +31,12 @@ app.use(cors(corsOptions));
 
 // Public API endpoints
 app.use("/api/auth", authRouter);
-app.use("/api/shared_note", sharedNoteRouter);
+app.use("/api/shared-note", sharedNoteRouter);
 
 // Private API endpoints
 app.use("/api/user", authenticateUser, userRouter);
 app.use("/api/note", authenticateUser, noteRouter);
-app.use("/api/pinned_note", authenticateUser, pinnedNoteRouter);
+app.use("/api/pinned-note", authenticateUser, pinnedNoteRouter);
 
 // Centralized Error Handling Middleware
 app.use((err, _req, res, _next) => {

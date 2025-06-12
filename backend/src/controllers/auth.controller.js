@@ -17,40 +17,27 @@ const cookieOptions = {
   maxAge: 30 * 24 * 60 * 60 * 1000,
 };
 
-const generateAccessAndRefreshTokens = asyncHandler(async (user) => {
-  const userId = user?._id || user?.id;
+const generateAccessAndRefreshTokens = async (user) => {
+  const { _id: id, username, email } = user;
 
-  const accessToken = generateToken(
-    {
-      id: userId,
-      username: user.username,
-      email: user.email,
-    },
-    "1d"
-  );
-  if (!accessToken) {
-    throw new ApiError(500, "Error while generating access token");
-  }
+  const accessToken = generateToken({ id, username, email }, "1d");
+  if (!accessToken) return { error: "Error while generating access token" };
 
-  const refreshToken = generateToken({ id: userId }, "7d");
-  if (!refreshToken) {
-    throw new ApiError(500, "Error while generating refresh token");
-  }
-
-  // store access and refresh tokens as cookies in broswer
-  res.cookie("accessToken", accessToken, cookieOptions);
-  res.cookie("refreshToken", refreshToken, cookieOptions);
+  const refreshToken = generateToken({ id }, "7d");
+  if (!refreshToken) return { error: "Error while generating refresh token" };
 
   // update the refresh token of the user in DB
-  const updatedUser = await User.findByIdAndUpdate(userId, {
-    $set: { refreshToken },
-  });
+  const updatedUser = await User.findByIdAndUpdate(
+    id,
+    { $set: { refreshToken } },
+    { new: true }
+  );
   if (!updatedUser) {
-    throw new ApiError(500, "Error while adding refresh token into DB");
+    return { error: "Error while adding refresh token into DB" };
   }
 
   return { accessToken, refreshToken };
-});
+};
 
 const signup = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
@@ -73,6 +60,11 @@ const signup = asyncHandler(async (req, res) => {
   if (!user) throw new ApiError(500, "Error while creating user");
 
   const data = await generateAccessAndRefreshTokens(user);
+  if (data?.error) throw new ApiError(500, error);
+
+  // store access and refresh tokens as cookies in broswer
+  res.cookie("accessToken", data?.accessToken, cookieOptions);
+  res.cookie("refreshToken", data?.refreshToken, cookieOptions);
 
   res.status(201).send(
     new ApiResponse("User created successfully", {
@@ -94,13 +86,18 @@ const login = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Please fill the required details");
   }
 
-  const user = await User.findOne({ email }).select("-password");
+  const user = await User.findOne({ email });
   if (!user) throw new ApiError(400, "Invalid Email or Password");
 
   const isValidPassword = await bcrypt.compare(password, user.password);
   if (!isValidPassword) throw new ApiError(400, "Invalid Email or Password");
 
   const data = await generateAccessAndRefreshTokens(user);
+  if (data?.error) throw new ApiError(500, error);
+
+  // store access and refresh tokens as cookies in broswer
+  res.cookie("accessToken", data?.accessToken, cookieOptions);
+  res.cookie("refreshToken", data?.refreshToken, cookieOptions);
 
   res.status(200).send(
     new ApiResponse("User logged in successfully", {
@@ -128,9 +125,14 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 
   const data = await generateAccessAndRefreshTokens(user);
+  if (data?.error) throw new ApiError(500, error);
+
+  // store access and refresh tokens as cookies in broswer
+  res.cookie("accessToken", data?.accessToken, cookieOptions);
+  res.cookie("refreshToken", data?.refreshToken, cookieOptions);
 
   res.status(200).send(
-    new ApiResponse("Updated user login session", {
+    new ApiResponse("Refreshed user login session", {
       accessToken: data?.accessToken,
       refreshToken: data?.refreshToken,
       user: {

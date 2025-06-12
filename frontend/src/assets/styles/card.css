@@ -23,12 +23,12 @@
   text-overflow: ellipsis;
   color: var(--clr-white);
   font-size: var(--fs-lg);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
 }
 
 .card-timestamp {
   color: var(--clr-gray-100);
-  font-size: var(--fs-base);
+  font-size: var(--fs-md);
 }
 
 .pin-icon {

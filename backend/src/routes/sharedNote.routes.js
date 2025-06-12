@@ -1,15 +1,15 @@
 import express from "express";
-import authenticateUser from "../middlewares/auth.middleware.js";
 import {
-  getSharedNote,
-  findSharedNote,
+  getSharedNoteByLink,
+  getSharedNoteById,
   addSharedNote,
 } from "../controllers/sharedNote.controller.js";
+import authenticateUser from "../middlewares/auth.middleware.js";
 
 const sharedNoteRouter = express.Router();
 
-sharedNoteRouter.get("/:link", getSharedNote);
-sharedNoteRouter.get("/find/:noteId", authenticateUser, findSharedNote);
+sharedNoteRouter.get("/:link", getSharedNoteByLink);
+sharedNoteRouter.get("/find/:id", authenticateUser, getSharedNoteById);
 sharedNoteRouter.post("/", authenticateUser, addSharedNote);
 
 export default sharedNoteRouter;

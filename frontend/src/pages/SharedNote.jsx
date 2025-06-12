@@ -13,14 +13,14 @@ import Loader from "../components/Loader";
 const SharedNote = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const { sharedNoteDetails, getSharedNote } = useContext(CommonContext);
+  const { sharedNoteDetails, getSharedNoteByLink } = useContext(CommonContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
       setIsLoading(true);
-      await getSharedNote(params?.link);
+      await getSharedNoteByLink(params?.link);
       setIsLoading(false);
     };
 

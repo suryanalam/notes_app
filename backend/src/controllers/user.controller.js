@@ -9,6 +9,8 @@ import User from "../models/user.model.js";
 const getUser = asyncHandler(async (req, res) => {
   const id = req?.params?.id;
 
+  if(!id) throw new ApiError(404, "Invalid user id");
+
   const user = await User.findById(id).select("-password");
   if (!user) throw new ApiError(404, "User not found");
 
@@ -17,6 +19,8 @@ const getUser = asyncHandler(async (req, res) => {
 
 const deleteUser = asyncHandler(async (req, res) => {
   const id = req?.params?.id;
+
+  if(!id) throw new ApiError(404, "Invalid user id");
 
   const user = await User.findByIdAndDelete(id);
   if (!user) throw new ApiError(500, "Error while deleting user");

@@ -24,7 +24,7 @@ const ShareDialog = () => {
     setShowShareDialog,
     sharedNoteLink,
     setSharedNoteLink,
-    findSharedNote,
+    findSharedNoteById,
     createSharedNote,
   } = useContext(CommonContext);
 
@@ -68,7 +68,7 @@ const ShareDialog = () => {
   // check the shareable link is exist or not
   useEffect(() => {
     const findNote = async () => {
-      const link = await findSharedNote(params?.id);
+      const link = await findSharedNoteById(params?.id);
       if (link) {
         setSharedNoteLink(`http://localhost:3000/share/${link}`);
         setBtnText("Copy Link");
@@ -80,7 +80,7 @@ const ShareDialog = () => {
       }
     };
 
-    // if link is already generated then don't trigger findSharedNote api
+    // if link is already generated then don't trigger findSharedNoteById api
     if (showShareDialog && sharedNoteLink) {
       // if link exist then update the states based on the link
       if (sharedNoteLink === "http://localhost:3000/share/...") {

@@ -1,12 +1,16 @@
+import { useContext } from "react";
 import { Outlet, Navigate } from "react-router-dom";
+
+// store
+import { CommonContext } from "../contexts/CommonContext";
 
 // components
 import Header from "../components/Header";
 import NoteForm from "../components/NoteForm";
 
 const ProtectedRoutes = () => {
-  const token = localStorage.getItem("token");
-  return token ? (
+  const { isAuthenticated } = useContext(CommonContext);
+  return isAuthenticated ? (
     <>
       <Header />
       <Outlet />

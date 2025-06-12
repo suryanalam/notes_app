@@ -71,7 +71,7 @@ api.interceptors.response.use(
           refreshToken: newRefreshToken,
         } = response.data.data;
 
-        localStorage.setItem("currentUser", user);
+        localStorage.setItem("currentUser", JSON.stringify(user));
         localStorage.setItem("accessToken", newAccessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
 
@@ -95,12 +95,4 @@ api.interceptors.response.use(
   }
 );
 
-// Generic API Request Wrapper
-export const Api = {
-  get: (url, params = {}) => api.get(url, { params }),
-  post: (url, data = {}) => api.post(url, data),
-  put: (url, data = {}) => api.put(url, data),
-  delete: (url) => api.delete(url),
-};
-
-export default api;
+export { api };
