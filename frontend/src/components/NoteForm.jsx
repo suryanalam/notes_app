@@ -21,8 +21,8 @@ const NoteForm = () => {
     formState: { errors },
   } = useForm();
   const {
+    apiInProgress,
     isEditForm,
-   apiInProgress,
     setIsEditForm,
     showNoteForm,
     setShowNoteForm,
@@ -34,7 +34,7 @@ const NoteForm = () => {
   const handleCloseForm = () => {
     reset();
     setShowNoteForm(false);
-    if (isEditForm) setIsEditForm(false);
+    isEditForm && setIsEditForm(false);
   };
 
   const onSubmit = async (data) => {
@@ -49,7 +49,7 @@ const NoteForm = () => {
         setShowNoteForm(false);
         return;
       }
-      await updateNote(noteDetails?.id, payload);
+      await updateNote(noteDetails?._id, payload);
     } else {
       await createNote(payload);
     }

@@ -69,7 +69,6 @@ const signup = asyncHandler(async (req, res) => {
   res.status(201).send(
     new ApiResponse("User created successfully", {
       accessToken: data?.accessToken,
-      refreshToken: data?.refreshToken,
       user: {
         id: user._id,
         username: user.username,
@@ -102,7 +101,6 @@ const login = asyncHandler(async (req, res) => {
   res.status(200).send(
     new ApiResponse("User logged in successfully", {
       accessToken: data?.accessToken,
-      refreshToken: data?.refreshToken,
       user: {
         id: user._id,
         username: user.username,
@@ -134,7 +132,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   res.status(200).send(
     new ApiResponse("Refreshed user login session", {
       accessToken: data?.accessToken,
-      refreshToken: data?.refreshToken,
       user: {
         id: user._id,
         username: user.username,

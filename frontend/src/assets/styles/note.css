@@ -13,10 +13,12 @@
 }
 
 .note-content {
+  max-width: 100%;
   margin-top: var(--gap-md);
   font-size: var(--fs-xl);
   font-weight: var(--font-weight-semibold);
   line-height: var(--fs-2xl);
+  overflow-wrap: break-word;
 }
 
 .menu-options-bg {

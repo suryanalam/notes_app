@@ -1,5 +1,5 @@
 import "../assets/styles/shareDialog.css";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 // icons
@@ -22,90 +22,39 @@ const ShareDialog = () => {
     setApiInProgress,
     showShareDialog,
     setShowShareDialog,
-    sharedNoteLink,
-    setSharedNoteLink,
-    findSharedNoteById,
+    noteDetails,
+    setNoteDetails,
     createSharedNote,
   } = useContext(CommonContext);
 
-  const text = useRef();
-  const [btnText, setBtnText] = useState("Generate Link");
-  const [isLinkExist, setIsLinkExist] = useState(false);
+  const inputRef = useRef();
+  const [isLinkCopied, setIsLinkCopied] = useState(false);
 
-  const handleClick = async () => {
-    if (isLinkExist) {
-      copyToClipboard(sharedNoteLink);
-      setApiInProgress(true);
-      setBtnText("Copied");
-      text.current.select();
-      setTimeout(() => {
-        window.getSelection().removeAllRanges();
-        setApiInProgress(false);
-        setBtnText("Copy Link");
-      }, 2000);
-      return;
-    }
+  const handleCopyLink = (link) => {
+    setApiInProgress(true);
+    setIsLinkCopied(true);
+    inputRef.current.select();
+    copyToClipboard(link);
+    setTimeout(() => {
+      inputRef.current.setSelectionRange(0, 0);
+      setApiInProgress(false);
+      setIsLinkCopied(false);
+    }, 1000);
+  };
 
+  const handleGenerateLink = async () => {
     let hexCode = generateHexCode();
     const payload = {
       nid: params?.id,
       link: hexCode,
     };
 
-    setBtnText("Generating...");
     const link = await createSharedNote(payload);
-    if (link) {
-      setSharedNoteLink(`http://localhost:3000/share/${link}`);
-      setBtnText("Copy Link");
-      setIsLinkExist(true);
-    } else {
-      setSharedNoteLink("http://localhost:3000/share/...");
-      setBtnText("Generate Link");
-      setIsLinkExist(false);
-    }
+    setNoteDetails({
+      ...noteDetails,
+      shareableLink: link,
+    });
   };
-
-  // check the shareable link is exist or not
-  useEffect(() => {
-    const findNote = async () => {
-      const link = await findSharedNoteById(params?.id);
-      if (link) {
-        setSharedNoteLink(`http://localhost:3000/share/${link}`);
-        setBtnText("Copy Link");
-        setIsLinkExist(true);
-      } else {
-        setSharedNoteLink("http://localhost:3000/share/...");
-        setBtnText("Generate Link");
-        setIsLinkExist(false);
-      }
-    };
-
-    // if link is already generated then don't trigger findSharedNoteById api
-    if (showShareDialog && sharedNoteLink) {
-      // if link exist then update the states based on the link
-      if (sharedNoteLink === "http://localhost:3000/share/...") {
-        setBtnText("Generate Link");
-        setIsLinkExist(false);
-      } else {
-        setBtnText("Copy Link");
-        setIsLinkExist(true);
-      }
-    } else if (showShareDialog && !sharedNoteLink) {
-      findNote();
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showShareDialog]);
-
-  // reset state values only when note page unmounts (cleanup function)
-  useEffect(() => {
-    return () => {
-      setIsLinkExist(false);
-      setSharedNoteLink("");
-      setBtnText("Generate Link");
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Dialog
@@ -113,25 +62,17 @@ const ShareDialog = () => {
       dialogTitle="Share Note"
       handleClose={() => setShowShareDialog(false)}
     >
-      {!sharedNoteLink ? (
-        <div className="skeleton-share-div d-flex flex-column gap-4 flex-align-start flex-justify-center">
-          <div className="skeleton-title-div w-100"></div>
-          <div className="skeleton-link-div w-100"></div>
-          <div className="skeleton-caption-div w-100"></div>
-          <div className="skeleton-button-div w-100"></div>
-        </div>
-      ) : (
+      {noteDetails?.shareableLink ? (
         <div className="w-100 d-flex flex-column gap-4 flex-align-start flex-justify-center">
           <p className="share-text">
-            {isLinkExist
-              ? "The link to your note has been generated. Simply copy it from below to share!"
-              : "You're just one step away from sharing your note with the world. Generate a shareable link now!"}
+            The link to your note has been generated. Simply copy it from below
+            to share!
           </p>
           <input
+            ref={inputRef}
             type="text"
-            ref={text}
             className="link w-100"
-            value={sharedNoteLink}
+            value={`http://localhost:3000/share/${noteDetails?.shareableLink}`}
             readOnly
           />
           <div className="d-flex flex-align-center gap-1 flex-wrap">
@@ -144,9 +85,40 @@ const ShareDialog = () => {
           <button
             className="btn btn-primary w-100 dialog-btn d-flex gap-1 flex-align-center flex-justify-center"
             disabled={apiInProgress}
-            onClick={handleClick}
+            onClick={() =>
+              handleCopyLink(
+                `http://localhost:3000/share/${noteDetails?.shareableLink}`
+              )
+            }
           >
-            {btnText}
+            {isLinkCopied ? "Copied" : "Copy Link"}
+          </button>
+        </div>
+      ) : (
+        <div className="w-100 d-flex flex-column gap-4 flex-align-start flex-justify-center">
+          <p className="share-text">
+            You're just one step away from sharing your note with the world.
+            Generate a shareable link now!
+          </p>
+          <input
+            type="text"
+            className="link w-100"
+            value={`http://localhost:3000/share/...`}
+            readOnly
+          />
+          <div className="d-flex flex-align-center gap-1 flex-wrap">
+            <MdInfoOutline className="info-icon" />
+            <span className="info-text">
+              Link is accessible to <strong>everyone</strong> with{" "}
+              <strong>read-only</strong> permissions.
+            </span>
+          </div>
+          <button
+            className="btn btn-primary w-100 dialog-btn d-flex gap-1 flex-align-center flex-justify-center"
+            disabled={apiInProgress}
+            onClick={handleGenerateLink}
+          >
+            Generate Link
           </button>
         </div>
       )}

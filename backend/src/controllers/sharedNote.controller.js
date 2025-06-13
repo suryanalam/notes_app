@@ -17,17 +17,6 @@ const getSharedNoteByLink = asyncHandler(async (req, res) => {
   res.status(200).send(new ApiResponse("Note found", sharedNote));
 });
 
-const getSharedNoteById = asyncHandler(async (req, res) => {
-  const nid = req?.params?.id;
-
-  if (!nid) throw new ApiError(404, "Invalid note id");
-
-  const sharedNote = await SharedNote.findOne({ nid }).populate("nid");
-  if (!sharedNote) throw new ApiError(404, "Note not found");
-
-  res.status(200).send(new ApiResponse("Note found", sharedNote));
-});
-
 const addSharedNote = asyncHandler(async (req, res) => {
   const uid = req?.user?.id;
   const { nid, link } = req.body;
@@ -46,4 +35,4 @@ const addSharedNote = asyncHandler(async (req, res) => {
     .send(new ApiResponse("Shareable link created successfully", sharedNote));
 });
 
-export { getSharedNoteByLink, getSharedNoteById, addSharedNote };
+export { getSharedNoteByLink, addSharedNote };

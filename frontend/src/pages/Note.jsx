@@ -27,6 +27,7 @@ const Note = () => {
   const navigate = useNavigate();
   const {
     noteDetails,
+    setNoteDetails,
     setIsEditForm,
     setShowNoteForm,
     setShowShareDialog,
@@ -51,16 +52,16 @@ const Note = () => {
   };
 
   useEffect(() => {
+    if(params?.id === noteDetails?._id) return;
     const fetch = async () => {
       setLoading(true);
-      const resp = await fetchNoteDetails(params?.id);
-      if (!resp) navigate("/");
+      const data = await fetchNoteDetails(params?.id);
+      if (!data) navigate("/");
+      setNoteDetails(data);
       setLoading(false);
     };
 
-    // trigger note details api only when the new note is viewed (cache the previous note data)
-    params?.id !== noteDetails?.id && fetch();
-
+    fetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

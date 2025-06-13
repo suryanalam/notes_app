@@ -37,11 +37,10 @@ export const CommonProvider = ({ children }) => {
         return;
       }
 
-      const { user, accessToken, refreshToken } = response.data.data;
+      const { user, accessToken } = response.data.data;
 
       localStorage.setItem("currentUser", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
       setIsAuthenticated(true);
       navigate("/");
       toast.success("Your account is created successfully");
@@ -60,11 +59,10 @@ export const CommonProvider = ({ children }) => {
         toast.error("Response not found while login");
         return;
       }
-      const { user, accessToken, refreshToken } = response.data.data;
+      const { user, accessToken } = response.data.data;
 
       localStorage.setItem("currentUser", JSON.stringify(user));
       localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
       setIsAuthenticated(true);
       navigate("/");
     } catch (err) {
@@ -80,7 +78,6 @@ export const CommonProvider = ({ children }) => {
       await api.put(`/auth/logout`);
       localStorage.removeItem("currentUser");
       localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
       resetStore();
       navigate("/login");
     } catch (err) {
@@ -112,7 +109,6 @@ export const CommonProvider = ({ children }) => {
         toast.error("Something went wrong");
         return;
       }
-      setNoteDetails({ ...resp.data.data, id: resp.data.data?._id });
       return resp.data.data;
     } catch (err) {
       if (err?.response?.status === 401) return;
@@ -203,20 +199,6 @@ export const CommonProvider = ({ children }) => {
     }
   };
 
-  const findSharedNoteById = async (id) => {
-    try {
-      const resp = await api.get(`/shared-note/find/${id}`);
-      if (!resp?.data?.data) {
-        toast.error("Something went wrong");
-        return;
-      }
-      return resp.data.data?.link;
-    } catch (err) {
-      if ([401, 404].includes(err?.response?.status)) return;
-      toast.error(err?.response?.data?.message || "Something went wrong");
-    }
-  };
-
   const getSharedNoteByLink = async (link) => {
     try {
       const resp = await api.get(`/shared-note/${link}`);
@@ -247,7 +229,6 @@ export const CommonProvider = ({ children }) => {
       toast.error(err?.response?.data?.message || "Something went wrong");
     } finally {
       setApiInProgress(false);
-      setShowShareDialog(false);
     }
   };
 
@@ -294,7 +275,6 @@ export const CommonProvider = ({ children }) => {
         deleteNote,
         addPinnedNote,
         removePinnedNote,
-        findSharedNoteById,
         getSharedNoteByLink,
         createSharedNote,
         resetStore,

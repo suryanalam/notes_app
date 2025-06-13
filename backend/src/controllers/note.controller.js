@@ -57,6 +57,28 @@ const getAllNotes = asyncHandler(async (req, res) => {
       $unset: "pinnedNotes",
     },
     {
+      $lookup: {
+        from: "shared_notes",
+        localField: "_id",
+        foreignField: "nid",
+        as: "sharedNotes",
+      },
+    },
+    {
+      $unwind: {
+        path: "$sharedNotes",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        shareableLink: "$sharedNotes.link",
+      },
+    },
+    {
+      $unset: "sharedNotes",
+    },
+    {
       $sort: {
         isPinned: -1,
         updatedAt: -1,
@@ -73,8 +95,22 @@ const getNote = asyncHandler(async (req, res) => {
 
   if (!id) throw new ApiError(400, "Invalid note id");
 
-  const note = await Note.findById(id);
+  const note = await Note.findById(id).lean();
   if (!note) throw new ApiError(404, "Note not found");
+
+  const pinnedNote = await PinnedNote.findOne({ nid: id });
+  if (pinnedNote) {
+    note.isPinned = true;
+  } else {
+    note.isPinned = false;
+  }
+
+  const sharedNote = await SharedNote.findOne({ nid: id });
+  if (sharedNote) {
+    note.shareableLink = sharedNote?.link;
+  } else {
+    note.shareableLink = null;
+  }
 
   res.status(200).send(new ApiResponse("Note found successfully", note));
 });
@@ -104,12 +140,10 @@ const deleteNote = asyncHandler(async (req, res) => {
   if (!id) throw new ApiError(400, "Invalid note id");
 
   const note = await Note.findByIdAndDelete(id);
-  const pinnedNote = await PinnedNote.findOneAndDelete({ nid: id });
-  const sharedNote = await SharedNote.findOneAndDelete({ nid: id });
+  await PinnedNote.findOneAndDelete({ nid: id });
+  await SharedNote.findOneAndDelete({ nid: id });
 
-  if (!note || !pinnedNote || !sharedNote) {
-    throw new ApiError(404, "Error while deleting the note");
-  }
+  if (!note) throw new ApiError(404, "Error while deleting the note");
 
   res.status(200).send(new ApiResponse("Note deleted successfully", note));
 });

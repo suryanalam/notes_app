@@ -33,17 +33,13 @@ api.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry) {
       // store the subsequent failed requests and pause the execution of them until the refresh-token api is fulfilled
       if (isRefreshing) {
-        console.log("refreshing...");
         try {
           const newAccessToken = await new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
-            console.log("queue: ", failedQueue);
           });
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          console.log("retry...");
           return api(originalRequest); // Retry the pending request
         } catch (err) {
-          console.log("catch...");
           return Promise.reject(err); // Reject the pending request
         }
       }
@@ -65,15 +61,10 @@ api.interceptors.response.use(
           );
         }
 
-        const {
-          user,
-          accessToken: newAccessToken,
-          refreshToken: newRefreshToken,
-        } = response.data.data;
+        const { user, accessToken: newAccessToken } = response.data.data;
 
         localStorage.setItem("currentUser", JSON.stringify(user));
         localStorage.setItem("accessToken", newAccessToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
 
         processQueue(null, newAccessToken); // Resolve all pending requests
         return api(originalRequest); // Retry the first request with the new access token
@@ -81,7 +72,6 @@ api.interceptors.response.use(
         // logout user
         localStorage.removeItem("currentUser");
         localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
         window.location.href = "/login";
 
         processQueue(refreshError); // Reject all pending requests
