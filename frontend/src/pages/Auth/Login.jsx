@@ -1,7 +1,11 @@
 import "../../assets/styles/auth.css";
 import { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+
+// api
+import { login } from "../../services/authService";
 
 // store
 import { CommonContext } from "../../contexts/CommonContext";
@@ -13,12 +17,25 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const navigate = useNavigate();
 
-  const { login,apiInProgress } = useContext(CommonContext);
+  const { apiInProgress, setApiInProgress, setIsAuthenticated } =
+    useContext(CommonContext);
 
   const onSubmit = async (data) => {
-    await login(data);
-    reset();
+    setApiInProgress(true);
+    try {
+      const { user, accessToken } = await login(data);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      setIsAuthenticated(true);
+      navigate("/");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setApiInProgress(false);
+      reset();
+    }
   };
 
   return (

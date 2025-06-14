@@ -1,5 +1,5 @@
 import "../assets/styles/note.css";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -9,6 +9,9 @@ import { LuCopy } from "react-icons/lu";
 import { FiEdit } from "react-icons/fi";
 import { RxShare1 } from "react-icons/rx";
 import { FiTrash2 } from "react-icons/fi";
+
+// api
+import { getNoteDetails } from "../services/noteService";
 
 // store
 import { CommonContext } from "../contexts/CommonContext";
@@ -26,22 +29,21 @@ const Note = () => {
   const params = useParams();
   const navigate = useNavigate();
   const {
+    apiInProgress,
+    setApInProgress,
     noteDetails,
     setNoteDetails,
     setIsEditForm,
     setShowNoteForm,
     setShowShareDialog,
     setShowDeleteDialog,
-    fetchNoteDetails,
   } = useContext(CommonContext);
-
-  const [loading, setLoading] = useState(false);
 
   const handleCopy = async () => {
     const isCopied = await copyToClipboard(noteDetails?.content);
-    if(isCopied) {
+    if (isCopied) {
       toast.success("Note copied successfully");
-    } else{
+    } else {
       toast.error("Failed to copy note");
     }
   };
@@ -52,13 +54,20 @@ const Note = () => {
   };
 
   useEffect(() => {
-    if(params?.id === noteDetails?._id) return;
+    // if note details are already fetched ignore api call
+    if (params?.id === noteDetails?._id) return;
     const fetch = async () => {
-      setLoading(true);
-      const data = await fetchNoteDetails(params?.id);
-      if (!data) navigate("/");
-      setNoteDetails(data);
-      setLoading(false);
+      setApInProgress(true);
+      try {
+        const data = await getNoteDetails(params?.id);
+        setNoteDetails(data);
+      } catch (error) {
+        if (error?.response?.status === 401) return;
+        navigate("/");
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      } finally {
+        setApInProgress(false);
+      }
     };
 
     fetch();
@@ -67,7 +76,7 @@ const Note = () => {
 
   return (
     <>
-      {loading && <Loader />}
+      {apiInProgress && <Loader />}
       <div className="note-container w-100">
         <h1 className="note-title">{noteDetails?.title}</h1>
         <p className="note-content">{noteDetails?.content}</p>

@@ -1,27 +1,41 @@
 import "../assets/styles/sharedNote.css";
 import brokenLink from "../assets/images/broken-link.png";
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-// Store
+// api
+import { getSharedNoteByLink } from "../services/noteService";
+
+// store
 import { CommonContext } from "../contexts/CommonContext";
 
-// Components
+// components
 import Header from "../components/Header";
 import Loader from "../components/Loader";
 
 const SharedNote = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const { sharedNoteDetails, getSharedNoteByLink } = useContext(CommonContext);
-
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    apiInProgress,
+    setApiInProgress,
+    sharedNoteDetails,
+    setSharedNoteDetails,
+  } = useContext(CommonContext);
 
   useEffect(() => {
     const fetch = async () => {
-      setIsLoading(true);
-      await getSharedNoteByLink(params?.link);
-      setIsLoading(false);
+      setApiInProgress(true);
+      try {
+        const data = await getSharedNoteByLink(params?.link);
+        setSharedNoteDetails(data);
+      } catch (error) {
+        if (error?.response?.status === 404) return;
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      } finally {
+        setApiInProgress(false);
+      }
     };
 
     fetch();
@@ -30,7 +44,7 @@ const SharedNote = () => {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {apiInProgress && <Loader />}
       <Header />
       {sharedNoteDetails ? (
         <div className="shared-note-container w-100">
@@ -39,7 +53,12 @@ const SharedNote = () => {
         </div>
       ) : (
         <div className="shared-note-empty-container w-100 d-flex flex-column flex-align-center flex-justify-center gap-3">
-          <img src={brokenLink} alt="broken link" draggable="false" className="shared-note-broken-link" />
+          <img
+            src={brokenLink}
+            alt="broken link"
+            draggable="false"
+            className="shared-note-broken-link"
+          />
           <h1 className="text-center">Whoops! Link was broken.</h1>
           <button className="btn btn-primary" onClick={() => navigate("/")}>
             Go to Homepage

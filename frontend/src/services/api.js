@@ -56,9 +56,7 @@ api.interceptors.response.use(
         );
 
         if (!response?.data?.data) {
-          throw new Error(
-            "Response not found while updating user login session"
-          );
+          throw new Error("Error while updating user login session");
         }
 
         const { user, accessToken: newAccessToken } = response.data.data;

@@ -1,9 +1,13 @@
 import "../assets/styles/home.css";
 import empty from "../assets/images/empty.png";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useContext } from "react";
+import { toast } from "react-toastify";
 
 // icons
 import { IoMdAdd } from "react-icons/io";
+
+// api
+import { getAllNotes } from "../services/noteService";
 
 // store
 import { CommonContext } from "../contexts/CommonContext";
@@ -13,14 +17,21 @@ import Card from "../components/Card";
 import Loader from "../components/Loader";
 
 const Home = () => {
-  const { notes, fetchNotes, setShowNoteForm } = useContext(CommonContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const { apiInProgress, setApiInProgress, notes, setNotes, setShowNoteForm } =
+    useContext(CommonContext);
 
   useEffect(() => {
     const fetch = async () => {
-      setIsLoading(true);
-      await fetchNotes();
-      setIsLoading(false);
+      setApiInProgress(true);
+      try {
+        const data = await getAllNotes();
+        setNotes(data);
+      } catch (error) {
+        if (error?.response?.status === 401) return;
+        toast.error(error?.response?.data?.message || "Something went wrong");
+      } finally {
+        setApiInProgress(false);
+      }
     };
 
     fetch();
@@ -29,7 +40,7 @@ const Home = () => {
 
   return (
     <>
-      {isLoading && <Loader />}
+      {apiInProgress && <Loader />}
       {notes?.length > 0 ? (
         <div className="notes-container w-100 d-grid grid-col-1 gap-2">
           {notes?.map((note) => (

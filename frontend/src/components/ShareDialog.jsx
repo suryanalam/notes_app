@@ -1,9 +1,13 @@
 import "../assets/styles/shareDialog.css";
 import { useContext, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // icons
 import { MdInfoOutline } from "react-icons/md";
+
+// api
+import { createSharedNote } from "../services/noteService";
 
 // store
 import { CommonContext } from "../contexts/CommonContext";
@@ -20,11 +24,10 @@ const ShareDialog = () => {
   const {
     apiInProgress,
     setApiInProgress,
-    showShareDialog,
-    setShowShareDialog,
     noteDetails,
     setNoteDetails,
-    createSharedNote,
+    showShareDialog,
+    setShowShareDialog,
   } = useContext(CommonContext);
 
   const inputRef = useRef();
@@ -49,11 +52,18 @@ const ShareDialog = () => {
       link: hexCode,
     };
 
-    const link = await createSharedNote(payload);
-    setNoteDetails({
-      ...noteDetails,
-      shareableLink: link,
-    });
+    setApiInProgress(true);
+    try {
+      const data = await createSharedNote(payload);
+      setNoteDetails({
+        ...noteDetails,
+        shareableLink: data?.link,
+      });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setApiInProgress(false);
+    }
   };
 
   return (

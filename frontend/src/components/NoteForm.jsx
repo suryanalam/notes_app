@@ -1,13 +1,17 @@
 import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 // custom hooks
 import useDevice from "../hooks/useDevice";
 
+// api
+import { createNote, updateNote } from "../services/noteService";
+
 // store
 import { CommonContext } from "../contexts/CommonContext";
 
-// Components
+// components
 import Dialog from "./Dialog";
 import BottomSheet from "./BottomSheet";
 
@@ -22,13 +26,14 @@ const NoteForm = () => {
   } = useForm();
   const {
     apiInProgress,
+    setApiInProgress,
     isEditForm,
     setIsEditForm,
     showNoteForm,
     setShowNoteForm,
+    notes,
+    setNotes,
     noteDetails,
-    createNote,
-    updateNote,
   } = useContext(CommonContext);
 
   const handleCloseForm = () => {
@@ -37,34 +42,72 @@ const NoteForm = () => {
     isEditForm && setIsEditForm(false);
   };
 
-  const onSubmit = async (data) => {
-    const { title, content } = data;
-    const payload = { title, content };
-
-    if (isEditForm) {
-      // don't trigger update api if new form values are same as previous
-      if (title === noteDetails?.title && content === noteDetails?.content) {
-        reset();
-        setIsEditForm(false);
-        setShowNoteForm(false);
-        return;
-      }
-      await updateNote(noteDetails?._id, payload);
-    } else {
-      await createNote(payload);
+  const handleCreateNote = async (payload) => {
+    setApiInProgress(true);
+    try {
+      const data = await createNote(payload);
+      setNotes([...notes, { ...data, isPinned: false, shareableLink: false }]);
+      toast.success("Note Created Successfully");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setApiInProgress(false);
+      setShowNoteForm(false);
+      reset();
     }
-
-    reset();
   };
 
-  // set the form values with note details
+  const handleUpdateNote = async (id, payload) => {
+    setApiInProgress(true);
+    try {
+      const data = await updateNote(id, payload);
+      setNotes([
+        ...notes,
+        {
+          ...data,
+          isPinned: noteDetails?.isPinned,
+          shareableLink: noteDetails?.shareableLink,
+        },
+      ]);
+      toast.success("Note Updated Successfully");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setApiInProgress(false);
+      setShowNoteForm(false);
+      setIsEditForm(false);
+      reset();
+    }
+  };
+
+  const onSubmit = (data) => {
+    // close the dialog if note details are not modified
+    if (
+      data?.title === noteDetails?.title &&
+      data?.content === noteDetails?.content
+    ) {
+      reset();
+      setIsEditForm(false);
+      setShowNoteForm(false);
+      return;
+    }
+
+    if (!isEditForm) {
+      handleCreateNote(data);
+      return;
+    }
+
+    handleUpdateNote(noteDetails?._id, data);
+  };
+
+  // Set form values with the note details
   useEffect(() => {
     if (isEditForm && noteDetails) {
       setValue("title", noteDetails?.title);
       setValue("content", noteDetails?.content);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEditForm]);
+  }, []);
 
   return (
     <>

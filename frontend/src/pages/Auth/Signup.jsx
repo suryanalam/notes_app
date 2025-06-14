@@ -1,7 +1,11 @@
 import "../../assets/styles/auth.css";
 import { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+
+// api
+import { signup } from "../../services/authService";
 
 // store
 import { CommonContext } from "../../contexts/CommonContext";
@@ -13,12 +17,26 @@ const Signup = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const navigate = useNavigate();
 
-  const { signup, apiInProgress } = useContext(CommonContext);
+  const { apiInProgress, setApiInProgress, setIsAuthenticated } =
+    useContext(CommonContext);
 
   const onSubmit = async (data) => {
-    await signup(data);
-    reset();
+    setApiInProgress(true);
+    try {
+      const { user, accessToken } = await signup(data);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      setIsAuthenticated(true);
+      navigate("/");
+      toast.success("Your account is created successfully");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setApiInProgress(false);
+      reset();
+    }
   };
 
   return (
@@ -45,11 +63,12 @@ const Signup = () => {
               },
               minLength: {
                 value: 4,
-                message: "Username must contain atleast 4 characters."
+                message: "Username must contain atleast 4 characters.",
               },
               maxLength: {
                 value: 16,
-                message: "Username must contain less than or equal to 16 characters."
+                message:
+                  "Username must contain less than or equal to 16 characters.",
               },
             })}
           />
@@ -95,11 +114,12 @@ const Signup = () => {
               },
               minLength: {
                 value: 8,
-                message: "Password must contain atleast 8 characters."
+                message: "Password must contain atleast 8 characters.",
               },
               maxLength: {
                 value: 20,
-                message: "Password must contain less than or equal to 20 characters."
+                message:
+                  "Password must contain less than or equal to 20 characters.",
               },
             })}
           />
@@ -109,7 +129,11 @@ const Signup = () => {
             </p>
           )}
         </div>
-        <button type="submit" className="form-btn btn-dark w-100" disabled={apiInProgress}>
+        <button
+          type="submit"
+          className="form-btn btn-dark w-100"
+          disabled={apiInProgress}
+        >
           Signup
         </button>
         <div className="w-100">

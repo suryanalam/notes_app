@@ -1,6 +1,10 @@
 import "../assets/styles/deleteDialog.css";
 import { useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+
+// api
+import { deleteNote } from "../services/noteService.js";
 
 // store
 import { CommonContext } from "../contexts/CommonContext";
@@ -10,8 +14,31 @@ import Dialog from "./Dialog";
 
 const DeleteDialog = () => {
   const params = useParams();
-  const { apiInProgress, showDeleteDialog, setShowDeleteDialog, deleteNote } =
-    useContext(CommonContext);
+  const navigate = useNavigate();
+  const {
+    apiInProgress,
+    setApiInProgress,
+    notes,
+    setNotes,
+    showDeleteDialog,
+    setShowDeleteDialog,
+  } = useContext(CommonContext);
+
+  const handleDeleteNote = async (id) => {
+    setApiInProgress(true);
+    try {
+      await deleteNote(id);
+      const filteredNotes = notes?.filter((note) => note._id !== id);
+      setNotes(filteredNotes);
+      navigate("/");
+      toast.success("Note deleted Successfully");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setApiInProgress(false);
+      setShowDeleteDialog(false);
+    }
+  };
 
   return (
     <Dialog
@@ -34,7 +61,7 @@ const DeleteDialog = () => {
           <button
             className="btn btn-red dialog-btn"
             disabled={apiInProgress}
-            onClick={() => deleteNote(params?.id)}
+            onClick={() => handleDeleteNote(params?.id)}
           >
             Delete
           </button>
