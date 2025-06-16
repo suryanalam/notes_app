@@ -50,3 +50,8 @@
   width: 16px;
   height: 16px;
 }
+
+.disabled-bottomsheet {
+  pointer-events: none;
+  cursor: not-allowed;
+}

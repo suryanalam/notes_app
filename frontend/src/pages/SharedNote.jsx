@@ -1,6 +1,6 @@
 import "../assets/styles/sharedNote.css";
 import brokenLink from "../assets/images/broken-link.png";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -12,21 +12,17 @@ import { CommonContext } from "../contexts/CommonContext";
 
 // components
 import Header from "../components/Header";
-import Loader from "../components/Loader";
 
 const SharedNote = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const {
-    apiInProgress,
-    setApiInProgress,
-    sharedNoteDetails,
-    setSharedNoteDetails,
-  } = useContext(CommonContext);
+  const { sharedNoteDetails, setSharedNoteDetails } = useContext(CommonContext);
+
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
-      setApiInProgress(true);
+      setLoader(true);
       try {
         const data = await getSharedNoteByLink(params?.link);
         setSharedNoteDetails(data);
@@ -34,7 +30,7 @@ const SharedNote = () => {
         if (error?.response?.status === 404) return;
         toast.error(error?.response?.data?.message || "Something went wrong");
       } finally {
-        setApiInProgress(false);
+        setLoader(false);
       }
     };
 
@@ -42,9 +38,23 @@ const SharedNote = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (loader) {
+    return (
+      <>
+        <div className="note-container w-100">
+          <div className="skeleton-div title"></div>
+          <div className="divider"></div>
+          <div className="skeleton-div content"></div>
+          <div className="skeleton-div content"></div>
+          <div className="skeleton-div content"></div>
+          <div className="skeleton-div content"></div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      {apiInProgress && <Loader />}
       <Header />
       {sharedNoteDetails ? (
         <div className="shared-note-container w-100">

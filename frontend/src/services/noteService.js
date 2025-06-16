@@ -73,7 +73,7 @@ const removePinnedNote = async (id) => {
 const getSharedNoteByLink = async (link) => {
   try {
     const response = await api.get(`/shared-note/${link}`);
-    return response?.data?.data;
+    return response?.data?.data?.nid;
   } catch (error) {
     console.log("Error while fetching shared note details: ", error);
     throw error;

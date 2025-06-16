@@ -5,11 +5,16 @@ const BottomSheet = ({
   children,
   showBottomSheet,
   bottomSheetTitle,
+  disabled,
   handleClose,
 }) => {
   if (showBottomSheet) {
     return (
-      <div className="bottomsheet-bg p-fixed">
+      <div
+        className={`bottomsheet-bg p-fixed ${
+          disabled && "disabled-bottomsheet"
+        }`}
+      >
         <div
           className="bottomsheet-backdrop w-100 h-100"
           onClick={handleClose}

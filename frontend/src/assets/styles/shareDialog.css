@@ -29,35 +29,3 @@
   font-size: var(--fs-base);
   font-family: var(--font-primary);
 }
-
-
-.skeleton-share-div > div {
-  background: linear-gradient(90deg, #4a4a4a 25%, #666666 50%, #4a4a4a 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-  background-color: var(--clr-gray-200);
-  border-radius: var(--br-sm);
-}
-
-.skeleton-title-div {
-  height: 40px;
-}
-.skeleton-link-div {
-  height: 38px;
-}
-.skeleton-caption-div {
-  max-width: 70%;
-  height: 13px;
-}
-.skeleton-button-div {
-  height: 35px;
-}
-
-@keyframes skeleton-loading {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}

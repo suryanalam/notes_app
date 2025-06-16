@@ -48,3 +48,8 @@
   width: 16px;
   height: 16px;
 }
+
+.disabled-dialog {
+  pointer-events: none;
+  cursor: not-allowed;
+}

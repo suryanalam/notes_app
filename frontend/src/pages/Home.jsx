@@ -1,6 +1,6 @@
 import "../assets/styles/home.css";
 import empty from "../assets/images/empty.png";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { toast } from "react-toastify";
 
 // icons
@@ -14,15 +14,15 @@ import { CommonContext } from "../contexts/CommonContext";
 
 // components
 import Card from "../components/Card";
-import Loader from "../components/Loader";
 
 const Home = () => {
-  const { apiInProgress, setApiInProgress, notes, setNotes, setShowNoteForm } =
-    useContext(CommonContext);
+  const { notes, setNotes, setShowNoteForm } = useContext(CommonContext);
+
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
-      setApiInProgress(true);
+      setLoader(true);
       try {
         const data = await getAllNotes();
         setNotes(data);
@@ -30,7 +30,7 @@ const Home = () => {
         if (error?.response?.status === 401) return;
         toast.error(error?.response?.data?.message || "Something went wrong");
       } finally {
-        setApiInProgress(false);
+        setLoader(false);
       }
     };
 
@@ -38,9 +38,24 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (loader) {
+    return (
+      <>
+        <div className="notes-container w-100 d-grid grid-col-1 gap-2">
+          {[1, 2, 3, 4, 5, 6].map((id) => (
+            <div className="skeleton-card" key={id}>
+              <div className="title"></div>
+              <div className="content"></div>
+              <div className="timestamp"></div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      {apiInProgress && <Loader />}
       {notes?.length > 0 ? (
         <div className="notes-container w-100 d-grid grid-col-1 gap-2">
           {notes?.map((note) => (

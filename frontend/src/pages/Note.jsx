@@ -1,5 +1,5 @@
 import "../assets/styles/note.css";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -20,7 +20,6 @@ import { CommonContext } from "../contexts/CommonContext";
 import copyToClipboard from "../utils/copyToClipboard";
 
 // components
-import Loader from "../components/Loader";
 import ShareDialog from "../components/ShareDialog";
 import DeleteDialog from "../components/DeleteDialog";
 import Tooltip from "../components/Tooltip";
@@ -29,8 +28,6 @@ const Note = () => {
   const params = useParams();
   const navigate = useNavigate();
   const {
-    apiInProgress,
-    setApInProgress,
     noteDetails,
     setNoteDetails,
     setIsEditForm,
@@ -38,6 +35,8 @@ const Note = () => {
     setShowShareDialog,
     setShowDeleteDialog,
   } = useContext(CommonContext);
+
+  const [loader, setLoader] = useState(false);
 
   const handleCopy = async () => {
     const isCopied = await copyToClipboard(noteDetails?.content);
@@ -57,7 +56,7 @@ const Note = () => {
     // if note details are already fetched ignore api call
     if (params?.id === noteDetails?._id) return;
     const fetch = async () => {
-      setApInProgress(true);
+      setLoader(true);
       try {
         const data = await getNoteDetails(params?.id);
         setNoteDetails(data);
@@ -66,7 +65,7 @@ const Note = () => {
         navigate("/");
         toast.error(error?.response?.data?.message || "Something went wrong");
       } finally {
-        setApInProgress(false);
+        setLoader(false);
       }
     };
 
@@ -74,9 +73,23 @@ const Note = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (loader) {
+    return (
+      <>
+        <div className="note-container w-100">
+          <div className="skeleton-div title"></div>
+          <div className="divider"></div>
+          <div className="skeleton-div content"></div>
+          <div className="skeleton-div content"></div>
+          <div className="skeleton-div content"></div>
+          <div className="skeleton-div content"></div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      {apiInProgress && <Loader />}
       <div className="note-container w-100">
         <h1 className="note-title">{noteDetails?.title}</h1>
         <p className="note-content">{noteDetails?.content}</p>

@@ -44,6 +44,7 @@ const DeleteDialog = () => {
     <Dialog
       showDialog={showDeleteDialog}
       dialogTitle="Delete Note"
+      disabled={apiInProgress}
       handleClose={() => setShowDeleteDialog(false)}
     >
       <div className="d-flex flex-column gap-4 flex-align-start flex-justify-center">

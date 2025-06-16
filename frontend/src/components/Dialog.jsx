@@ -1,10 +1,20 @@
 import "../assets/styles/dialog.css";
 import { IoClose } from "react-icons/io5";
 
-const Dialog = ({ children, showDialog, dialogTitle, handleClose }) => {
+const Dialog = ({
+  children,
+  showDialog,
+  dialogTitle,
+  disabled,
+  handleClose,
+}) => {
   if (showDialog) {
     return (
-      <div className="dialog-bg p-fixed d-flex flex-align-center flex-justify-center">
+      <div
+        className={`dialog-bg p-fixed d-flex flex-align-center flex-justify-center ${
+          disabled && "disabled-dialog"
+        }`}
+      >
         <div
           className="dialog-backdrop p-absolute w-100 h-100"
           onClick={handleClose}

@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { RiPushpinFill } from "react-icons/ri";
 
 // api
-import { addPinnedNote, removePinnedNote } from "../services/noteService";
+import { getAllNotes, addPinnedNote, removePinnedNote } from "../services/noteService";
 
 // store
 import { CommonContext } from "../contexts/CommonContext";
@@ -17,16 +17,13 @@ import getFormattedTimestamp from ".././utils/formatTimestamp";
 
 const Card = ({ note }) => {
   const navigate = useNavigate();
-  const { notes, setNotes } = useContext(CommonContext);
+  const { setNotes } = useContext(CommonContext);
 
   const handleAddPinnedNote = async (payload) => {
     try {
       await addPinnedNote(payload);
-      const filteredNotes = notes?.map((item) => {
-        if (item?._id === note?._id) item.isPinned = true;
-        return item;
-      });
-      setNotes(filteredNotes);
+      const data = await getAllNotes();
+      setNotes(data);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
@@ -35,11 +32,8 @@ const Card = ({ note }) => {
   const handleRemovePinnedNote = async (id) => {
     try {
       await removePinnedNote(id);
-      const filteredNotes = notes?.map((item) => {
-        if (item?._id === note?._id) item.isPinned = false;
-        return item;
-      });
-      setNotes(filteredNotes);
+      const data = await getAllNotes();
+      setNotes(data);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
     }

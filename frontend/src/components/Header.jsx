@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 // api
-import { logout } from "../../services/authService";
+import { logout } from "../services/authService";
 
 // store
 import { CommonContext } from "../contexts/CommonContext";

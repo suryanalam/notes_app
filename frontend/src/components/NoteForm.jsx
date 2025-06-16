@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import useDevice from "../hooks/useDevice";
 
 // api
-import { createNote, updateNote } from "../services/noteService";
+import { getAllNotes, createNote, updateNote } from "../services/noteService";
 
 // store
 import { CommonContext } from "../contexts/CommonContext";
@@ -31,9 +31,9 @@ const NoteForm = () => {
     setIsEditForm,
     showNoteForm,
     setShowNoteForm,
-    notes,
-    setNotes,
     noteDetails,
+    setNoteDetails,
+    setNotes,
   } = useContext(CommonContext);
 
   const handleCloseForm = () => {
@@ -45,9 +45,10 @@ const NoteForm = () => {
   const handleCreateNote = async (payload) => {
     setApiInProgress(true);
     try {
-      const data = await createNote(payload);
-      setNotes([...notes, { ...data, isPinned: false, shareableLink: false }]);
+      await createNote(payload);
       toast.success("Note Created Successfully");
+      const data = await getAllNotes();
+      setNotes(data);
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
@@ -61,14 +62,11 @@ const NoteForm = () => {
     setApiInProgress(true);
     try {
       const data = await updateNote(id, payload);
-      setNotes([
-        ...notes,
-        {
-          ...data,
-          isPinned: noteDetails?.isPinned,
-          shareableLink: noteDetails?.shareableLink,
-        },
-      ]);
+      setNoteDetails({
+        ...data,
+        isPinned: noteDetails?.isPinned,
+        shareableLink: noteDetails?.shareableLink,
+      });
       toast.success("Note Updated Successfully");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
@@ -102,12 +100,12 @@ const NoteForm = () => {
 
   // Set form values with the note details
   useEffect(() => {
-    if (isEditForm && noteDetails) {
+    if (showNoteForm && isEditForm && noteDetails) {
       setValue("title", noteDetails?.title);
       setValue("content", noteDetails?.content);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [showNoteForm]);
 
   return (
     <>
@@ -115,6 +113,7 @@ const NoteForm = () => {
         <BottomSheet
           showBottomSheet={showNoteForm}
           handleClose={handleCloseForm}
+          disabled={apiInProgress}
           bottomSheetTitle={isEditForm ? "Update Note" : "Create Note"}
         >
           <form
@@ -182,6 +181,7 @@ const NoteForm = () => {
         <Dialog
           showDialog={showNoteForm}
           handleClose={handleCloseForm}
+          disabled={apiInProgress}
           dialogTitle={isEditForm ? "Update Note" : "Create Note"}
         >
           <form

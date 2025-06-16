@@ -70,6 +70,7 @@ const ShareDialog = () => {
     <Dialog
       showDialog={showShareDialog}
       dialogTitle="Share Note"
+      disabled={apiInProgress}
       handleClose={() => setShowShareDialog(false)}
     >
       {noteDetails?.shareableLink ? (
