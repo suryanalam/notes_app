@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "npm install",
-    "start": "nodemon src/index.js"
+    "start": "node src/index.js"
   },
   "keywords": [
     "notes",
