@@ -1,11 +1,6 @@
 import "../../assets/styles/auth.css";
 import { useContext, useEffect } from "react";
-import {
-  NavLink,
-  useNavigate,
-  useSearchParams,
-  useParams,
-} from "react-router-dom";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
