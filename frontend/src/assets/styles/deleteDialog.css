@@ -1,8 +1,6 @@
 .confirmation-text {
   font-size: var(--fs-lg);
   font-weight: var(--font-weight-semibold);
-  font-family: var(--font-primary);
-  line-height: var(--gap-2xl);
 }
 
 .dialog-btn {

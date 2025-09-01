@@ -10,7 +10,6 @@ header {
 .logo-text{
   font-size: var(--fs-2xl);
   font-weight: var(--font-weight-extrabold);
-  font-family: var(--font-primary);
 }
 
 .logout-btn{

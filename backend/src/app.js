@@ -18,7 +18,7 @@ dotenv.config({
 // Create an express server instance
 const app = express();
 const corsOptions = {
-  origin: [process.env.CORS_ORIGIN_PROD, process.env.CORS_ORIGIN_DEV],
+  origin: [process.env.FRONTEND_URL, 'http://localhost:3000'],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 }

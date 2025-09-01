@@ -15,9 +15,10 @@ html {
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: var(--font-secondary);
+  font-family: var(--font-primary);
   background-color: var(--clr-black);
   color: var(--clr-white);
+  line-height: 1.4;
 }
 
 :root {
@@ -91,15 +92,11 @@ a {
   font-weight: var(--font-weight-semibold);
 }
 
-a:hover {
-  text-decoration: underline;
-}
-
 button {
   padding: var(--fs-md) var(--gap-lg);
   border-radius: var(--br-sm);
   font-size: var(--fs-lg);
-  line-height: var(--fs-xl);
+  line-height: 1.4;
   font-weight: var(--font-weight-bold);
   font-family: var(--font-primary);
   cursor: pointer;

@@ -47,7 +47,7 @@ const DeleteDialog = () => {
       disabled={apiInProgress}
       handleClose={() => setShowDeleteDialog(false)}
     >
-      <div className="d-flex flex-column gap-4 flex-align-start flex-justify-center">
+      <div className="d-flex flex-col gap-4 flex-align-start flex-justify-center">
         <p className="confirmation-text">
           Do you really want to delete the note? please confirm to proceed.
         </p>

@@ -8,7 +8,6 @@
   padding-bottom: var(--gap-lg);
   font-size: var(--fs-2xl);
   font-weight: var(--font-weight-bold);
-  font-family: var(--font-primary);
   border-bottom: 2px solid var(--clr-gray-200);
 }
 
@@ -17,7 +16,6 @@
   margin-top: var(--gap-md);
   font-size: var(--fs-xl);
   font-weight: var(--font-weight-semibold);
-  line-height: var(--fs-2xl);
   overflow-wrap: break-word;
 }
 
@@ -87,7 +85,6 @@
   display: none;
   font-size: var(--fs-lg);
   font-weight: var(--font-weight-semibold);
-  font-family: var(--font-primary);
 }
 
 @media screen and (min-width: 501px) {

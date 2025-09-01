@@ -20,6 +20,26 @@ const login = async (payload) => {
   }
 };
 
+const forgotPassword = async (payload) => {
+  try {
+    const response = await api.post("/auth/forgot-password", payload);
+    return response?.data?.data;
+  } catch (error) {
+    console.log("Error while forgot password:", error);
+    throw error;
+  }
+};
+
+const resetPassword = async (payload) => {
+  try {
+    const response = await api.post("/auth/reset-password", payload);
+    return response?.data?.data;
+  } catch (error) {
+    console.log("Error while reset password:", error);
+    throw error;
+  }
+};
+
 const logout = async () => {
   try {
     const response = await api.put("/auth/logout");
@@ -30,4 +50,4 @@ const logout = async () => {
   }
 };
 
-export { signup, login, logout };
+export { signup, login, forgotPassword, resetPassword, logout };

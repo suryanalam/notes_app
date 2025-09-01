@@ -118,9 +118,9 @@ const NoteForm = () => {
         >
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="d-flex flex-column gap-4"
+            className="d-flex flex-col gap-4"
           >
-            <div className="d-flex flex-column gap-1 justify-content-start">
+            <div className="d-flex flex-col gap-2">
               <label htmlFor="title" className="input-label">
                 Title
               </label>
@@ -138,7 +138,7 @@ const NoteForm = () => {
                 </p>
               )}
             </div>
-            <div className="d-flex flex-column gap-1 justify-content-start">
+            <div className="d-flex flex-col gap-2">
               <label htmlFor="content" className="input-label">
                 Content
               </label>
@@ -186,9 +186,9 @@ const NoteForm = () => {
         >
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="d-flex flex-column gap-4"
+            className="d-flex flex-col gap-4"
           >
-            <div className="d-flex flex-column gap-1 justify-content-start">
+            <div className="d-flex flex-col gap-2">
               <label htmlFor="title" className="input-label">
                 Title
               </label>
@@ -206,7 +206,7 @@ const NoteForm = () => {
                 </p>
               )}
             </div>
-            <div className="d-flex flex-column gap-1 justify-content-start">
+            <div className="d-flex flex-col gap-2">
               <label htmlFor="content" className="input-label">
                 Content
               </label>

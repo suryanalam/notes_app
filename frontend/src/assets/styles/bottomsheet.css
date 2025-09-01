@@ -31,7 +31,6 @@
 .bottomsheet-title {
   color: var(--clr-primary);
   font-weight: var(--font-weight-bold);
-  font-family: var(--font-primary);
 }
 
 .bottomsheet-close-div {

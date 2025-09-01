@@ -10,7 +10,7 @@ const NotFound = () => {
   return (
     <>
     <Header />
-    <div className='not-found-container w-100 d-flex flex-column flex-align-center flex-justify-center gap-3'>
+    <div className='not-found-container w-100 d-flex flex-col flex-align-center flex-justify-center gap-3'>
        <img src={notFound} alt="404" draggable="false" />
        <h1>Whoops! Page was not found.</h1>
        <button className='btn btn-primary' onClick={()=> navigate('/')}>Go to Homepage</button>

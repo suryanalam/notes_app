@@ -62,7 +62,7 @@ const SharedNote = () => {
           <p className="shared-note-content">{sharedNoteDetails.content}</p>
         </div>
       ) : (
-        <div className="shared-note-empty-container w-100 d-flex flex-column flex-align-center flex-justify-center gap-3">
+        <div className="shared-note-empty-container w-100 d-flex flex-col flex-align-center flex-justify-center gap-3">
           <img
             src={brokenLink}
             alt="broken link"

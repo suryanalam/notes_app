@@ -9,6 +9,8 @@ import AuthenticateRoutes from "./middlewares/AuthenticateRoutes";
 // pages
 import Signup from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 import Home from "./pages/Home";
 import Note from "./pages/Note";
 import SharedNote from "./pages/SharedNote";
@@ -22,6 +24,8 @@ function App() {
         <Route element={<AuthenticateRoutes />}>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
 
          {/* Protected Routes */}

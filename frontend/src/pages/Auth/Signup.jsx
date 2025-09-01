@@ -43,16 +43,17 @@ const Signup = () => {
     <div className="auth-bg d-grid grid-items-center">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="form-container d-flex flex-column gap-4 justify-content-center"
+        className="form-container d-flex flex-col gap-4"
       >
-        <h1 className="form-tite text-primary text-center">
-          Create an Account
-        </h1>
-        <div className="d-flex flex-column gap-1 justify-content-start">
+        <h1 className="form-title text-center">Create an Account</h1>
+        <div className="d-flex flex-col gap-2">
+          <label htmlFor="username" className="input-label">
+            Username
+          </label>
           <input
             className="input-field"
             type="text"
-            placeholder="Username"
+            placeholder="surya"
             disabled={apiInProgress}
             {...register("username", {
               required: "Username is required",
@@ -78,11 +79,14 @@ const Signup = () => {
             </p>
           )}
         </div>
-        <div className="d-flex flex-column gap-1 justify-content-start">
+        <div className="d-flex flex-col gap-2">
+          <label htmlFor="email" className="input-label">
+            Email
+          </label>
           <input
             className="input-field"
             type="email"
-            placeholder="Email"
+            placeholder="user@gmail.com"
             disabled={apiInProgress}
             {...register("email", {
               required: "Email is required",
@@ -98,11 +102,14 @@ const Signup = () => {
             </p>
           )}
         </div>
-        <div className="d-flex flex-column gap-1 justify-content-start">
+        <div className="d-flex flex-col gap-2">
+          <label htmlFor="password" className="input-label">
+            Password
+          </label>
           <input
             className="input-field"
             type="password"
-            placeholder="Password"
+            placeholder="••••••••••••••••"
             disabled={apiInProgress}
             {...register("password", {
               required: "Password is required",

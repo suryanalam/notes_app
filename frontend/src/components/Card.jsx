@@ -51,7 +51,7 @@ const Card = ({ note }) => {
 
   return (
     <div
-      className="card-bg w-100 d-flex flex-column gap-2 cursor-pointer"
+      className="card-bg w-100 d-flex flex-col gap-2 cursor-pointer"
       onClick={() => navigate(`/note/${note?._id}`)}
     >
       <div className="d-flex flex-align-center flex-justify-between">

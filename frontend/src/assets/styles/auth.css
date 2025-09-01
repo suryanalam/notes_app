@@ -1,4 +1,4 @@
-.auth-bg{
+.auth-bg {
   width: 100dvw;
   max-width: 100%;
   height: 100dvh;
@@ -13,24 +13,21 @@
   background-color: rgba(40, 40, 40, 0.5);
 }
 
-.form-tite {
-  margin-bottom: var(--gap-sm);
+.form-title {
   color: var(--clr-primary);
   font-weight: var(--font-weight-bold);
-  font-family: var(--font-primary);
 }
 
-.input-label{
+.input-label {
   color: var(--clr-gray-100);
   font-size: var(--fs-lg);
-  font-weight: var(--font-weight-bold);
-  font-family: var(--font-primary);
+  font-weight: var(--font-weight-semibold);
 }
 
 .input-field {
   padding: var(--gap-lg);
   border-radius: var(--br-sm);
-  border: 2px solid var(--clr-gray-200);
+  border: 2px solid var(--clr-gray-300);
   background-color: var(--clr-gray-300);
   color: var(--clr-gray-100);
   outline: 0;
@@ -44,23 +41,26 @@
 }
 
 .input-field:focus {
-  border-color: var(--clr-gray-100);
-}
-
-.form-btn {
-  margin: var(--gap-sm) auto;
   border-color: var(--clr-gray-200);
 }
 
-.form-link-text, .form-link {
-  font-size: var(--fs-md);
+.form-btn {
+  border-color: var(--clr-gray-200);
 }
 
-.form-link-text{
+.form-link-text {
+  font-size: var(--fs-lg);
   color: var(--clr-gray-100);
 }
 
-.form-link{
-  margin-left: var(--gap-xs);
+.form-link {
+  margin: 0 var(--gap-xs);
+  font-size: var(--fs-lg);
+  color: var(--clr-primary);
+}
+
+.forgot-password-text {
+  margin: 0 var(--gap-xs);
+  font-size: var(--fs-md);
   color: var(--clr-primary);
 }

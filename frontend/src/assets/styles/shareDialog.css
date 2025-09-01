@@ -1,8 +1,6 @@
 .share-text {
   font-size: var(--fs-lg);
   font-weight: var(--font-weight-semibold);
-  font-family: var(--font-primary);
-  line-height: var(--gap-2xl);
 }
 
 .link {
@@ -12,7 +10,6 @@
   color: var(--clr-gray-100);
   font-size: var(--fs-md);
   font-weight: var(--font-weight-semibold);
-  font-family: var(--font-primary);
   overflow-x: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -27,5 +24,4 @@
 
 .info-text {
   font-size: var(--fs-base);
-  font-family: var(--font-primary);
 }

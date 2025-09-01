@@ -63,7 +63,7 @@ const Home = () => {
           ))}
         </div>
       ) : (
-        <div className="empty-container d-flex flex-column flex-align-center flex-justify-center gap-4">
+        <div className="empty-container d-flex flex-col flex-align-center flex-justify-center gap-4">
           <img
             src={empty}
             alt="empty notes"

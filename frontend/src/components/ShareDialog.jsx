@@ -74,7 +74,7 @@ const ShareDialog = () => {
       handleClose={() => setShowShareDialog(false)}
     >
       {noteDetails?.shareableLink ? (
-        <div className="w-100 d-flex flex-column gap-4 flex-align-start flex-justify-center">
+        <div className="w-100 d-flex flex-col gap-4 flex-align-start flex-justify-center">
           <p className="share-text">
             The link to your note has been generated. Simply copy it from below
             to share!
@@ -106,7 +106,7 @@ const ShareDialog = () => {
           </button>
         </div>
       ) : (
-        <div className="w-100 d-flex flex-column gap-4 flex-align-start flex-justify-center">
+        <div className="w-100 d-flex flex-col gap-4 flex-align-start flex-justify-center">
           <p className="share-text">
             You're just one step away from sharing your note with the world.
             Generate a shareable link now!
