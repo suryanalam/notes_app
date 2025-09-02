@@ -83,7 +83,7 @@ const ShareDialog = () => {
             ref={inputRef}
             type="text"
             className="link w-100"
-            value={`http://localhost:3000/share/${noteDetails?.shareableLink}`}
+            value={`https://jot-it-app.netlify.app/share/${noteDetails?.shareableLink}`}
             readOnly
           />
           <div className="d-flex flex-align-center gap-1 flex-wrap">
@@ -98,7 +98,7 @@ const ShareDialog = () => {
             disabled={apiInProgress}
             onClick={() =>
               handleCopyLink(
-                `http://localhost:3000/share/${noteDetails?.shareableLink}`
+                `https://jot-it-app.netlify.app/share/${noteDetails?.shareableLink}`
               )
             }
           >
@@ -114,7 +114,7 @@ const ShareDialog = () => {
           <input
             type="text"
             className="link w-100"
-            value={`http://localhost:3000/share/...`}
+            value={`https://jot-it-app.netlify.app/share/...`}
             readOnly
           />
           <div className="d-flex flex-align-center gap-1 flex-wrap">
