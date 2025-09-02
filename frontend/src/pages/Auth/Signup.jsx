@@ -23,9 +23,9 @@ const Signup = () => {
     useContext(CommonContext);
 
   const onSubmit = async (data) => {
-    setApiInProgress(true);
     try {
-      const { user, accessToken } = await signup(data);
+      setApiInProgress(true);
+      const { accessToken, user } = await signup(data);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("currentUser", JSON.stringify(user));
       setIsAuthenticated(true);
@@ -58,13 +58,13 @@ const Signup = () => {
             {...register("username", {
               required: "Username is required",
               pattern: {
-                value: /^[a-z][a-z0-9_]{3,15}$/,
+                value: /^[a-z][a-z0-9_]{2,15}$/,
                 message:
                   "Username must start with a letter and contain only lower case letters, numbers and underscore.",
               },
               minLength: {
-                value: 4,
-                message: "Username must contain atleast 4 characters.",
+                value: 3,
+                message: "Username must contain atleast 3 characters.",
               },
               maxLength: {
                 value: 16,

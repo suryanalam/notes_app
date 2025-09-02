@@ -10,6 +10,9 @@ import { getSharedNoteByLink } from "../services/noteService";
 // store
 import { CommonContext } from "../contexts/CommonContext";
 
+// utils
+import getFormattedTimestamp from "../utils/formatTimestamp";
+
 // components
 import Header from "../components/Header";
 
@@ -58,7 +61,12 @@ const SharedNote = () => {
       <Header />
       {sharedNoteDetails ? (
         <div className="shared-note-container w-100">
-          <h1 className="shared-note-title">{sharedNoteDetails.title}</h1>
+          <div className="shared-note-title-container d-flex flex-col gap-2">
+            <h1 className="shared-note-title">{sharedNoteDetails?.title}</h1>
+            <span className="shared-note-timestamp">
+              Date: {getFormattedTimestamp(sharedNoteDetails.updatedAt)}
+            </span>
+          </div>
           <p className="shared-note-content">{sharedNoteDetails.content}</p>
         </div>
       ) : (

@@ -1,32 +1,38 @@
 .shared-note-container {
-  margin-top: 55px;
+  margin-top: 57px;
   padding: var(--gap-xl);
-  min-height: calc(100dvh - 55px);
 }
 
-.shared-note-title {
-  padding-bottom: var(--gap-lg);
-  font-size: var(--fs-2xl);
-  font-weight: var(--font-weight-bold);
+.shared-note-title-container {
+  padding-bottom:  var(--gap-base);
   border-bottom: 2px solid var(--clr-gray-200);
 }
 
-.shared-note-content {
-  margin-top: var(--gap-md);
-  font-size: var(--fs-xl);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--fs-2xl);
+.shared-note-title {
+  font-size: var(--fs-2xl);
+  font-weight: var(--font-weight-bold);
 }
 
-.shared-note-empty-container{
+.shared-note-timestamp {
+  font-size: var(--fs-lg);
+  color: var(--clr-gray-100);
+}
+
+.shared-note-content {
+  margin-top: var(--gap-base);
+  font-size: var(--fs-xl);
+  overflow-wrap: break-word;
+}
+
+.shared-note-empty-container {
   height: 100dvh;
 }
 
 .shared-note-broken-link {
-    width: 100px;
-    height: 100px;
+  width: 100px;
+  height: 100px;
 }
 
 .shared-note-container > button:hover {
-    border-color: var(--clr-white);
+  border-color: var(--clr-white);
 }

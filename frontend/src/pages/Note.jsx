@@ -18,6 +18,7 @@ import { CommonContext } from "../contexts/CommonContext";
 
 // utils
 import copyToClipboard from "../utils/copyToClipboard";
+import getFormattedTimestamp from "../utils/formatTimestamp";
 
 // components
 import ShareDialog from "../components/ShareDialog";
@@ -91,7 +92,10 @@ const Note = () => {
   return (
     <>
       <div className="note-container w-100">
-        <h1 className="note-title">{noteDetails?.title}</h1>
+        <div className="note-title-container d-flex flex-col gap-2">
+           <h1 className="note-title">{noteDetails?.title}</h1>
+           <span className="note-timestamp">Date: {getFormattedTimestamp(noteDetails?.updatedAt)}</span>
+        </div>
         <p className="note-content">{noteDetails?.content}</p>
       </div>
       <div className="menu-options-bg p-fixed w-100 d-flex flex-align-center flex-justify-center">

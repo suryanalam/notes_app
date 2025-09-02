@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
-import generateToken from "../utils/generateToken.js";
 
 // Models
 import User from "../models/user.model.js";
@@ -14,27 +13,23 @@ const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-  maxAge: 30 * 24 * 60 * 60 * 1000,
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
-const generateAccessAndRefreshTokens = async (user) => {
+const generateAccessAndRefreshToken = async (user) => {
   const { _id: id, username, email } = user;
 
-  const accessToken = generateToken({ id, username, email }, "1d");
+  const accessToken = jwt.sign(
+    { id, username, email },
+    process.env.JWT_SECRET_KEY,
+    { expiresIn: "1h" } // 1 hour
+  );
   if (!accessToken) return { error: "Error while generating access token" };
 
-  const refreshToken = generateToken({ id }, "7d");
+  const refreshToken = jwt.sign({ id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: "7d", // 7 days
+  });
   if (!refreshToken) return { error: "Error while generating refresh token" };
-
-  // update the refresh token of the user in DB
-  const updatedUser = await User.findByIdAndUpdate(
-    id,
-    { $set: { refreshToken } },
-    { new: true }
-  );
-  if (!updatedUser) {
-    return { error: "Error while adding refresh token into DB" };
-  }
 
   return { accessToken, refreshToken };
 };
@@ -57,15 +52,22 @@ const signup = asyncHandler(async (req, res) => {
     email: email.toLowerCase(),
     password: hashedPassword,
   });
-  if (!user) throw new ApiError(500, "Error while creating user");
+  if (!user?._id) throw new ApiError(500, "Error while creating user");
 
-  const data = await generateAccessAndRefreshTokens(user);
+  const data = await generateAccessAndRefreshToken(user);
   if (data?.error) throw new ApiError(500, error);
 
-  // store access and refresh tokens as cookies in broswer
-  res.cookie("accessToken", data?.accessToken, cookieOptions);
-  res.cookie("refreshToken", data?.refreshToken, cookieOptions);
+  const updatedUser = await User.findByIdAndUpdate(
+    user?._id,
+    { $set: { refreshToken: data?.refreshToken } },
+    { new: true }
+  );
+  if (!updatedUser?.refreshToken) {
+    throw new ApiError(500, "Error while adding refresh token into DB");
+  }
 
+  // store refresh token in browser cookies
+  res.cookie("refreshToken", data?.refreshToken, cookieOptions);
   res.status(201).send(
     new ApiResponse("User created successfully", {
       accessToken: data?.accessToken,
@@ -86,18 +88,25 @@ const login = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email });
-  if (!user) throw new ApiError(400, "Invalid Email or Password");
+  if (!user?._id) throw new ApiError(400, "Invalid Email or Password");
 
   const isValidPassword = await bcrypt.compare(password, user.password);
   if (!isValidPassword) throw new ApiError(400, "Invalid Email or Password");
 
-  const data = await generateAccessAndRefreshTokens(user);
+  const data = await generateAccessAndRefreshToken(user);
   if (data?.error) throw new ApiError(500, error);
 
-  // store access and refresh tokens as cookies in broswer
-  res.cookie("accessToken", data?.accessToken, cookieOptions);
-  res.cookie("refreshToken", data?.refreshToken, cookieOptions);
+  const updatedUser = await User.findByIdAndUpdate(
+    user?._id,
+    { $set: { refreshToken: data?.refreshToken } },
+    { new: true }
+  );
+  if (!updatedUser?.refreshToken) {
+    throw new ApiError(500, "Error while adding refresh token into DB");
+  }
 
+  // store refresh token in browser cookies
+  res.cookie("refreshToken", data?.refreshToken, cookieOptions);
   res.status(200).send(
     new ApiResponse("User logged in successfully", {
       accessToken: data?.accessToken,
@@ -114,21 +123,28 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   const token = req.cookies?.refreshToken;
   if (!token) throw new ApiError(401, "Unauthorized request");
 
-  const decodedUser = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  if (!decodedUser) throw new ApiError(401, "Unauthorized request");
+  const userPayload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  if (!userPayload?.id) throw new ApiError(401, "Unauthorized request");
 
-  const user = await User.findById(decodedUser?.id);
-  if (!user || token !== user?.refreshToken) {
+  const user = await User.findById(userPayload?.id);
+  if (!user?._id || token !== user?.refreshToken) {
     throw new ApiError(401, "Unauthorized request");
   }
 
-  const data = await generateAccessAndRefreshTokens(user);
+  const data = await generateAccessAndRefreshToken(user);
   if (data?.error) throw new ApiError(500, error);
 
-  // store access and refresh tokens as cookies in broswer
-  res.cookie("accessToken", data?.accessToken, cookieOptions);
-  res.cookie("refreshToken", data?.refreshToken, cookieOptions);
+  const updatedUser = await User.findByIdAndUpdate(
+    user?._id,
+    { $set: { refreshToken: data?.refreshToken } },
+    { new: true }
+  );
+  if (!updatedUser?.refreshToken) {
+    throw new ApiError(500, "Error while adding refresh token into DB");
+  }
 
+  // store refresh token in browser cookies
+  res.cookie("refreshToken", data?.refreshToken, cookieOptions);
   res.status(200).send(
     new ApiResponse("Refreshed user login session", {
       accessToken: data?.accessToken,
@@ -142,7 +158,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 const logout = asyncHandler(async (req, res) => {
-  res.clearCookie("accessToken", cookieOptions);
   res.clearCookie("refreshToken", cookieOptions);
 
   const user = await User.findByIdAndUpdate(
@@ -150,7 +165,7 @@ const logout = asyncHandler(async (req, res) => {
     { $unset: { refreshToken: 1 } },
     { new: true }
   );
-  if (user?.refreshToken) {
+  if (!user?._id) {
     throw new ApiError(500, "Error while removing refresh token from DB");
   }
 

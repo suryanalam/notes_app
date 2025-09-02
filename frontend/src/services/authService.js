@@ -2,7 +2,7 @@ import { api } from "./api";
 
 const signup = async (payload) => {
   try {
-    const response = await api.post("/auth/signup", payload);
+    const response = await api.post("/api/auth/signup", payload);
     return response?.data?.data;
   } catch (error) {
     console.log("Error while signup:", error);
@@ -12,7 +12,7 @@ const signup = async (payload) => {
 
 const login = async (payload) => {
   try {
-    const response = await api.post("/auth/login", payload);
+    const response = await api.post("/api/auth/login", payload);
     return response?.data?.data;
   } catch (error) {
     console.log("Error while login:", error);
@@ -22,7 +22,7 @@ const login = async (payload) => {
 
 const forgotPassword = async (payload) => {
   try {
-    const response = await api.post("/auth/forgot-password", payload);
+    const response = await api.post("/api/auth/forgot-password", payload);
     return response?.data?.data;
   } catch (error) {
     console.log("Error while forgot password:", error);
@@ -32,7 +32,7 @@ const forgotPassword = async (payload) => {
 
 const resetPassword = async (payload) => {
   try {
-    const response = await api.post("/auth/reset-password", payload);
+    const response = await api.post("/api/auth/reset-password", payload);
     return response?.data?.data;
   } catch (error) {
     console.log("Error while reset password:", error);
@@ -42,7 +42,7 @@ const resetPassword = async (payload) => {
 
 const logout = async () => {
   try {
-    const response = await api.put("/auth/logout");
+    const response = await api.put("/api/auth/logout");
     return response?.data?.data;
   } catch (error) {
     console.log("Error while logout:", error);

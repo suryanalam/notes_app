@@ -27,7 +27,7 @@
 .input-field {
   padding: var(--gap-lg);
   border-radius: var(--br-sm);
-  border: 2px solid var(--clr-gray-300);
+  border: 2px solid var(--clr-gray-200);
   background-color: var(--clr-gray-300);
   color: var(--clr-gray-100);
   outline: 0;
@@ -41,7 +41,7 @@
 }
 
 .input-field:focus {
-  border-color: var(--clr-gray-200);
+  border-color: var(--clr-gray-100);
 }
 
 .form-btn {

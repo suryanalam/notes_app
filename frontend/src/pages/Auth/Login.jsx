@@ -14,31 +14,18 @@ const Login = () => {
   const {
     reset,
     register,
-    getValues,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
-  // eslint-disable-next-line no-unused-vars
-  // const [searchParams, setSearchParams] = useSearchParams();
 
   const { apiInProgress, setApiInProgress, setIsAuthenticated } =
     useContext(CommonContext);
 
-  const redirectForgotPassword = () => {
-    const email = getValues("email");
-
-    if (email) {
-      navigate(`/forgot-password?email=${email}`);
-    } else {
-      navigate(`/forgot-password`);
-    }
-  };
-
   const onSubmit = async (data) => {
-    setApiInProgress(true);
     try {
-      const { user, accessToken } = await login(data);
+      setApiInProgress(true);
+      const { accessToken, user } = await login(data);
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("currentUser", JSON.stringify(user));
       setIsAuthenticated(true);
@@ -86,12 +73,6 @@ const Login = () => {
             <label htmlFor="password" className="input-label">
               Password
             </label>
-            <span
-              className="form-link cursor-pointer forgot-password-text"
-              onClick={redirectForgotPassword}
-            >
-              Forgot Password?
-            </span>
           </div>
           <input
             className="input-field"

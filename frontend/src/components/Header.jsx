@@ -12,16 +12,12 @@ import { CommonContext } from "../contexts/CommonContext";
 const Header = () => {
   const navigate = useNavigate();
 
-  const {
-    apiInProgress,
-    setApiInProgress,
-    isAuthenticated,
-    resetStore,
-  } = useContext(CommonContext);
+  const { apiInProgress, setApiInProgress, isAuthenticated, resetStore } =
+    useContext(CommonContext);
 
   const handleLogout = async () => {
-    setApiInProgress(true);
     try {
+      setApiInProgress(true);
       await logout();
       localStorage.removeItem("currentUser");
       localStorage.removeItem("accessToken");

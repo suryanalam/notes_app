@@ -22,7 +22,6 @@
   text-overflow: ellipsis;
   color: var(--clr-white);
   font-size: var(--fs-lg);
-  font-weight: var(--font-weight-bold);
 }
 
 .card-timestamp {
